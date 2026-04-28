@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.css": "/butia-microbit-extension/static/css/main.06467040.css",
+    "main.js": "/butia-microbit-extension/static/js/main.83b61bfe.js",
+    "index.html": "/butia-microbit-extension/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.06467040.css",
+    "static/js/main.83b61bfe.js"
+  ]
+}
