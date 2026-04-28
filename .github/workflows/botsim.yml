@@ -1,0 +1,33 @@
+name: Botsim build
+
+on:
+    push:
+        paths:
+            - "botsim/**"
+        branches:
+            - master
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js 18
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+            - run: npm ci
+              working-directory: botsim
+            - run: npm run build
+              working-directory: botsim
+            - name: Deploy to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              if: ${{ github.ref == 'refs/heads/master' }}
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./botsim/build
+                  force_orphan: true

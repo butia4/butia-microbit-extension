@@ -1,18 +1,34 @@
 {
     "name": "butia-microbit-extension",
-    "description": "",
+    "version": "0.1.0",
+    "description": "MakeCode extension for the Butia v4 educational robotics kit — imperative and event-based block paradigms.",
     "dependencies": {
-        "core": "*",
-        "radio": "*",
-        "microphone": "*"
+        "core": "*"
     },
     "files": [
-        "main.blocks",
-        "main.ts",
+        "src/blocks/events.ts",
+        "src/blocks/imperative.ts",
+        "src/core/constants.ts",
+        "src/core/robot-base.ts",
+        "src/hardware/analog-line-sensor.ts",
+        "src/hardware/butia-robot.ts",
+        "src/hardware/i2c-motor-driver.ts",
+        "src/hardware/sr04-distance-sensor.ts",
+        "src/main.ts",
+        "src/sim/protocol.ts",
+        "src/sim/sim-distance-sensor.ts",
+        "src/sim/sim-line-sensor.ts",
+        "src/sim/sim.ts",
+        "src/types/components.d.ts",
+        "src/types/enums.d.ts",
+        "src/types/robot.d.ts",
         "README.md"
     ],
     "testFiles": [
-        "test.ts"
+        "test/events.test.ts",
+        "test/imperative.test.ts",
+        "test/robot.test.ts",
+        "test/sensor.test.ts"
     ],
     "targetVersions": {
         "target": "8.0.21",
@@ -21,5 +37,6 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "blocksprj",
+    "simUrl": "https://github.com/butia4/butia-microbit-extension"
 }
