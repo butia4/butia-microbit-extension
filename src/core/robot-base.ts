@@ -1,6 +1,6 @@
 // PXT does not support `abstract class` — this DI base class is the approved substitute.
 
-class RobotBase implements IRobot {
+class RobotBase implements IRobot{
     protected _motors: IMotorDriver
     protected _line: ILineSensor
     protected _distance: IDistanceSensor
@@ -15,18 +15,12 @@ class RobotBase implements IRobot {
         this._assistFlags = 0
     }
 
-    setSimDrivers(line: ILineSensor, distance: IDistanceSensor): void {
-        this._line = line
-        this._distance = distance
-    }
-
     protected _setMotorSpeed(left: number, right: number): void {
         this._motorLeft = left
         this._motorRight = right
         this._motors.setSpeed(left, right)
     }
-
-    start(): void {
+     start(): void {
         this._motors.init()
         this._line.init()
         this._distance.init()
@@ -34,69 +28,73 @@ class RobotBase implements IRobot {
             while (true) {
                 this._line.poll()
                 this._distance.poll()
-                this._applyAssists()
+                //this._applyAssists()
                 basic.pause(POLL_INTERVAL_MS)
             }
         })
     }
-
-    protected _applyAssists(): void {
-        if ((this._assistFlags & RobotAssist.ObstacleStop) !== 0) {
-            if (this._distance.read() <= OBSTACLE_STOP_DISTANCE_CM) {
-                this._motors.stop()
-            }
-        }
+    setSimDrivers(line: ILineSensor, distance: IDistanceSensor): void {
+        this._line = line
+        this._distance = distance
     }
-
-    moveForward(speed: number = 70, duration?: number): void {
+    moveForward(speed: number, duration?: number): void {
         this._setMotorSpeed(speed, speed)
-        if (duration !== undefined) {
+        if (duration) {
             basic.pause(duration)
             this._setMotorSpeed(0, 0)
         }
     }
-
     moveBackward(speed: number = 70, duration?: number): void {
         this._setMotorSpeed(-speed, -speed)
+
         if (duration !== undefined) {
             basic.pause(duration)
             this._setMotorSpeed(0, 0)
         }
     }
-
     turn(direction: TurnDirection, speed: number = 60, duration?: number): void {
         if (direction === TurnDirection.Left) {
             this._setMotorSpeed(-speed, speed)
         } else {
             this._setMotorSpeed(speed, -speed)
         }
+
         if (duration !== undefined) {
             basic.pause(duration)
             this._setMotorSpeed(0, 0)
         }
     }
-
     motorTank(left: number, right: number): void {
         this._setMotorSpeed(left, right)
     }
-
     motorStop(): void {
         this._setMotorSpeed(0, 0)
     }
-
     detectLine(id: LineSensorId): boolean {
-        return id === LineSensorId.Left ? this._line.readLeft() : this._line.readRight()
+        control.fail("Method not implemented");
+        return false;
     }
-
     obstacleDistance(): number {
-        return this._distance.read()
+        control.fail("Method not implemented")
+        return 0;
     }
-
     setAssist(flag: RobotAssist, enabled: boolean): void {
-        if (enabled) {
+
+        control.fail("Method not implemented")
+        /*if (enabled) {
             this._assistFlags = this._assistFlags | flag
         } else {
             this._assistFlags = this._assistFlags & ~flag
-        }
+        }*/
     }
+    
+    /*
+    protected _applyAssists(): void {
+        if ((this._assistFlags & RobotAssist.ObstacleStop) !== 0) {
+            if (this._distance.read() <= OBSTACLE_STOP_DISTANCE_CM) {
+                this._motors.stop()
+            }
+        }
+    }*/
+
 }
