@@ -9,7 +9,7 @@ class GPIOMotorDriver implements IMotorDriver {
 
     setSpeed(left: number, right: number): void {
         this._setMotor(this.leftPins, left)
-        this._setMotor(this.rightPins, right)
+        this._setMotor(this.rightPins, -right)
     }
 
     stop(): void {
