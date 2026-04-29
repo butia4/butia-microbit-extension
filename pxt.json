@@ -6,11 +6,12 @@
         "core": "*"
     },
     "files": [
+        "src/blocks/events.ts",
         "src/blocks/imperative.ts",
         "src/core/constants.ts",
         "src/core/robot-base.ts",
+        "src/hardware/analog-line-sensor.ts",
         "src/hardware/butia-robot.ts",
-        "src/hardware/analog-line-sensor.ts",        
         "src/hardware/gpio-motor-driver.ts",
         "src/hardware/sr04-distance-sensor.ts",
         "src/types/components.d.ts",
