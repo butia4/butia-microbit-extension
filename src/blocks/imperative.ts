@@ -2,44 +2,49 @@
 namespace ButiaImperative {
 
     //% blockId="butia_imp_move_forward"
-    //% block="move forward at speed %speed || for %duration ms"
+    //% block="Avanzar a velocidad %speed || durante %duration ms"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.shadow=timePicker expandableArgumentMode="toggle"
     //% weight=100
+    //% group="Motores"
     export function moveForward(speed: number, duration?: number): void {
         robot.moveForward(speed, duration)
     }
 
     //% blockId="butia_imp_move_backward"
-    //% block="move backward at speed %speed || for %duration ms"
+    //% block="Retroceder a velocidad %speed || durante %duration ms"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.shadow=timePicker expandableArgumentMode="toggle"
     //% weight=95
+    //% group="Motores"
     export function moveBackward(speed: number, duration?: number): void {
         robot.moveBackward(speed, duration)
     }
 
     //% blockId="butia_imp_turn"
-    //% block="turn %direction at speed %speed || for %duration ms"
+    //% block="Girar hacia %direction a velocidad %speed || durante %duration ms"
     //% speed.min=0 speed.max=100 speed.defl=40
     //% duration.shadow=timePicker expandableArgumentMode="toggle"
     //% weight=90
+    //% group="Motores"
     export function turn(direction: TurnDirection, speed: number, duration?: number): void {
         robot.turn(direction, speed, duration)
     }
 
     //% blockId="butia_imp_motor_tank"
-    //% block="motor left %left right %right"
+    //% block="Motor Izquierdo %left Derecho %right"
     //% left.min=-100 left.max=100 left.defl=70
     //% right.min=-100 right.max=100 right.defl=70
     //% weight=85
+    //% group="Motores"
     export function motorTank(left: number, right: number): void {
         robot.motorTank(left, right)
     }
 
     //% blockId="butia_imp_stop"
-    //% block="stop"
+    //% block="Apagar Motor"
     //% weight=80
+    //% group="Motores"
     export function motorStop(): void {
         robot.motorStop()
     }
