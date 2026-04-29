@@ -21,13 +21,20 @@
     "deploy": "pxt deploy",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "sync": "bun scripts/sync-pxt.ts"
+    "sync": "bun scripts/sync-pxt.ts",
+    "commit": "cz",
+    "prepare": "husky"
   },
   "dependencies": {},
   "devDependencies": {
+    "@commitlint/cli": "^20.5.2",
+    "@commitlint/config-conventional": "^20.5.0",
     "@typescript-eslint/eslint-plugin": "^8.59.0",
     "@typescript-eslint/parser": "^8.59.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^10.2.1",
+    "husky": "^9.1.7",
     "pxt-microbit": "^8.1.12",
     "typescript": "^6.0.3"
   }
