@@ -3,16 +3,19 @@
 class RobotBase implements IRobot{
     protected _motors: IMotorDriver
     protected _line: ILineSensor
+    protected _light: ILightSensor
     protected _distance: IDistanceSensor
     protected _assistFlags: number
     _motorLeft: number = 0
     _motorRight: number = 0
 
-    constructor(motors: IMotorDriver, line: ILineSensor, distance: IDistanceSensor) {
+
+    constructor(motors: IMotorDriver, line: ILineSensor, distance: IDistanceSensor, light: ILightSensor) {
         this._motors = motors
         this._line = line
         this._distance = distance
         this._assistFlags = 0
+        this._light = light
     }
 
     protected _setMotorSpeed(left: number, right: number): void {
@@ -76,9 +79,9 @@ class RobotBase implements IRobot{
         // return id === LineSensorId.Left ? this._line.readLeft() : this._line.readRight()
     }
     obstacleDistance(): number {
-        control.fail("Method not implemented")
-        return 0;
-        // return this._distance.read()
+        //control.fail("Method not implemented")
+        //return 0;
+        return this._distance.readCm()
     }
     setAssist(flag: RobotAssist, enabled: boolean): void {
 
@@ -100,11 +103,11 @@ class RobotBase implements IRobot{
     }*/
 
     readGraySensor(pin: number): number {
-        return 1023 - pins.analogReadPin(pin as AnalogPin)
+        return 1023 - pins.analogReadPin(AnalogPin.P1)
     }
 
     readLightSensor(pin: number): number {
-        return 1023 - pins.analogReadPin(pin as AnalogPin)
+        return this._light.readCm()
     }
 
     readButton(pin: number): boolean {
