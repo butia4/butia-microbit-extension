@@ -6,22 +6,22 @@
         "core": "*"
     },
     "files": [
+        "src/robotdriver.ts",
         "src/blocks/events.ts",
         "src/blocks/imperative.ts",
         "src/core/constants.ts",
         "src/core/robot-base.ts",
-        "src/hardware/analog-line-sensor.ts",
         "src/hardware/butia-robot.ts",
         "src/hardware/gpio-motor-driver.ts",
-        "src/hardware/sr04-distance-sensor.ts",
+        "src/hardware/distance-sensor-butia.ts",
+        "src/hardware/light-sensor-butia.ts",
+        "src/hardware/gray-sensor-butia.ts",
         "src/types/components.d.ts",
         "src/types/enums.d.ts",
         "src/types/robot.d.ts",
         "README.md"
     ],
-    "testFiles": [
-
-    ],
+    "testFiles": [],
     "targetVersions": {
         "target": "8.0.21",
         "targetId": "microbit"

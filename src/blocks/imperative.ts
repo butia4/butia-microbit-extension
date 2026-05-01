@@ -1,19 +1,6 @@
 //% color="#3d6fc4" icon="" weight=90
 //% groups="['Sensores', 'Motores']"
-namespace ButiaImperative {
-
-    export enum Jconectors {
-        //% block="J1"
-        J1 = 1,  // Ej: AnalogPin.P1
-        //% block="J2"
-        J2 = 2, // Ej: AnalogPin.P2
-        //% block="J3"
-        J3 = 3,
-        //% block="J4"
-        J4 = 4,
-        //% block="J5"
-        J5 = 5,
-    }
+namespace Butia {
 
     //% blockId="butia_imp_move_forward"
     //% block="Avanzar a velocidad %speed || durante %duration ms"
@@ -22,7 +9,7 @@ namespace ButiaImperative {
     //% weight=100
     //% group="Motores"
     export function moveForward(speed: number, duration?: number): void {
-        robot.moveForward(speed, duration)
+        Butia.RobotDriver.currentRobot().moveForward(speed, duration)
     }
 
     //% blockId="butia_imp_move_backward"
@@ -32,7 +19,7 @@ namespace ButiaImperative {
     //% weight=95
     //% group="Motores"
     export function moveBackward(speed: number, duration?: number): void {
-        robot.moveBackward(speed, duration)
+        Butia.RobotDriver.currentRobot().moveBackward(speed, duration)
     }
 
     //% blockId="butia_imp_turn"
@@ -42,7 +29,7 @@ namespace ButiaImperative {
     //% weight=90
     //% group="Motores"
     export function turn(direction: TurnDirection, speed: number, duration?: number): void {
-        robot.turn(direction, speed, duration)
+        Butia.RobotDriver.currentRobot().turn(direction, speed, duration)
     }
 
     //% blockId="butia_imp_motor_tank"
@@ -52,7 +39,7 @@ namespace ButiaImperative {
     //% weight=85
     //% group="Motores"
     export function motorTank(left: number, right: number): void {
-        robot.motorTank(left, right)
+        Butia.RobotDriver.currentRobot().motorTank(left, right)
     }
 
     //% blockId="butia_imp_stop"
@@ -60,47 +47,39 @@ namespace ButiaImperative {
     //% weight=80
     //% group="Motores"
     export function motorStop(): void {
-        robot.motorStop()
+        Butia.RobotDriver.currentRobot().motorStop()
     }
 
     //% blockId="butia_imp_read_gray"
     //% block="Sensor de grises en %pin"
     //% weight=70
     //% group="Sensores"
-    export function readGraySensor(pin: Jconectors): number {
-        return robot.readGraySensor(pin)
+    export function readGraySensor(pin: string): number {
+        return Butia.RobotDriver.currentRobot().readGraySensor(pin)
     }
 
     //% blockId="butia_imp_read_light"
     //% block="Sensor de luz en %pin"
     //% weight=69
     //% group="Sensores"
-    export function readLightSensor(pin: Jconectors): number {
-        return robot.readLightSensor(pin)
+    export function readLightSensor(pin: string): number {
+        return Butia.RobotDriver.currentRobot().readLightSensor(pin)
     }
 
     //% blockId="butia_imp_read_button"
     //% block="Botón en %pin presionado"
     //% weight=68
     //% group="Sensores"
-    export function readButton(pin: Jconectors): boolean {
-        return robot.readButton(pin)
-    }
-
-    //% blockId="butia_imp_detect_line"
-    //% block="Sensor de línea %id detecta línea"
-    //% weight=70
-    //% group="Sensores"
-    export function detectLine(id: LineSensorId): boolean {
-        return robot.detectLine(id)
+    export function readButton(pin: string): boolean {
+        return Butia.RobotDriver.currentRobot().readButton(pin)
     }
 
     //% blockId="butia_imp_distance"
-    //% block="Distancia al obstáculo (cm)"
-    //% weight=65
+    //% block="Sensor de Distancia en %pin"
+    //% weight=69
     //% group="Sensores"
-    export function obstacleDistance(): number {
-        return robot.obstacleDistance()
+    export function obstacleDistance(pin: string): number {
+        return Butia.RobotDriver.currentRobot().readDistanceSensor(pin)
     }
 
     //% blockId="butia_imp_set_assist"
@@ -109,6 +88,6 @@ namespace ButiaImperative {
     //% weight=10
     //% group="Motores"
     export function setAssist(assist: RobotAssist, enabled: boolean): void {
-        robot.setAssist(assist, enabled)
+        Butia.RobotDriver.currentRobot().setAssist(assist, enabled)
     }
 }

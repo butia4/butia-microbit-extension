@@ -8,6 +8,7 @@ interface ISensor extends IRobotComponent {
 
 interface IPolledSensor extends ISensor {
     poll(): void
+    getPin(): number
 }
 
 interface ILineSensor extends IPolledSensor {
@@ -16,7 +17,15 @@ interface ILineSensor extends IPolledSensor {
 }
 
 interface IDistanceSensor extends IPolledSensor {
-    readCm(): number
+
+}
+
+interface ILightSensor extends IPolledSensor {
+
+}
+
+interface IGraySensor extends IPolledSensor {
+
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
