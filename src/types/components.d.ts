@@ -8,6 +8,7 @@ interface ISensor extends IRobotComponent {
 
 interface IPolledSensor extends ISensor {
     poll(): void
+    getPin(): number
 }
 
 interface ILineSensor extends IPolledSensor {

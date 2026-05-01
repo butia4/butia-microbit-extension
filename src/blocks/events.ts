@@ -16,40 +16,40 @@ namespace ButiaEvents {
     //% threshold.min=1 threshold.max=1023
     //% weight=60
     //% group="Sensores"
-    export function startMonitoring(sensor: Sensors, pin: ButiaImperative.Jconectors, threshold: number): void {
-        robot.startMonitoring(sensor, pin, threshold)
+    export function startMonitoring(sensor: Sensors, pin: string, threshold: number): void {
+        //robot.startMonitoring(sensor, pin, threshold)
     }
 
     //% blockId="butia_evt_on_level_reached"
     //% block="Cuando sensor %sensor en puerto %pin supera umbral"
     //% weight=55
     //% group="Eventos"
-    export function onLevelReached(sensor: Sensors, pin: ButiaImperative.Jconectors, handler: () => void): void {
-        robot.onLevelReached(sensor, pin, handler)
+    export function onLevelReached(sensor: Sensors, pin: string, handler: () => void): void {
+        //robot.onLevelReached(sensor, pin, handler)
     }
 
     //% blockId="butia_evt_on_level_unreached"
     //% block="Cuando sensor %sensor en puerto %pin baja del umbral"
     //% weight=54
     //% group="Eventos"
-    export function onLevelUnreached(sensor: Sensors, pin: ButiaImperative.Jconectors, handler: () => void): void {
-        robot.onLevelUnreached(sensor, pin, handler)
+    export function onLevelUnreached(sensor: Sensors, pin: string, handler: () => void): void {
+        //robot.onLevelUnreached(sensor, pin, handler)
     }
 
     //% blockId="butia_evt_start_monitoring_button"
     //% block="Monitorear botón en puerto %pin"
     //% weight=50
     //% group="Sensores"
-    export function startMonitoringButton(pin: ButiaImperative.Jconectors): void {
-        robot.startMonitoringButton(pin)
+    export function startMonitoringButton(pin: string): void {
+        //robot.startMonitoringButton(pin)
     }
 
     //% blockId="butia_evt_on_button"
     //% block="Cuando botón en puerto %pin es presionado"
     //% weight=45
     //% group="Eventos"
-    export function onButton(pin: ButiaImperative.Jconectors, handler: () => void): void {
-        robot.onButton(pin, handler)
+    export function onButton(pin: string, handler: () => void): void {
+        //robot.onButton(pin, handler)
     }
 
     //% blockId="butia_evt_line_left"

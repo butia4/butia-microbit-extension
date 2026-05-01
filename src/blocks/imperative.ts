@@ -2,19 +2,6 @@
 //% groups="['Sensores', 'Motores']"
 namespace ButiaImperative {
 
-    export enum Jconectors {
-        //% block="J1"
-        J1 = 1,  // Ej: AnalogPin.P1
-        //% block="J2"
-        J2 = 2, // Ej: AnalogPin.P2
-        //% block="J3"
-        J3 = 3,
-        //% block="J4"
-        J4 = 4,
-        //% block="J5"
-        J5 = 5,
-    }
-
     //% blockId="butia_imp_move_forward"
     //% block="Avanzar a velocidad %speed || durante %duration ms"
     //% speed.min=0 speed.max=100 speed.defl=50
@@ -67,7 +54,7 @@ namespace ButiaImperative {
     //% block="Sensor de grises en %pin"
     //% weight=70
     //% group="Sensores"
-    export function readGraySensor(pin: Jconectors): number {
+    export function readGraySensor(pin: string): number {
         return robot.readGraySensor(pin)
     }
 
@@ -75,7 +62,7 @@ namespace ButiaImperative {
     //% block="Sensor de luz en %pin"
     //% weight=69
     //% group="Sensores"
-    export function readLightSensor(pin: Jconectors): number {
+    export function readLightSensor(pin: string): number {
         return robot.readLightSensor(pin)
     }
 
@@ -83,7 +70,7 @@ namespace ButiaImperative {
     //% block="Botón en %pin presionado"
     //% weight=68
     //% group="Sensores"
-    export function readButton(pin: Jconectors): boolean {
+    export function readButton(pin: string): boolean {
         return robot.readButton(pin)
     }
 
@@ -91,7 +78,7 @@ namespace ButiaImperative {
     //% block="Sensor de Distancia en %pin"
     //% weight=69
     //% group="Sensores"
-    export function obstacleDistance(pin: Jconectors): number {
+    export function obstacleDistance(pin: string): number {
         return robot.readDistanceSensor(pin)
     }
 

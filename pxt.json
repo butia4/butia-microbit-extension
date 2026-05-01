@@ -10,7 +10,6 @@
         "src/blocks/imperative.ts",
         "src/core/constants.ts",
         "src/core/robot-base.ts",
-        "src/hardware/analog-line-sensor.ts",
         "src/hardware/butia-robot.ts",
         "src/hardware/gpio-motor-driver.ts",
         "src/hardware/distance-sensor-butia.ts",

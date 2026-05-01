@@ -6,10 +6,10 @@ interface IRobot {
     motorTank(left: number, right: number): void
     motorStop(): void
     setAssist(flag: RobotAssist, enabled: boolean): void
-    readDistanceSensor(pin: number): number
-    readGraySensor(pin: number): number
-    readLightSensor(pin: number): number
-    readButton(pin: number): boolean
+    readDistanceSensor(pin: string): number
+    readGraySensor(pin: string): number
+    readLightSensor(pin: string): number
+    readButton(pin: string): boolean
     startMonitoring(sensor: number, pin: number, threshold: number): void
     onLevelReached(sensor: number, pin: number, handler: () => void): void
     onLevelUnreached(sensor: number, pin: number, handler: () => void): void
