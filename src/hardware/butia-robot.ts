@@ -16,7 +16,8 @@ class ButiaRobot extends Butia.RobotBase{
                 J5: AnalogPin.P10,            
             } ,
             [new SR04DistanceSensor(DigitalPin.P8)],
-            [new LightSensor(DigitalPin.P1)]
+            [new LightSensor(DigitalPin.P1)],
+            [new GraySensor(DigitalPin.P2)]
         )           
     }
     start(): void {

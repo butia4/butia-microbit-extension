@@ -4,16 +4,18 @@ namespace Butia {
     export class RobotBase implements IRobot {
         protected _motors: IMotorDriver
         protected _lights: ILightSensor[]
+        protected _grays: IGraySensor[]
         protected _distances: IDistanceSensor[]
         protected _assistFlags: number
         protected connectorConfig:{ [key: string]: AnalogPin }
         _motorLeft: number = 0
         _motorRight: number = 0
         
-        constructor(motors: IMotorDriver, connectorConfig: { [key: string]: AnalogPin }, distance: IDistanceSensor[], light: ILightSensor[]) {
+        constructor(motors: IMotorDriver, connectorConfig: { [key: string]: AnalogPin }, distance: IDistanceSensor[], light: ILightSensor[], gray: IGraySensor[]) {
             this._motors = motors
             this._distances = distance
             this._lights = light
+            this._grays = gray
             this.connectorConfig = connectorConfig
             this._assistFlags = 0
         }
@@ -31,6 +33,14 @@ namespace Butia {
             }
             control.fail("No light sensor found for pin " + pin)
             return null as any as ILightSensor
+        }
+
+        private _findGraySensor(pin: AnalogPin): IGraySensor {
+            for (const sensor of this._grays) {
+                if (sensor.getPin() === pin) return sensor
+            }
+            control.fail("No gray sensor found for pin " + pin)
+            return null as any as IGraySensor
         }
 
         private _findDistanceSensor(pin: AnalogPin): IDistanceSensor {

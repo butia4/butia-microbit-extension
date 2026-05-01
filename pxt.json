@@ -15,6 +15,7 @@
         "src/hardware/gpio-motor-driver.ts",
         "src/hardware/distance-sensor-butia.ts",
         "src/hardware/light-sensor-butia.ts",
+        "src/hardware/gray-sensor-butia.ts",
         "src/types/components.d.ts",
         "src/types/enums.d.ts",
         "src/types/robot.d.ts",
