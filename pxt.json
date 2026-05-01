@@ -6,6 +6,7 @@
         "core": "*"
     },
     "files": [
+        "src/robotdriver.ts",
         "src/blocks/events.ts",
         "src/blocks/imperative.ts",
         "src/core/constants.ts",

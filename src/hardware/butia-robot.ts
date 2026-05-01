@@ -1,7 +1,7 @@
 // ButiaRobot wires the Butia v4 hardware components.
 // Pin assignments are placeholders — pending Butia v4 schematic confirmation.
 
-class ButiaRobot extends RobotBase{
+class ButiaRobot extends Butia.RobotBase{
     constructor() {
         super(
             new GPIOMotorDriver(
@@ -25,4 +25,8 @@ class ButiaRobot extends RobotBase{
         //startSendSimLoop()
     }
 }
-const robot = new ButiaRobot()
+
+namespace Butia {
+    //% fixedInstance whenUsed block="Butia v4"
+    export const Butia4_1_0 = new RobotDriver(new ButiaRobot())
+}

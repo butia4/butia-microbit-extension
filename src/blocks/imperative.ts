@@ -1,6 +1,6 @@
 //% color="#3d6fc4" icon="" weight=90
 //% groups="['Sensores', 'Motores']"
-namespace ButiaImperative {
+namespace Butia {
 
     //% blockId="butia_imp_move_forward"
     //% block="Avanzar a velocidad %speed || durante %duration ms"
@@ -9,7 +9,7 @@ namespace ButiaImperative {
     //% weight=100
     //% group="Motores"
     export function moveForward(speed: number, duration?: number): void {
-        robot.moveForward(speed, duration)
+        Butia.RobotDriver.currentRobot().moveForward(speed, duration)
     }
 
     //% blockId="butia_imp_move_backward"
@@ -19,7 +19,7 @@ namespace ButiaImperative {
     //% weight=95
     //% group="Motores"
     export function moveBackward(speed: number, duration?: number): void {
-        robot.moveBackward(speed, duration)
+        Butia.RobotDriver.currentRobot().moveBackward(speed, duration)
     }
 
     //% blockId="butia_imp_turn"
@@ -29,7 +29,7 @@ namespace ButiaImperative {
     //% weight=90
     //% group="Motores"
     export function turn(direction: TurnDirection, speed: number, duration?: number): void {
-        robot.turn(direction, speed, duration)
+        Butia.RobotDriver.currentRobot().turn(direction, speed, duration)
     }
 
     //% blockId="butia_imp_motor_tank"
@@ -39,7 +39,7 @@ namespace ButiaImperative {
     //% weight=85
     //% group="Motores"
     export function motorTank(left: number, right: number): void {
-        robot.motorTank(left, right)
+        Butia.RobotDriver.currentRobot().motorTank(left, right)
     }
 
     //% blockId="butia_imp_stop"
@@ -47,7 +47,7 @@ namespace ButiaImperative {
     //% weight=80
     //% group="Motores"
     export function motorStop(): void {
-        robot.motorStop()
+        Butia.RobotDriver.currentRobot().motorStop()
     }
 
     //% blockId="butia_imp_read_gray"
@@ -55,7 +55,7 @@ namespace ButiaImperative {
     //% weight=70
     //% group="Sensores"
     export function readGraySensor(pin: string): number {
-        return robot.readGraySensor(pin)
+        return Butia.RobotDriver.currentRobot().readGraySensor(pin)
     }
 
     //% blockId="butia_imp_read_light"
@@ -63,7 +63,7 @@ namespace ButiaImperative {
     //% weight=69
     //% group="Sensores"
     export function readLightSensor(pin: string): number {
-        return robot.readLightSensor(pin)
+        return Butia.RobotDriver.currentRobot().readLightSensor(pin)
     }
 
     //% blockId="butia_imp_read_button"
@@ -71,7 +71,7 @@ namespace ButiaImperative {
     //% weight=68
     //% group="Sensores"
     export function readButton(pin: string): boolean {
-        return robot.readButton(pin)
+        return Butia.RobotDriver.currentRobot().readButton(pin)
     }
 
     //% blockId="butia_imp_distance"
@@ -79,7 +79,7 @@ namespace ButiaImperative {
     //% weight=69
     //% group="Sensores"
     export function obstacleDistance(pin: string): number {
-        return robot.readDistanceSensor(pin)
+        return Butia.RobotDriver.currentRobot().readDistanceSensor(pin)
     }
 
     //% blockId="butia_imp_set_assist"
@@ -88,6 +88,6 @@ namespace ButiaImperative {
     //% weight=10
     //% group="Motores"
     export function setAssist(assist: RobotAssist, enabled: boolean): void {
-        robot.setAssist(assist, enabled)
+        Butia.RobotDriver.currentRobot().setAssist(assist, enabled)
     }
 }
