@@ -8,9 +8,8 @@ class ButiaRobot extends RobotBase{
                 [DigitalPin.P13, DigitalPin.P14],
                 [DigitalPin.P15, DigitalPin.P16]
             ),
-            new AnalogLineSensor(AnalogPin.P1, AnalogPin.P2),
-            new SR04DistanceSensor(DigitalPin.P8, DigitalPin.P12),
-            new LightSensor(DigitalPin.P8, DigitalPin.P12)
+            new SR04DistanceSensor(DigitalPin.P8),
+            new LightSensor(DigitalPin.P8)
         )
     }
     start(): void {
@@ -18,7 +17,5 @@ class ButiaRobot extends RobotBase{
         super.start()
         //startSendSimLoop()
     }
-    
-
 }
 const robot = new ButiaRobot()

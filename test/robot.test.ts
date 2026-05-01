@@ -27,27 +27,6 @@ basic.showString("PASS motorTank")
 butiaRobot.motorStop()
 basic.showString("PASS motorStop")
 
-const robotDist = butiaRobot.obstacleDistance()
-if (typeof robotDist === "number" && robotDist >= 0) {
-    basic.showString("PASS obstacleDistance")
-} else {
-    basic.showString("FAIL obstacleDistance")
-}
-
-const robotLineLeft = butiaRobot.detectLine(LineSensorId.Left)
-if (typeof robotLineLeft === "boolean") {
-    basic.showString("PASS detectLine left")
-} else {
-    basic.showString("FAIL detectLine left")
-}
-
-const robotLineRight = butiaRobot.detectLine(LineSensorId.Right)
-if (typeof robotLineRight === "boolean") {
-    basic.showString("PASS detectLine right")
-} else {
-    basic.showString("FAIL detectLine right")
-}
-
 butiaRobot.setAssist(RobotAssist.ObstacleStop, true)
 basic.showString("PASS setAssist enable")
 

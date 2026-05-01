@@ -1,25 +1,28 @@
 class LightSensor implements ILightSensor {
     private _lastLight: number
+    private _pinTrigger: DigitalPin
 
-    constructor(pinTrigger: DigitalPin, pinEcho: DigitalPin) {
-
+    constructor(pinTrigger: DigitalPin) {
+        this._pinTrigger=pinTrigger
         this._lastLight = 0
     }
     
-
-    init(): void {}
-
     // Returns the last cached distance — safe to call at any time without triggering hardware.
-    read(): number {
+    getLastValue(): number {
         return this._lastLight
     }
+    getPin(): number{
+        return this._pinTrigger;
+    }
+    read(): number {
+        return 1023 - pins.analogReadPin(this._pinTrigger)
+    }
+    
     poll(): void {
         control.fail("Method not implemented")
-    }
-
-
-    readCm(): number {
-        return 1023 - pins.analogReadPin(AnalogPin.P1)
+    } 
+    init(): void {
+        control.fail("Method not implemented")
     }
 
 }

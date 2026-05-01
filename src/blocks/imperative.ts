@@ -87,20 +87,12 @@ namespace ButiaImperative {
         return robot.readButton(pin)
     }
 
-    //% blockId="butia_imp_detect_line"
-    //% block="Sensor de línea %id detecta línea"
-    //% weight=70
-    //% group="Sensores"
-    export function detectLine(id: LineSensorId): boolean {
-        return robot.detectLine(id)
-    }
-
     //% blockId="butia_imp_distance"
-    //% block="Distancia al obstáculo (cm)"
-    //% weight=65
+    //% block="Sensor de Distancia en %pin"
+    //% weight=69
     //% group="Sensores"
-    export function obstacleDistance(): number {
-        return robot.obstacleDistance()
+    export function obstacleDistance(pin: Jconectors): number {
+        return robot.readDistanceSensor(pin)
     }
 
     //% blockId="butia_imp_set_assist"

@@ -2,43 +2,25 @@
 
 class RobotBase implements IRobot{
     protected _motors: IMotorDriver
-    protected _line: ILineSensor
     protected _light: ILightSensor
     protected _distance: IDistanceSensor
     protected _assistFlags: number
     _motorLeft: number = 0
     _motorRight: number = 0
 
-
-    constructor(motors: IMotorDriver, line: ILineSensor, distance: IDistanceSensor, light: ILightSensor) {
+    constructor(motors: IMotorDriver, distance: IDistanceSensor, light: ILightSensor) {
         this._motors = motors
-        this._line = line
         this._distance = distance
         this._assistFlags = 0
         this._light = light
     }
 
+
+
     protected _setMotorSpeed(left: number, right: number): void {
         this._motorLeft = left
         this._motorRight = right
         this._motors.setSpeed(left, right)
-    }
-    start(): void {
-        this._motors.init()
-        this._line.init()
-        this._distance.init()
-        control.inBackground(() => {
-            while (true) {
-                this._line.poll()
-                this._distance.poll()
-                //this._applyAssists()
-                basic.pause(POLL_INTERVAL_MS)
-            }
-        })
-    }
-    setSimDrivers(line: ILineSensor, distance: IDistanceSensor): void {
-        this._line = line
-        this._distance = distance
     }
     moveForward(speed: number, duration?: number): void {
         this._setMotorSpeed(speed, speed)
@@ -73,15 +55,46 @@ class RobotBase implements IRobot{
     motorStop(): void {
         this._setMotorSpeed(0, 0)
     }
-    detectLine(id: LineSensorId): boolean {
-        control.fail("Method not implemented");
-        return false;
-        // return id === LineSensorId.Left ? this._line.readLeft() : this._line.readRight()
+    readDistanceSensor(pin: number): number {
+        return this._distance.read()
     }
-    obstacleDistance(): number {
-        //control.fail("Method not implemented")
-        //return 0;
-        return this._distance.readCm()
+    readLightSensor(pin: number): number {
+        return this._light.read();
+    }
+
+    readGraySensor(pin: number): number {
+        return 1023 - pins.analogReadPin(AnalogPin.P1)
+    }
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    start(): void {
+        this._motors.init()
+        this._distance.init()
+        control.inBackground(() => {
+            while (true) {
+                this._distance.poll()
+                this._light.poll();
+                //this._applyAssists()
+                basic.pause(POLL_INTERVAL_MS)
+            }
+        })
+    }
+    setSimDrivers(distance: IDistanceSensor): void {
+        this._distance = distance
     }
     setAssist(flag: RobotAssist, enabled: boolean): void {
 
@@ -92,7 +105,6 @@ class RobotBase implements IRobot{
             this._assistFlags = this._assistFlags & ~flag
         }*/
     }
-
     /*
     protected _applyAssists(): void {
         if ((this._assistFlags & RobotAssist.ObstacleStop) !== 0) {
@@ -101,19 +113,9 @@ class RobotBase implements IRobot{
             }
         }
     }*/
-
-    readGraySensor(pin: number): number {
-        return 1023 - pins.analogReadPin(AnalogPin.P1)
-    }
-
-    readLightSensor(pin: number): number {
-        return this._light.readCm()
-    }
-
     readButton(pin: number): boolean {
         return pins.digitalReadPin(pin as DigitalPin) === 0
     }
-
     startMonitoring(sensor: number, pin: number, threshold: number): void {
         // Start monitoring a sensor for threshold crossing events
         let wasAbove = false

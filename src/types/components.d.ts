@@ -16,11 +16,11 @@ interface ILineSensor extends IPolledSensor {
 }
 
 interface IDistanceSensor extends IPolledSensor {
-    readCm(): number
+
 }
 
 interface ILightSensor extends IPolledSensor {
-    readCm(): number
+
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

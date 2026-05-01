@@ -5,9 +5,8 @@ interface IRobot {
     turn(direction: TurnDirection, speed: number, duration?: number): void
     motorTank(left: number, right: number): void
     motorStop(): void
-    detectLine(id: LineSensorId): boolean
-    obstacleDistance(): number
     setAssist(flag: RobotAssist, enabled: boolean): void
+    readDistanceSensor(pin: number): number
     readGraySensor(pin: number): number
     readLightSensor(pin: number): number
     readButton(pin: number): boolean
