@@ -7,15 +7,15 @@
 // This version reads the sensor on every loop iteration, so it reacts
 // as fast as the loop runs.
 
-const SAFE_DISTANCE_CM = 15
+const SAFE_DISTANCE_CM = 15;
 
 basic.forever(() => {
     if (ButiaImperative.obstacleDistance() <= SAFE_DISTANCE_CM) {
-        ButiaImperative.motorStop()
-        basic.pause(300)
-        ButiaImperative.moveBackward(50, 400)
-        ButiaImperative.turn(TurnDirection.Right, 50, 500)
+        ButiaImperative.motorStop();
+        basic.pause(300);
+        ButiaImperative.moveBackward(50, 400);
+        ButiaImperative.turn(TurnDirection.Right, 50, 500);
     } else {
-        ButiaImperative.moveForward(70)
+        ButiaImperative.moveForward(70);
     }
-})
+});

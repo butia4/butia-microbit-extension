@@ -1,28 +1,28 @@
-ButiaEvents.onLineLeft(() => {})
-basic.showString("PASS onLineLeft")
+ButiaEvents.onLineLeft(() => {});
+basic.showString("PASS onLineLeft");
 
-ButiaEvents.onLineRight(() => {})
-basic.showString("PASS onLineRight")
+ButiaEvents.onLineRight(() => {});
+basic.showString("PASS onLineRight");
 
-ButiaEvents.onLineBoth(() => {})
-basic.showString("PASS onLineBoth")
+ButiaEvents.onLineBoth(() => {});
+basic.showString("PASS onLineBoth");
 
-ButiaEvents.onLineNone(() => {})
-basic.showString("PASS onLineNone")
+ButiaEvents.onLineNone(() => {});
+basic.showString("PASS onLineNone");
 
-ButiaEvents.onObstacleNear(() => {})
-basic.showString("PASS onObstacleNear")
+ButiaEvents.onObstacleNear(() => {});
+basic.showString("PASS onObstacleNear");
 
-ButiaEvents.onObstacleFar(() => {})
-basic.showString("PASS onObstacleFar")
+ButiaEvents.onObstacleFar(() => {});
+basic.showString("PASS onObstacleFar");
 
-ButiaEvents.onButtonAPressed(() => {})
-basic.showString("PASS onButtonAPressed")
+ButiaEvents.onButtonAPressed(() => {});
+basic.showString("PASS onButtonAPressed");
 
-ButiaEvents.onButtonBPressed(() => {})
-basic.showString("PASS onButtonBPressed")
+ButiaEvents.onButtonBPressed(() => {});
+basic.showString("PASS onButtonBPressed");
 
-ButiaEvents.onShake(() => {})
-basic.showString("PASS onShake")
+ButiaEvents.onShake(() => {});
+basic.showString("PASS onShake");
 
-basic.showString("ALL PASS events")
+basic.showString("ALL PASS events");

@@ -12,13 +12,13 @@
 
 basic.forever(() => {
     if (input.buttonIsPressed(Button.B)) {
-        ButiaImperative.motorStop()
+        ButiaImperative.motorStop();
     } else if (input.buttonIsPressed(Button.A)) {
-        ButiaImperative.moveForward(70)
+        ButiaImperative.moveForward(70);
     }
-    basic.pause(50)
-})
+    basic.pause(50);
+});
 
 input.onGesture(Gesture.Shake, () => {
-    ButiaImperative.moveBackward(50, 500)
-})
+    ButiaImperative.moveBackward(50, 500);
+});

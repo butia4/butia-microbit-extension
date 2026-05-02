@@ -11,17 +11,17 @@
 // No sensor on line     → stop (line lost)
 
 ButiaEvents.onLineBoth(() => {
-    ButiaImperative.moveForward(60)
-})
+    ButiaImperative.moveForward(60);
+});
 
 ButiaEvents.onLineLeft(() => {
-    ButiaImperative.turn(TurnDirection.Left, 40)
-})
+    ButiaImperative.turn(TurnDirection.Left, 40);
+});
 
 ButiaEvents.onLineRight(() => {
-    ButiaImperative.turn(TurnDirection.Right, 40)
-})
+    ButiaImperative.turn(TurnDirection.Right, 40);
+});
 
 ButiaEvents.onLineNone(() => {
-    ButiaImperative.motorStop()
-})
+    ButiaImperative.motorStop();
+});

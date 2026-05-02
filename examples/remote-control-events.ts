@@ -8,13 +8,13 @@
 // Shake             → move backward
 
 ButiaEvents.onButtonAPressed(() => {
-    ButiaImperative.moveForward(70)
-})
+    ButiaImperative.moveForward(70);
+});
 
 ButiaEvents.onButtonBPressed(() => {
-    ButiaImperative.motorStop()
-})
+    ButiaImperative.motorStop();
+});
 
 ButiaEvents.onShake(() => {
-    ButiaImperative.moveBackward(50, 500)
-})
+    ButiaImperative.moveBackward(50, 500);
+});

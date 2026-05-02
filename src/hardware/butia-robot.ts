@@ -18,16 +18,16 @@ class ButiaRobot extends Butia.RobotBase{
             [new SR04DistanceSensor(DigitalPin.P8)],
             [new LightSensor(DigitalPin.P1)],
             [new GraySensor(DigitalPin.P2)]
-        )
+        );
     }
     start(): void {
         //registerSim()
-        super.start()
+        super.start();
         //startSendSimLoop()
     }
 }
 
 namespace Butia {
     //% fixedInstance whenUsed block="Butia v4"
-    export const Butia4_1_0 = new RobotDriver(new ButiaRobot())
+    export const Butia4_1_0 = new RobotDriver(new ButiaRobot());
 }

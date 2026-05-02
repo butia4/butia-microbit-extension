@@ -57,7 +57,7 @@ namespace ButiaEvents {
     //% weight=100
     //% group="Eventos"
     export function onLineLeft(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineLeftDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineLeftDetected, handler);
     }
 
     //% blockId="butia_evt_line_right"
@@ -65,7 +65,7 @@ namespace ButiaEvents {
     //% weight=99
     //% group="Eventos"
     export function onLineRight(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineRightDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineRightDetected, handler);
     }
 
     //% blockId="butia_evt_line_both"
@@ -73,7 +73,7 @@ namespace ButiaEvents {
     //% weight=98
     //% group="Eventos"
     export function onLineBoth(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineBothDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineBothDetected, handler);
     }
 
     //% blockId="butia_evt_line_none"
@@ -81,7 +81,7 @@ namespace ButiaEvents {
     //% weight=97
     //% group="Eventos"
     export function onLineNone(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineNoneDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineNoneDetected, handler);
     }
 
     //% blockId="butia_evt_obstacle_near"
@@ -89,7 +89,7 @@ namespace ButiaEvents {
     //% weight=90
     //% group="Eventos"
     export function onObstacleNear(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleNear, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleNear, handler);
     }
 
     //% blockId="butia_evt_obstacle_far"
@@ -97,7 +97,7 @@ namespace ButiaEvents {
     //% weight=89
     //% group="Eventos"
     export function onObstacleFar(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleFar, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleFar, handler);
     }
 
     //% blockId="butia_evt_button_a"
@@ -105,7 +105,7 @@ namespace ButiaEvents {
     //% weight=80
     //% group="Eventos"
     export function onButtonAPressed(handler: () => void): void {
-        input.onButtonPressed(Button.A, handler)
+        input.onButtonPressed(Button.A, handler);
     }
 
     //% blockId="butia_evt_button_b"
@@ -113,7 +113,7 @@ namespace ButiaEvents {
     //% weight=75
     //% group="Eventos"
     export function onButtonBPressed(handler: () => void): void {
-        input.onButtonPressed(Button.B, handler)
+        input.onButtonPressed(Button.B, handler);
     }
 
     //% blockId="butia_evt_shake"
@@ -121,6 +121,6 @@ namespace ButiaEvents {
     //% weight=70
     //% group="Eventos"
     export function onShake(handler: () => void): void {
-        input.onGesture(Gesture.Shake, handler)
+        input.onGesture(Gesture.Shake, handler);
     }
 }

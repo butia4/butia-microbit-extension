@@ -9,16 +9,16 @@
 // No sensor on line     → stop (line lost)
 
 basic.forever(() => {
-    const left = ButiaImperative.detectLine(LineSensorId.Left)
-    const right = ButiaImperative.detectLine(LineSensorId.Right)
+    const left = ButiaImperative.detectLine(LineSensorId.Left);
+    const right = ButiaImperative.detectLine(LineSensorId.Right);
 
     if (left && right) {
-        ButiaImperative.moveForward(60)
+        ButiaImperative.moveForward(60);
     } else if (left) {
-        ButiaImperative.turn(TurnDirection.Left, 40)
+        ButiaImperative.turn(TurnDirection.Left, 40);
     } else if (right) {
-        ButiaImperative.turn(TurnDirection.Right, 40)
+        ButiaImperative.turn(TurnDirection.Right, 40);
     } else {
-        ButiaImperative.motorStop()
+        ButiaImperative.motorStop();
     }
-})
+});
