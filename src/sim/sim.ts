@@ -21,8 +21,8 @@ function sendSim(): void {
         type: SIM_MSG_STATE,
         id: RUN_ID,
         deviceId: serial,
-        motorLeft: r._motorLeft,
-        motorRight: r._motorRight,
+        motorLeft: r.motorLeft(),
+        motorRight: r.motorRight(),
         lineUsed: true, // intentional: Butia always uses both sensors in sim
         sonarUsed: true // intentional: Butia always uses both sensors in sim
     };
