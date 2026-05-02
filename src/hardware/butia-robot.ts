@@ -13,12 +13,12 @@ class ButiaRobot extends Butia.RobotBase{
                 J2: AnalogPin.P2,
                 J3: AnalogPin.P3,
                 J4: AnalogPin.P4,
-                J5: AnalogPin.P10,            
+                J5: AnalogPin.P10,
             } ,
             [new SR04DistanceSensor(DigitalPin.P8)],
             [new LightSensor(DigitalPin.P1)],
             [new GraySensor(DigitalPin.P2)]
-        )           
+        )
     }
     start(): void {
         //registerSim()

@@ -8,6 +8,8 @@ class SimLineSensor implements ILineSensor {
 
     init(): void {}
 
+    getPin(): number { return -1 }
+
     poll(): void {
         const left = this.readLeft()
         const right = this.readRight()

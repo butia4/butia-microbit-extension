@@ -36,7 +36,8 @@ basic.showString("PASS setAssist disable")
 butiaRobot.setAssist(RobotAssist.LineAssist, true)
 basic.showString("PASS setAssist LineAssist")
 
-if (typeof robot === "object") {
+Butia.RobotDriver.start(Butia.Butia4_1_0)
+if (Butia.RobotDriver.instance() !== null) {
     basic.showString("PASS robot singleton")
 } else {
     basic.showString("FAIL robot singleton")

@@ -2,7 +2,8 @@
 function registerSim(): void {
     const simLine = new SimLineSensor()
     const simDist = new SimDistanceSensor()
-    robot.setSimDrivers(simLine, simDist)
+    const r = Butia.RobotDriver.getCurrentRobot() as Butia.RobotBase
+    r.setSimDrivers(simLine, simDist)
     control.simmessages.onReceived(SIM_CHANNEL, (buf: Buffer) => {
         const msg = <ButiaSensorsMessage>JSON.parse(buf.toString())
         if (msg && msg.type === SIM_MSG_SENSORS) {
@@ -15,12 +16,13 @@ function registerSim(): void {
 //% shim=TD_NOOP
 function sendSim(): void {
     const serial = control.deviceSerialNumber()
+    const r = Butia.RobotDriver.getCurrentRobot() as Butia.RobotBase
     const msg = <ButiaSimStateMessage>{
         type: SIM_MSG_STATE,
         id: RUN_ID,
         deviceId: serial,
-        motorLeft: robot._motorLeft,
-        motorRight: robot._motorRight,
+        motorLeft: r._motorLeft,
+        motorRight: r._motorRight,
         lineUsed: true, // intentional: Butia always uses both sensors in sim
         sonarUsed: true // intentional: Butia always uses both sensors in sim
     }

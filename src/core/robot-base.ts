@@ -10,7 +10,7 @@ namespace Butia {
         protected connectorConfig:{ [key: string]: AnalogPin }
         _motorLeft: number = 0
         _motorRight: number = 0
-        
+
         constructor(motors: IMotorDriver, connectorConfig: { [key: string]: AnalogPin }, distance: IDistanceSensor[], light: ILightSensor[], gray: IGraySensor[]) {
             this._motors = motors
             this._distances = distance
@@ -27,28 +27,28 @@ namespace Butia {
             }
             return resolved
         }
-        private _findLightSensor(pin: AnalogPin): ILightSensor {
+        private _findLightSensor(pin: AnalogPin): ILightSensor | null {
             for (const sensor of this._lights) {
                 if (sensor.getPin() === pin) return sensor
             }
             control.fail("No light sensor found for pin " + pin)
-            return null as any as ILightSensor
+            return null
         }
 
-        private _findGraySensor(pin: AnalogPin): IGraySensor {
+        private _findGraySensor(pin: AnalogPin): IGraySensor | null {
             for (const sensor of this._grays) {
                 if (sensor.getPin() === pin) return sensor
             }
             control.fail("No gray sensor found for pin " + pin)
-            return null as any as IGraySensor
+            return null
         }
 
-        private _findDistanceSensor(pin: AnalogPin): IDistanceSensor {
+        private _findDistanceSensor(pin: AnalogPin): IDistanceSensor | null {
             for (const sensor of this._distances) {
                 if (sensor.getPin() === pin) return sensor
             }
             control.fail("No distance sensor found for pin " + pin)
-            return null as any as IDistanceSensor
+            return null
         }
         protected _setMotorSpeed(left: number, right: number): void {
             this._motorLeft = left
@@ -89,29 +89,18 @@ namespace Butia {
             this._setMotorSpeed(0, 0)
         }
         readDistanceSensor(pin: string): number {
-            return this._findDistanceSensor(this._resolvePin(pin)).read()
+            return this._findDistanceSensor(this._resolvePin(pin))?.read() ?? 0
         }
         readLightSensor(pin: string): number {
-            return this._findLightSensor(this._resolvePin(pin)).read()
+            return this._findLightSensor(this._resolvePin(pin))?.read() ?? 0
         }
 
         readGraySensor(pin: string): number {
-            return 1023 - pins.analogReadPin(AnalogPin.P1)
+            return this._findGraySensor(this._resolvePin(pin))?.read() ?? 0
         }
 
-
-
-
-
-
-
-
-
-
-
-        
         start(): void {}
-        setSimDrivers(distance: IDistanceSensor): void {
+        setSimDrivers(line: ILineSensor, distance: IDistanceSensor): void {
             control.fail("Method not implemented")
         }
         setAssist(flag: RobotAssist, enabled: boolean): void {

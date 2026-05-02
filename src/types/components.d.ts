@@ -16,17 +16,14 @@ interface ILineSensor extends IPolledSensor {
     readRight(): boolean
 }
 
-interface IDistanceSensor extends IPolledSensor {
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface IDistanceSensor extends IPolledSensor {}
 
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface ILightSensor extends IPolledSensor {}
 
-interface ILightSensor extends IPolledSensor {
-
-}
-
-interface IGraySensor extends IPolledSensor {
-
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface IGraySensor extends IPolledSensor {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IActuator extends IRobotComponent {}

@@ -6,6 +6,8 @@ class SimDistanceSensor implements IDistanceSensor {
 
     init(): void {}
 
+    getPin(): number { return -1 }
+
     poll(): void {
         const near = this._distance <= OBSTACLE_STOP_DISTANCE_CM
         if (near === this._prevNear) return

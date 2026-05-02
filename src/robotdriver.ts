@@ -3,17 +3,13 @@ namespace Butia {
     export class RobotDriver {
         private static _instance: RobotDriver | null = null
 
-        constructor(public readonly robot: IRobot) {}
+        constructor(private readonly _robot: IRobot) {}
 
-        //% block="Inicializar %this"
-        //% blockId=butia_robot_start
-        //% weight=100
-        //% group="Obligatorio"
-        start() {
-            if (RobotDriver._instance === this) return
+        static start(instance: RobotDriver): void {
+            if (RobotDriver._instance === instance) return
             if (RobotDriver._instance) control.fail("Ya se inició otro robot")
-            RobotDriver._instance = this
-            this.robot.start()
+            RobotDriver._instance = instance
+            instance._robot.start()
         }
 
         static instance(): RobotDriver {
@@ -22,8 +18,8 @@ namespace Butia {
             return RobotDriver._instance
         }
 
-        static currentRobot(): IRobot {
-            return RobotDriver.instance().robot
+        static getCurrentRobot(): IRobot {
+            return RobotDriver.instance()._robot
         }
     }
 }
