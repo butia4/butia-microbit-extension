@@ -1,3 +1,12 @@
+interface IConnector {
+    readonly name: string;
+}
+
+interface IConnectorPin {
+    readonly connector: IConnector;
+    readonly pin: AnalogPin;
+}
+
 interface IRobot {
     start(): void
     moveForward(speed: number, duration?: number): void
@@ -6,10 +15,10 @@ interface IRobot {
     motorTank(left: number, right: number): void
     motorStop(): void
     setAssist(flag: RobotAssist, enabled: boolean): void
-    readDistanceSensor(pin: string): number
-    readGraySensor(pin: string): number
-    readLightSensor(pin: string): number
-    readButton(pin: string): boolean
+    readDistanceSensor(connector: IConnector): number
+    readGraySensor(connector: IConnector): number
+    readLightSensor(connector: IConnector): number
+    readButton(connector: IConnector): boolean
     startMonitoring(sensor: number, pin: number, threshold: number): void
     onLevelReached(sensor: number, pin: number, handler: () => void): void
     onLevelUnreached(sensor: number, pin: number, handler: () => void): void

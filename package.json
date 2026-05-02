@@ -6,7 +6,13 @@
     "type": "git",
     "url": "git+https://github.com/butia4/butia-microbit-extension.git"
   },
-  "keywords": ["microbit", "makecode", "pxt", "butia", "robotics"],
+  "keywords": [
+    "microbit",
+    "makecode",
+    "pxt",
+    "butia",
+    "robotics"
+  ],
   "author": "Butia Team",
   "license": "MIT",
   "bugs": {
@@ -21,10 +27,10 @@
     "deploy": "pxt deploy",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "sync": "bun scripts/sync-pxt.ts"
+    "sync": "npx tsx scripts/sync-pxt.ts"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "@typescript-eslint/eslint-plugin": "^8.59.0",
     "@typescript-eslint/parser": "^8.59.0",
     "eslint": "^10.2.1",

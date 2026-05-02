@@ -16,7 +16,7 @@ namespace ButiaEvents {
     //% threshold.min=1 threshold.max=1023
     //% weight=60
     //% group="Sensores"
-    export function startMonitoring(sensor: Sensors, pin: string, threshold: number): void {
+    export function startMonitoring(sensor: Sensors, connector: Butia.ButiaV4Connector, threshold: number): void {
         //robot.startMonitoring(sensor, pin, threshold)
     }
 
@@ -24,7 +24,7 @@ namespace ButiaEvents {
     //% block="Cuando sensor %sensor en puerto %pin supera umbral"
     //% weight=55
     //% group="Eventos"
-    export function onLevelReached(sensor: Sensors, pin: string, handler: () => void): void {
+    export function onLevelReached(sensor: Sensors, connector: Butia.ButiaV4Connector, handler: () => void): void {
         //robot.onLevelReached(sensor, pin, handler)
     }
 
@@ -32,7 +32,7 @@ namespace ButiaEvents {
     //% block="Cuando sensor %sensor en puerto %pin baja del umbral"
     //% weight=54
     //% group="Eventos"
-    export function onLevelUnreached(sensor: Sensors, pin: string, handler: () => void): void {
+    export function onLevelUnreached(sensor: Sensors, connector: Butia.ButiaV4Connector, handler: () => void): void {
         //robot.onLevelUnreached(sensor, pin, handler)
     }
 
@@ -40,7 +40,7 @@ namespace ButiaEvents {
     //% block="Monitorear botón en puerto %pin"
     //% weight=50
     //% group="Sensores"
-    export function startMonitoringButton(pin: string): void {
+    export function startMonitoringButton(connector: Butia.ButiaV4Connector): void {
         //robot.startMonitoringButton(pin)
     }
 
@@ -48,7 +48,7 @@ namespace ButiaEvents {
     //% block="Cuando botón en puerto %pin es presionado"
     //% weight=45
     //% group="Eventos"
-    export function onButton(pin: string, handler: () => void): void {
+    export function onButton(connector: Butia.ButiaV4Connector, handler: () => void): void {
         //robot.onButton(pin, handler)
     }
 
@@ -57,7 +57,7 @@ namespace ButiaEvents {
     //% weight=100
     //% group="Eventos"
     export function onLineLeft(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineLeftDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineLeftDetected, handler);
     }
 
     //% blockId="butia_evt_line_right"
@@ -65,7 +65,7 @@ namespace ButiaEvents {
     //% weight=99
     //% group="Eventos"
     export function onLineRight(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineRightDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineRightDetected, handler);
     }
 
     //% blockId="butia_evt_line_both"
@@ -73,7 +73,7 @@ namespace ButiaEvents {
     //% weight=98
     //% group="Eventos"
     export function onLineBoth(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineBothDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineBothDetected, handler);
     }
 
     //% blockId="butia_evt_line_none"
@@ -81,7 +81,7 @@ namespace ButiaEvents {
     //% weight=97
     //% group="Eventos"
     export function onLineNone(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineNoneDetected, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.LineNoneDetected, handler);
     }
 
     //% blockId="butia_evt_obstacle_near"
@@ -89,7 +89,7 @@ namespace ButiaEvents {
     //% weight=90
     //% group="Eventos"
     export function onObstacleNear(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleNear, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleNear, handler);
     }
 
     //% blockId="butia_evt_obstacle_far"
@@ -97,7 +97,7 @@ namespace ButiaEvents {
     //% weight=89
     //% group="Eventos"
     export function onObstacleFar(handler: () => void): void {
-        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleFar, handler)
+        control.onEvent(BUTIA_EVENT_SOURCE, ButiaEvent.ObstacleFar, handler);
     }
 
     //% blockId="butia_evt_button_a"
@@ -105,7 +105,7 @@ namespace ButiaEvents {
     //% weight=80
     //% group="Eventos"
     export function onButtonAPressed(handler: () => void): void {
-        input.onButtonPressed(Button.A, handler)
+        input.onButtonPressed(Button.A, handler);
     }
 
     //% blockId="butia_evt_button_b"
@@ -113,7 +113,7 @@ namespace ButiaEvents {
     //% weight=75
     //% group="Eventos"
     export function onButtonBPressed(handler: () => void): void {
-        input.onButtonPressed(Button.B, handler)
+        input.onButtonPressed(Button.B, handler);
     }
 
     //% blockId="butia_evt_shake"
@@ -121,6 +121,6 @@ namespace ButiaEvents {
     //% weight=70
     //% group="Eventos"
     export function onShake(handler: () => void): void {
-        input.onGesture(Gesture.Shake, handler)
+        input.onGesture(Gesture.Shake, handler);
     }
 }

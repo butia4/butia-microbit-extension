@@ -1,7 +1,7 @@
-const SIM_CHANNEL = "butia"
-const SIM_MSG_STATE = "state"
-const SIM_MSG_SENSORS = "sensors"
-const RUN_ID: string = Math.random() + ""
+const SIM_CHANNEL = "butia";
+const SIM_MSG_STATE = "state";
+const SIM_MSG_SENSORS = "sensors";
+const RUN_ID: string = Math.random() + "";
 
 interface ButiaSimStateMessage {
     type: "state"
