@@ -4,19 +4,8 @@ namespace RobotSystem {
     let _activeRobot: IRobot | null = null;
     let _connectorPins: { connector: Connector; pin: DigitalPin }[] = [];
 
-    let _motorLeftOverride: Connector[] | null = null;
-    let _motorRightOverride: Connector[] | null = null;
-
     export function register(record: IRobotRecord): void {
         _registry.push(record);
-    }
-
-    export function configureMotorLeft(c1: Connector, c2: Connector): void {
-        _motorLeftOverride = [c1, c2];
-    }
-
-    export function configureMotorRight(c1: Connector, c2: Connector): void {
-        _motorRightOverride = [c1, c2];
     }
 
     export function setActive(model: RobotModel): void {
@@ -28,13 +17,8 @@ namespace RobotSystem {
         }
         for (const r of _registry) {
             if (r.model === model) {
-                const cfg: IRobotConfig = {
-                    connectorPins: r.defaultConfig.connectorPins,
-                    motorLeftConnectors: _motorLeftOverride !== null ? _motorLeftOverride : r.defaultConfig.motorLeftConnectors,
-                    motorRightConnectors: _motorRightOverride !== null ? _motorRightOverride : r.defaultConfig.motorRightConnectors,
-                };
-                _activeRobot = r.build(cfg);
-                _connectorPins = cfg.connectorPins;
+                _activeRobot = r.build(r.defaultConfig);
+                _connectorPins = r.defaultConfig.connectorPins;
                 _active = r;
                 _activeRobot.start();
                 return;
@@ -81,7 +65,5 @@ namespace RobotSystem {
         _active = null;
         _activeRobot = null;
         _connectorPins = [];
-        _motorLeftOverride = null;
-        _motorRightOverride = null;
     }
 }

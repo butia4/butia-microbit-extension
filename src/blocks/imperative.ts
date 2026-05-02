@@ -1,22 +1,6 @@
 //% color="#3d6fc4" icon="" weight=90
-//% groups="['Configuración', 'Sensores', 'Motores']"
+//% groups="['Sensores', 'Motores']"
 namespace Butia {
-
-    //% blockId="butia_cfg_motor_left"
-    //% block="Configurar motor izquierdo en conectores %c1 y %c2"
-    //% weight=99
-    //% group="Configuración"
-    export function configureMotorLeft(c1: Connector, c2: Connector): void {
-        RobotSystem.configureMotorLeft(c1, c2);
-    }
-
-    //% blockId="butia_cfg_motor_right"
-    //% block="Configurar motor derecho en conectores %c1 y %c2"
-    //% weight=98
-    //% group="Configuración"
-    export function configureMotorRight(c1: Connector, c2: Connector): void {
-        RobotSystem.configureMotorRight(c1, c2);
-    }
 
     //% block="Inicializar %model"
     //% blockId=butia_robot_start
