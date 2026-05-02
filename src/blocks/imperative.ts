@@ -1,13 +1,29 @@
 //% color="#3d6fc4" icon="" weight=90
-//% groups="['Sensores', 'Motores']"
+//% groups="['Configuración', 'Sensores', 'Motores']"
 namespace Butia {
 
-    //% block="Inicializar %robot"
+    //% blockId="butia_cfg_motor_left"
+    //% block="Configurar motor izquierdo en conectores %c1 y %c2"
+    //% weight=99
+    //% group="Configuración"
+    export function configureMotorLeft(c1: Connector, c2: Connector): void {
+        RobotSystem.configureMotorLeft(c1, c2);
+    }
+
+    //% blockId="butia_cfg_motor_right"
+    //% block="Configurar motor derecho en conectores %c1 y %c2"
+    //% weight=98
+    //% group="Configuración"
+    export function configureMotorRight(c1: Connector, c2: Connector): void {
+        RobotSystem.configureMotorRight(c1, c2);
+    }
+
+    //% block="Inicializar %model"
     //% blockId=butia_robot_start
     //% weight=100
     //% group="Obligatorio"
-    export function start(robot: Butia.RobotDriver): void {
-        Butia.RobotDriver.start(robot);
+    export function start(model: RobotModel): void {
+        RobotSystem.setActive(model);
     }
 
     //% blockId="butia_imp_move_forward"
@@ -17,7 +33,7 @@ namespace Butia {
     //% weight=100
     //% group="Motores"
     export function moveForward(speed: number, duration?: number): void {
-        Butia.RobotDriver.getCurrentRobot().moveForward(speed, duration);
+        RobotSystem.activeRobot().moveForward(speed, duration);
     }
 
     //% blockId="butia_imp_move_backward"
@@ -27,7 +43,7 @@ namespace Butia {
     //% weight=95
     //% group="Motores"
     export function moveBackward(speed: number, duration?: number): void {
-        Butia.RobotDriver.getCurrentRobot().moveBackward(speed, duration);
+        RobotSystem.activeRobot().moveBackward(speed, duration);
     }
 
     //% blockId="butia_imp_turn"
@@ -37,7 +53,7 @@ namespace Butia {
     //% weight=90
     //% group="Motores"
     export function turn(direction: TurnDirection, speed: number, duration?: number): void {
-        Butia.RobotDriver.getCurrentRobot().turn(direction, speed, duration);
+        RobotSystem.activeRobot().turn(direction, speed, duration);
     }
 
     //% blockId="butia_imp_motor_tank"
@@ -47,7 +63,7 @@ namespace Butia {
     //% weight=85
     //% group="Motores"
     export function motorTank(left: number, right: number): void {
-        Butia.RobotDriver.getCurrentRobot().motorTank(left, right);
+        RobotSystem.activeRobot().motorTank(left, right);
     }
 
     //% blockId="butia_imp_stop"
@@ -55,39 +71,39 @@ namespace Butia {
     //% weight=80
     //% group="Motores"
     export function motorStop(): void {
-        Butia.RobotDriver.getCurrentRobot().motorStop();
+        RobotSystem.activeRobot().motorStop();
     }
 
     //% blockId="butia_imp_read_gray"
     //% block="Sensor de grises en %connector"
     //% weight=70
     //% group="Sensores"
-    export function readGraySensor(connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readGraySensor(connector);
+    export function readGraySensor(connector: Connector): number {
+        return RobotSystem.activeRobot().readGraySensor(connector);
     }
 
     //% blockId="butia_imp_read_light"
     //% block="Sensor de luz en %connector"
     //% weight=69
     //% group="Sensores"
-    export function readLightSensor(connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readLightSensor(connector);
+    export function readLightSensor(connector: Connector): number {
+        return RobotSystem.activeRobot().readLightSensor(connector);
     }
 
     //% blockId="butia_imp_read_button"
     //% block="Botón en %connector presionado"
     //% weight=68
     //% group="Sensores"
-    export function readButton(connector: Butia.Connector): boolean {
-        return Butia.RobotDriver.getCurrentRobot().readButton(connector);
+    export function readButton(connector: Connector): boolean {
+        return RobotSystem.activeRobot().readButton(connector);
     }
 
     //% blockId="butia_imp_distance"
     //% block="Sensor de Distancia en %connector"
     //% weight=69
     //% group="Sensores"
-    export function obstacleDistance(connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readDistanceSensor(connector);
+    export function obstacleDistance(connector: Connector): number {
+        return RobotSystem.activeRobot().readDistanceSensor(connector);
     }
 
     //% blockId="butia_imp_set_assist"
@@ -96,6 +112,6 @@ namespace Butia {
     //% weight=10
     //% group="Motores"
     export function setAssist(assist: RobotAssist, enabled: boolean): void {
-        Butia.RobotDriver.getCurrentRobot().setAssist(assist, enabled);
+        RobotSystem.activeRobot().setAssist(assist, enabled);
     }
 }

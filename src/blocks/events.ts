@@ -12,44 +12,49 @@ namespace ButiaEvents {
     }
 
     //% blockId="butia_evt_start_monitoring"
-    //% block="Iniciar monitoreo de sensor %sensor en puerto %pin con umbral %threshold"
+    //% block="Iniciar monitoreo de sensor %sensor en puerto %connector con umbral %threshold"
     //% threshold.min=1 threshold.max=1023
     //% weight=60
     //% group="Sensores"
-    export function startMonitoring(sensor: Sensors, connector: Butia.ButiaV4Connector, threshold: number): void {
-        //robot.startMonitoring(sensor, pin, threshold)
+    export function startMonitoring(sensor: Sensors, connector: Connector, threshold: number): void {
+        const pin = RobotSystem.resolveAnalog(connector);
+        RobotSystem.activeRobot().startMonitoring(sensor, pin as number, threshold);
     }
 
     //% blockId="butia_evt_on_level_reached"
-    //% block="Cuando sensor %sensor en puerto %pin supera umbral"
+    //% block="Cuando sensor %sensor en puerto %connector supera umbral"
     //% weight=55
     //% group="Eventos"
-    export function onLevelReached(sensor: Sensors, connector: Butia.ButiaV4Connector, handler: () => void): void {
-        //robot.onLevelReached(sensor, pin, handler)
+    export function onLevelReached(sensor: Sensors, connector: Connector, handler: () => void): void {
+        const pin = RobotSystem.resolveAnalog(connector);
+        RobotSystem.activeRobot().onLevelReached(sensor, pin as number, handler);
     }
 
     //% blockId="butia_evt_on_level_unreached"
-    //% block="Cuando sensor %sensor en puerto %pin baja del umbral"
+    //% block="Cuando sensor %sensor en puerto %connector baja del umbral"
     //% weight=54
     //% group="Eventos"
-    export function onLevelUnreached(sensor: Sensors, connector: Butia.ButiaV4Connector, handler: () => void): void {
-        //robot.onLevelUnreached(sensor, pin, handler)
+    export function onLevelUnreached(sensor: Sensors, connector: Connector, handler: () => void): void {
+        const pin = RobotSystem.resolveAnalog(connector);
+        RobotSystem.activeRobot().onLevelUnreached(sensor, pin as number, handler);
     }
 
     //% blockId="butia_evt_start_monitoring_button"
-    //% block="Monitorear botón en puerto %pin"
+    //% block="Monitorear botón en puerto %connector"
     //% weight=50
     //% group="Sensores"
-    export function startMonitoringButton(connector: Butia.ButiaV4Connector): void {
-        //robot.startMonitoringButton(pin)
+    export function startMonitoringButton(connector: Connector): void {
+        const pin = RobotSystem.resolveAnalog(connector);
+        RobotSystem.activeRobot().startMonitoringButton(pin as number);
     }
 
     //% blockId="butia_evt_on_button"
-    //% block="Cuando botón en puerto %pin es presionado"
+    //% block="Cuando botón en puerto %connector es presionado"
     //% weight=45
     //% group="Eventos"
-    export function onButton(connector: Butia.ButiaV4Connector, handler: () => void): void {
-        //robot.onButton(pin, handler)
+    export function onButton(connector: Connector, handler: () => void): void {
+        const pin = RobotSystem.resolveAnalog(connector);
+        RobotSystem.activeRobot().onButton(pin as number, handler);
     }
 
     //% blockId="butia_evt_line_left"

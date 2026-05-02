@@ -2,7 +2,7 @@
 function registerSim(): void {
     const simLine = new SimLineSensor();
     const simDist = new SimDistanceSensor();
-    const r = Butia.RobotDriver.getCurrentRobot() as Butia.RobotBase;
+    const r = RobotSystem.activeRobot() as Butia.RobotBase;
     r.setSimDrivers(simLine, simDist);
     control.simmessages.onReceived(SIM_CHANNEL, (buf: Buffer) => {
         const msg = <ButiaSensorsMessage>JSON.parse(buf.toString());
@@ -16,7 +16,7 @@ function registerSim(): void {
 //% shim=TD_NOOP
 function sendSim(): void {
     const serial = control.deviceSerialNumber();
-    const r = Butia.RobotDriver.getCurrentRobot() as Butia.RobotBase;
+    const r = RobotSystem.activeRobot() as Butia.RobotBase;
     const msg = <ButiaSimStateMessage>{
         type: SIM_MSG_STATE,
         id: RUN_ID,

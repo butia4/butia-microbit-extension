@@ -10,9 +10,9 @@ class MockMotorDriver implements IMotorDriver {
 }
 
 class MockSensor implements ILightSensor, IGraySensor, IDistanceSensor {
-    private _pin: AnalogPin;
+    private _pin: number;
     private _value: number;
-    constructor(pin: AnalogPin, value: number) { this._pin = pin; this._value = value; }
+    constructor(pin: number, value: number) { this._pin = pin; this._value = value; }
     init(): void {}
     poll(): void {}
     getPin(): number { return this._pin; }
@@ -30,7 +30,7 @@ function assertMock(condition: boolean, label: string): void {
 // --- Motor behavioral tests ---
 
 const motors = new MockMotorDriver();
-const motorRobot = new Butia.RobotBase(motors, [], [], [], []);
+const motorRobot = new Butia.RobotBase(motors, [], [], []);
 
 motorRobot.moveForward(60);
 assertMock(motors.left === 60 && motors.right === 60, "moveForward speed");
@@ -53,28 +53,51 @@ assertMock(motors.left === 0 && motors.right === 0, "motorStop");
 basic.showString("ALL PASS motors");
 
 // --- Sensor read tests ---
+// connectorPins is global to the robot — all sensor types on a connector share the same pin.
 
-const sensorConfig: Butia.ConnectorPin[] = [
-    new Butia.ConnectorPin(Butia.J1, AnalogPin.P1),
-    new Butia.ConnectorPin(Butia.J2, AnalogPin.P2),
-    new Butia.ConnectorPin(Butia.J3, AnalogPin.P3),
-];
+RobotSystem.reset();
+
 const lightA = new MockSensor(AnalogPin.P1, 750);
 const lightB = new MockSensor(AnalogPin.P2, 200);
-const gray = new MockSensor(AnalogPin.P2, 300);
-const distance = new MockSensor(AnalogPin.P3, 25);
+const gray = new MockSensor(AnalogPin.P3, 300);
+const distance = new MockSensor(AnalogPin.P4, 25);
 
-const sensorRobot = new Butia.RobotBase(
-    new MockMotorDriver(),
-    sensorConfig,
-    [distance],
-    [lightA, lightB],
-    [gray]
-);
+class SensorMockBuilder implements IRobotRecord {
+    model: RobotModel;
+    defaultConfig: IRobotConfig;
 
-assertMock(sensorRobot.readLightSensor(Butia.J1) === 750, "readLightSensor J1");
-assertMock(sensorRobot.readLightSensor(Butia.J2) === 200, "readLightSensor J2 (multi-sensor lookup)");
-assertMock(sensorRobot.readGraySensor(Butia.J2) === 300, "readGraySensor");
-assertMock(sensorRobot.readDistanceSensor(Butia.J3) === 25, "readDistanceSensor");
+    constructor() {
+        this.model = RobotModel.Butia4;
+        this.defaultConfig = {
+            connectorPins: [
+                { connector: Connector.Port1, pin: DigitalPin.P1 },
+                { connector: Connector.Port2, pin: DigitalPin.P2 },
+                { connector: Connector.Port3, pin: DigitalPin.P3 },
+                { connector: Connector.Port4, pin: DigitalPin.P4 },
+            ],
+            motorLeftConnectors: [] as Connector[],
+            motorRightConnectors: [] as Connector[],
+        };
+    }
+
+    build(_cfg: IRobotConfig): IRobot {
+        return new Butia.RobotBase(
+            new MockMotorDriver(),
+            [distance],
+            [lightA, lightB],
+            [gray]
+        );
+    }
+}
+
+RobotSystem.register(new SensorMockBuilder());
+RobotSystem.setActive(RobotModel.Butia4);
+
+const sensorRobot = RobotSystem.activeRobot();
+
+assertMock(sensorRobot.readLightSensor(Connector.Port1) === 750, "readLightSensor Port1");
+assertMock(sensorRobot.readLightSensor(Connector.Port2) === 200, "readLightSensor Port2");
+assertMock(sensorRobot.readGraySensor(Connector.Port3) === 300, "readGraySensor Port3");
+assertMock(sensorRobot.readDistanceSensor(Connector.Port4) === 25, "readDistanceSensor Port4");
 
 basic.showString("ALL PASS sensors");

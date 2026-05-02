@@ -7,20 +7,17 @@ namespace Butia {
         private _lights: ILightSensor[];
         private _grays: IGraySensor[];
         private _distances: IDistanceSensor[];
-        private _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
 
         // --- Constructor ---
         constructor(
             motors: IMotorDriver,
-            connectorConfig: IConnectorPin[],
             distance: IDistanceSensor[],
             light: ILightSensor[],
             gray: IGraySensor[]
         ) {
             this._motors = motors;
-            this._connectorConfig = connectorConfig;
             this._distances = distance;
             this._lights = light;
             this._grays = gray;
@@ -29,14 +26,6 @@ namespace Butia {
         }
 
         // --- Private helpers ---
-        private _resolvePin(connector: IConnector): AnalogPin {
-            for (const cp of this._connectorConfig) {
-                if (cp.connector.name === connector.name) return cp.pin;
-            }
-            control.fail("Conector " + connector.name + " no encontrado.");
-            return 0 as AnalogPin;
-        }
-
         private _findLightSensor(pin: AnalogPin): ILightSensor | null {
             for (const sensor of this._lights) {
                 if (sensor.getPin() === pin) return sensor;
@@ -53,10 +42,11 @@ namespace Butia {
             return null;
         }
 
-        private _findDistanceSensor(pin: AnalogPin): IDistanceSensor | null {
+        private _findDistanceSensor(pin: DigitalPin): IDistanceSensor | null {
             for (const sensor of this._distances) {
                 if (sensor.getPin() === pin) return sensor;
             }
+            basic.showString("ERR");
             control.fail("No distance sensor found for pin " + pin);
             return null;
         }
@@ -105,18 +95,18 @@ namespace Butia {
         }
 
         // --- Sensors ---
-        readDistanceSensor(connector: IConnector): number {
-            const s = this._findDistanceSensor(this._resolvePin(connector));
+        readDistanceSensor(connector: Connector): number {
+            const s = this._findDistanceSensor(RobotSystem.resolveDigital(connector));
             return s ? s.read() : 0;
         }
 
-        readLightSensor(connector: IConnector): number {
-            const s = this._findLightSensor(this._resolvePin(connector));
+        readLightSensor(connector: Connector): number {
+            const s = this._findLightSensor(RobotSystem.resolveAnalog(connector));
             return s ? s.read() : 0;
         }
 
-        readGraySensor(connector: IConnector): number {
-            const s = this._findGraySensor(this._resolvePin(connector));
+        readGraySensor(connector: Connector): number {
+            const s = this._findGraySensor(RobotSystem.resolveAnalog(connector));
             return s ? s.read() : 0;
         }
 
@@ -148,7 +138,7 @@ namespace Butia {
             control.fail("Method not implemented");
         }
 
-        readButton(_connector: IConnector): boolean {
+        readButton(_connector: Connector): boolean {
             control.fail("Method not implemented");
             return false;
         }
