@@ -16,7 +16,7 @@ namespace ButiaEvents {
     //% threshold.min=1 threshold.max=1023
     //% weight=60
     //% group="Sensores"
-    export function startMonitoring(sensor: Sensors, pin: string, threshold: number): void {
+    export function startMonitoring(sensor: Sensors, connector: Butia.ButiaV4Connector, threshold: number): void {
         //robot.startMonitoring(sensor, pin, threshold)
     }
 
@@ -24,7 +24,7 @@ namespace ButiaEvents {
     //% block="Cuando sensor %sensor en puerto %pin supera umbral"
     //% weight=55
     //% group="Eventos"
-    export function onLevelReached(sensor: Sensors, pin: string, handler: () => void): void {
+    export function onLevelReached(sensor: Sensors, connector: Butia.ButiaV4Connector, handler: () => void): void {
         //robot.onLevelReached(sensor, pin, handler)
     }
 
@@ -32,7 +32,7 @@ namespace ButiaEvents {
     //% block="Cuando sensor %sensor en puerto %pin baja del umbral"
     //% weight=54
     //% group="Eventos"
-    export function onLevelUnreached(sensor: Sensors, pin: string, handler: () => void): void {
+    export function onLevelUnreached(sensor: Sensors, connector: Butia.ButiaV4Connector, handler: () => void): void {
         //robot.onLevelUnreached(sensor, pin, handler)
     }
 
@@ -40,7 +40,7 @@ namespace ButiaEvents {
     //% block="Monitorear botón en puerto %pin"
     //% weight=50
     //% group="Sensores"
-    export function startMonitoringButton(pin: string): void {
+    export function startMonitoringButton(connector: Butia.ButiaV4Connector): void {
         //robot.startMonitoringButton(pin)
     }
 
@@ -48,7 +48,7 @@ namespace ButiaEvents {
     //% block="Cuando botón en puerto %pin es presionado"
     //% weight=45
     //% group="Eventos"
-    export function onButton(pin: string, handler: () => void): void {
+    export function onButton(connector: Butia.ButiaV4Connector, handler: () => void): void {
         //robot.onButton(pin, handler)
     }
 

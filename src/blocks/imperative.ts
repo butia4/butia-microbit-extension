@@ -59,35 +59,35 @@ namespace Butia {
     }
 
     //% blockId="butia_imp_read_gray"
-    //% block="Sensor de grises en %pin"
+    //% block="Sensor de grises en %connector"
     //% weight=70
     //% group="Sensores"
-    export function readGraySensor(pin: string): number {
-        return Butia.RobotDriver.getCurrentRobot().readGraySensor(pin);
+    export function readGraySensor(connector: Butia.Connector): number {
+        return Butia.RobotDriver.getCurrentRobot().readGraySensor(connector);
     }
 
     //% blockId="butia_imp_read_light"
-    //% block="Sensor de luz en %pin"
+    //% block="Sensor de luz en %connector"
     //% weight=69
     //% group="Sensores"
-    export function readLightSensor(pin: string): number {
-        return Butia.RobotDriver.getCurrentRobot().readLightSensor(pin);
+    export function readLightSensor(connector: Butia.Connector): number {
+        return Butia.RobotDriver.getCurrentRobot().readLightSensor(connector);
     }
 
     //% blockId="butia_imp_read_button"
-    //% block="Botón en %pin presionado"
+    //% block="Botón en %connector presionado"
     //% weight=68
     //% group="Sensores"
-    export function readButton(pin: string): boolean {
-        return Butia.RobotDriver.getCurrentRobot().readButton(pin);
+    export function readButton(connector: Butia.Connector): boolean {
+        return Butia.RobotDriver.getCurrentRobot().readButton(connector);
     }
 
     //% blockId="butia_imp_distance"
-    //% block="Sensor de Distancia en %pin"
+    //% block="Sensor de Distancia en %connector"
     //% weight=69
     //% group="Sensores"
-    export function obstacleDistance(pin: string): number {
-        return Butia.RobotDriver.getCurrentRobot().readDistanceSensor(pin);
+    export function obstacleDistance(connector: Butia.Connector): number {
+        return Butia.RobotDriver.getCurrentRobot().readDistanceSensor(connector);
     }
 
     //% blockId="butia_imp_set_assist"

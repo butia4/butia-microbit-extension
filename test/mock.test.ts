@@ -30,7 +30,7 @@ function assertMock(condition: boolean, label: string): void {
 // --- Motor behavioral tests ---
 
 const motors = new MockMotorDriver();
-const motorRobot = new Butia.RobotBase(motors, {}, [], [], []);
+const motorRobot = new Butia.RobotBase(motors, [], [], [], []);
 
 motorRobot.moveForward(60);
 assertMock(motors.left === 60 && motors.right === 60, "moveForward speed");
@@ -54,7 +54,11 @@ basic.showString("ALL PASS motors");
 
 // --- Sensor read tests ---
 
-const sensorConfig = { J1: AnalogPin.P1, J2: AnalogPin.P2, J3: AnalogPin.P3 };
+const sensorConfig: Butia.ConnectorPin[] = [
+    new Butia.ConnectorPin(Butia.J1, AnalogPin.P1),
+    new Butia.ConnectorPin(Butia.J2, AnalogPin.P2),
+    new Butia.ConnectorPin(Butia.J3, AnalogPin.P3),
+];
 const lightA = new MockSensor(AnalogPin.P1, 750);
 const lightB = new MockSensor(AnalogPin.P2, 200);
 const gray = new MockSensor(AnalogPin.P2, 300);
@@ -68,9 +72,9 @@ const sensorRobot = new Butia.RobotBase(
     [gray]
 );
 
-assertMock(sensorRobot.readLightSensor("J1") === 750, "readLightSensor J1");
-assertMock(sensorRobot.readLightSensor("J2") === 200, "readLightSensor J2 (multi-sensor lookup)");
-assertMock(sensorRobot.readGraySensor("J2") === 300, "readGraySensor");
-assertMock(sensorRobot.readDistanceSensor("J3") === 25, "readDistanceSensor");
+assertMock(sensorRobot.readLightSensor(Butia.J1) === 750, "readLightSensor J1");
+assertMock(sensorRobot.readLightSensor(Butia.J2) === 200, "readLightSensor J2 (multi-sensor lookup)");
+assertMock(sensorRobot.readGraySensor(Butia.J2) === 300, "readGraySensor");
+assertMock(sensorRobot.readDistanceSensor(Butia.J3) === 25, "readDistanceSensor");
 
 basic.showString("ALL PASS sensors");
