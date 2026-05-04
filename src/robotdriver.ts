@@ -14,8 +14,8 @@ namespace Butia {
 
         static instance(): RobotDriver {
             if (!RobotDriver._instance)
-                throw "Debe iniciar un robot con el bloque 'robot ... start'";
-            return RobotDriver._instance;
+                RobotDriver.start(Butia4_1_0);
+            return RobotDriver._instance as RobotDriver;
         }
 
         static getCurrentRobot(): IRobot {
