@@ -1,18 +1,16 @@
-class SR04DistanceSensor implements IDistanceSensor {
+class DistanceSensor implements IDistanceSensor {
     private _lastDistance: number;
     private _pinTrigger: DigitalPin;
     constructor(pinTrigger: DigitalPin) {
-        this._pinTrigger=pinTrigger;
+        this._pinTrigger = pinTrigger;
         this._lastDistance = 0;
-    }   
-
-    
+    }
 
     // Returns the last cached distance — safe to call at any time without triggering hardware.
     getLastValue(): number {
         return this._lastDistance;
     }
-    getPin(): number{
+    getPin(): number {
         return this._pinTrigger;
     }
     poll(): void {
@@ -22,9 +20,7 @@ class SR04DistanceSensor implements IDistanceSensor {
         control.fail("Method not implemented");
     }
     read(): number {
-
-        let adc_value =  pins.analogReadPin(AnalogPin.P1);
+        const adc_value = pins.analogReadPin(this._pinTrigger as number as AnalogPin);
         return 9462 / (adc_value - 16);
     }
-
 }

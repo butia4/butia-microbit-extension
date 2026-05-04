@@ -32,7 +32,7 @@ namespace Butia {
                     new ConnectorPin(J4, AnalogPin.P4),
                     new ConnectorPin(J5, AnalogPin.P10),
                 ],
-                [new SR04DistanceSensor(DigitalPin.P8)],
+                [new DistanceSensor(DigitalPin.P8)],
                 [new LightSensor(DigitalPin.P1)],
                 [new GraySensor(DigitalPin.P2)]
             );
