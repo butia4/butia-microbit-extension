@@ -15,7 +15,9 @@ class LightSensor implements ILightSensor {
         return this._pinTrigger;
     }
     read(): number {
-        return 1023 - pins.analogReadPin(this._pinTrigger);
+        let raw = 1023 - pins.analogReadPin(this._pinTrigger);
+        let value = (raw / 1023) * 100;
+        return Math.round(value * 10) / 10;
     }
     
     poll(): void {
