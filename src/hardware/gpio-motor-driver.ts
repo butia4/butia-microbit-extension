@@ -8,6 +8,8 @@ class GPIOMotorDriver implements IMotorDriver {
     init(): void {}
 
     setSpeed(left: number, right: number): void {
+        if (this.leftPins.length === 0 || this.rightPins.length === 0)
+            control.fail("Pines de motores no configurados.");
         this._setMotor(this.leftPins, left);
         this._setMotor(this.rightPins, -right);
     }

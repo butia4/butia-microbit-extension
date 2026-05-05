@@ -32,7 +32,7 @@ namespace Butia {
                     new ConnectorPin(J4, AnalogPin.P4),
                     new ConnectorPin(J5, AnalogPin.P10),
                 ],
-                [new SR04DistanceSensor(DigitalPin.P8)],
+                [new DistanceSensor(DigitalPin.P8)],
                 [new LightSensor(DigitalPin.P1)],
                 [new GraySensor(DigitalPin.P2)]
             );
@@ -44,6 +44,6 @@ namespace Butia {
         }
     }
 
-    //% fixedInstance whenUsed block="Butia v4"
+    //% fixedInstance block="Butia v4"
     export const Butia4_1_0 = new RobotDriver(new ButiaRobot());
 }

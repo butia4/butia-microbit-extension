@@ -2,14 +2,6 @@
 //% groups="['Sensores', 'Motores']"
 namespace Butia {
 
-    //% block="Inicializar %robot"
-    //% blockId=butia_robot_start
-    //% weight=100
-    //% group="Obligatorio"
-    export function start(robot: Butia.RobotDriver): void {
-        Butia.RobotDriver.start(robot);
-    }
-
     //% blockId="butia_imp_move_forward"
     //% block="Avanzar a velocidad %speed || durante %duration ms"
     //% speed.min=0 speed.max=100 speed.defl=50
