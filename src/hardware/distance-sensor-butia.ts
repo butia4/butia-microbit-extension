@@ -1,7 +1,7 @@
 class DistanceSensor implements IDistanceSensor {
     private _lastDistance: number;
-    private _pinTrigger: DigitalPin;
-    constructor(pinTrigger: DigitalPin) {
+    private _pinTrigger: DigitalPin|AnalogPin;
+    constructor(pinTrigger: DigitalPin|AnalogPin) {
         this._pinTrigger = pinTrigger;
         this._lastDistance = 0;
     }

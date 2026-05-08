@@ -4,7 +4,7 @@ interface IConnector {
 
 interface IConnectorPin {
     readonly connector: IConnector;
-    readonly pin: AnalogPin;
+    readonly pin: AnalogPin | DigitalPin;
 }
 
 interface IRobot {

@@ -1,8 +1,8 @@
 class LightSensor implements ILightSensor {
     private _lastLight: number;
-    private _pinTrigger: DigitalPin;
+    private _pinTrigger: DigitalPin | AnalogPin;
 
-    constructor(pinTrigger: DigitalPin) {
+    constructor(pinTrigger: DigitalPin|AnalogPin) {
         this._pinTrigger=pinTrigger;
         this._lastLight = 0;
     }

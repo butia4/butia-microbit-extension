@@ -30,7 +30,7 @@ function assertMock(condition: boolean, label: string): void {
 // --- Motor behavioral tests ---
 
 const motors = new MockMotorDriver();
-const motorRobot = new Butia.RobotBase(motors, [], [], [], []);
+const motorRobot = new Butia.RobotBase(motors, []);
 
 motorRobot.moveForward(60);
 assertMock(motors.left === 60 && motors.right === 60, "moveForward speed");
@@ -66,10 +66,7 @@ const distance = new MockSensor(AnalogPin.P3, 25);
 
 const sensorRobot = new Butia.RobotBase(
     new MockMotorDriver(),
-    sensorConfig,
-    [distance],
-    [lightA, lightB],
-    [gray]
+    sensorConfig
 );
 
 assertMock(sensorRobot.readLightSensor(Butia.J1) === 750, "readLightSensor J1");
