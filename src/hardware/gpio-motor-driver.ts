@@ -18,13 +18,18 @@ class GPIOMotorDriver implements IMotorDriver {
         this.setSpeed(0, 0);
     }
 
-    private _setMotor(motorPins: DigitalPin[], speed: number): void {  // ← cambiado
-        if (speed > 0) {
-            pins.digitalWritePin(motorPins[0], 1);
+    private _setMotor(motorPins: DigitalPin[], speed: number): void {
+        const value = Math.min(100, Math.max(-100, speed));
+        const pwm = Math.floor(Math.abs(value) * 1023 / 100);
+
+        if (value > 0) {
             pins.digitalWritePin(motorPins[1], 0);
-        } else if (speed < 0) {
+            pins.analogWritePin(motorPins[0], pwm);
+
+        } else if (value < 0) {
             pins.digitalWritePin(motorPins[0], 0);
-            pins.digitalWritePin(motorPins[1], 1);
+            pins.analogWritePin(motorPins[1], pwm);
+
         } else {
             pins.digitalWritePin(motorPins[0], 0);
             pins.digitalWritePin(motorPins[1], 0);

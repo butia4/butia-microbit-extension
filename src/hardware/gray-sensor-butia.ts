@@ -1,8 +1,8 @@
 class GraySensor implements IGraySensor {
     private _lastGray: number;
-    private _pinTrigger: DigitalPin;
+    private _pinTrigger: DigitalPin|AnalogPin;
 
-    constructor(pinTrigger: DigitalPin) {
+    constructor(pinTrigger: DigitalPin|AnalogPin) {
         this._pinTrigger=pinTrigger;
         this._lastGray = 0;
     }

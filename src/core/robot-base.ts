@@ -4,61 +4,91 @@ namespace Butia {
     export class RobotBase implements IRobot {
         // --- Fields ---
         private _motors: IMotorDriver;
-        private _lights: ILightSensor[];
-        private _grays: IGraySensor[];
-        private _distances: IDistanceSensor[];
+        private _lights: {pin:AnalogPin | DigitalPin, sensor: ILightSensor}[];
+        private _grays: {pin:AnalogPin | DigitalPin, sensor: IGraySensor}[];
+        private _distances: {pin:AnalogPin | DigitalPin, sensor: IDistanceSensor}[];
         private _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
-
+        private _pinUsage: { pin: AnalogPin | DigitalPin; type: string }[];
         // --- Constructor ---
         constructor(
             motors: IMotorDriver,
-            connectorConfig: IConnectorPin[],
-            distance: IDistanceSensor[],
-            light: ILightSensor[],
-            gray: IGraySensor[]
+            connectorConfig: IConnectorPin[]
         ) {
             this._motors = motors;
             this._connectorConfig = connectorConfig;
-            this._distances = distance;
-            this._lights = light;
-            this._grays = gray;
+            this._lights = [];
+            this._grays = [];
+            this._distances = [];
             this._motorLeft = 0;
             this._motorRight = 0;
+            this._pinUsage = [];
         }
 
         // --- Private helpers ---
-        private _resolvePin(connector: IConnector): AnalogPin {
+         private _resolvePin(connector: IConnector): AnalogPin|DigitalPin {
             for (const cp of this._connectorConfig) {
                 if (cp.connector.name === connector.name) return cp.pin;
             }
             control.fail("Conector " + connector.name + " no encontrado.");
             return 0 as AnalogPin;
         }
-
-        private _findLightSensor(pin: AnalogPin): ILightSensor | null {
-            for (const sensor of this._lights) {
-                if (sensor.getPin() === pin) return sensor;
+        private _claimPin(pin: AnalogPin | DigitalPin, type: string): void {
+          
+            let valid = false;
+            for (const cp of this._connectorConfig) {
+                if (cp.pin === pin) {
+                    valid = true;
+                    break;
+                }
             }
-            control.fail("No light sensor found for pin " + pin);
-            return null;
+            if (!valid) {
+                control.fail("Pin " + pin + " no pertenece a ningún conector configurado.");
+            }
+
+            for (const entry of this._pinUsage) {
+                if (entry.pin === pin) {
+                    if (entry.type !== type) {
+                        control.fail("Pin " + pin + " ya está en uso como " + entry.type);
+                    }
+                    return;
+                }
+            }
+            this._pinUsage.push({ pin, type });
         }
 
-        private _findGraySensor(pin: AnalogPin): IGraySensor | null {
-            for (const sensor of this._grays) {
-                if (sensor.getPin() === pin) return sensor;
+        private _getLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
+    
+            for (const entry of this._lights) {
+                if (entry.pin === pin) {
+                    return entry.sensor;
+                }
             }
-            control.fail("No gray sensor found for pin " + pin);
-            return null;
+            this._claimPin(pin, "light")
+            const sensor = new LightSensor(pin);
+            this._lights.push({ pin, sensor });
+            return sensor;
         }
 
-        private _findDistanceSensor(pin: AnalogPin): IDistanceSensor | null {
-            for (const sensor of this._distances) {
-                if (sensor.getPin() === pin) return sensor;
+        private _getGraySensor(pin: AnalogPin | DigitalPin): IGraySensor {
+            for (const entry of this._grays) {
+                if (entry.pin === pin) return entry.sensor;
             }
-            control.fail("No distance sensor found for pin " + pin);
-            return null;
+            this._claimPin(pin, "gray")
+            const sensor = new GraySensor(pin);
+            this._grays.push({ pin, sensor });
+            return sensor;
+        }
+
+        private _getDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor {
+            for (const entry of this._distances) {
+                if (entry.pin === pin) return entry.sensor;
+            }
+            this._claimPin(pin, "distance")
+            const sensor = new DistanceSensor(pin);
+            this._distances.push({ pin, sensor });
+            return sensor;
         }
 
         private _setMotorSpeed(left: number, right: number): void {
@@ -106,18 +136,18 @@ namespace Butia {
 
         // --- Sensors ---
         readDistanceSensor(connector: IConnector): number {
-            const s = this._findDistanceSensor(this._resolvePin(connector));
-            return s ? s.read() : 0;
+            const s = this._getDistanceSensor(this._resolvePin(connector));
+            return s.read();
         }
 
         readLightSensor(connector: IConnector): number {
-            const s = this._findLightSensor(this._resolvePin(connector));
-            return s ? s.read() : 0;
+            const s = this._getLightSensor(this._resolvePin(connector));
+            return s.read();
         }
 
         readGraySensor(connector: IConnector): number {
-            const s = this._findGraySensor(this._resolvePin(connector));
-            return s ? s.read() : 0;
+            const s = this._getGraySensor(this._resolvePin(connector));
+            return s.read();
         }
 
         // --- Events ---
