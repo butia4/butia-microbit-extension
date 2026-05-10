@@ -66,28 +66,11 @@ namespace Butia {
         return Butia.RobotDriver.getCurrentRobot().readLightSensor(connector);
     }
 
-    //% blockId="butia_imp_read_button"
-    //% block="Botón en %connector presionado"
-    //% weight=68
-    //% group="Sensores"
-    export function readButton(connector: Butia.Connector): boolean {
-        return Butia.RobotDriver.getCurrentRobot().readButton(connector);
-    }
-
     //% blockId="butia_imp_distance"
     //% block="Sensor de Distancia en %connector"
     //% weight=69
     //% group="Sensores"
     export function obstacleDistance(connector: Butia.Connector): number {
         return Butia.RobotDriver.getCurrentRobot().readDistanceSensor(connector);
-    }
-
-    //% blockId="butia_imp_set_assist"
-    //% block="Activar asistencia %assist %enabled"
-    //% enabled.shadow=toggleOnOff
-    //% weight=10
-    //% group="Motores"
-    export function setAssist(assist: RobotAssist, enabled: boolean): void {
-        Butia.RobotDriver.getCurrentRobot().setAssist(assist, enabled);
     }
 }

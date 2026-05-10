@@ -35,6 +35,5 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "blocksprj",
-    "simUrl": "https://github.com/butia4/butia-microbit-extension"
+    "preferredEditor": "blocksprj"
 }
