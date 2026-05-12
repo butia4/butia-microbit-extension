@@ -92,10 +92,17 @@ namespace Butia {
             return sensor;
         }
 
+        private _clampSpeed(speed: number): number {
+            const scaled = speed * MAX_MOTOR_SPEED / 100;
+            if (scaled > MAX_MOTOR_SPEED) return MAX_MOTOR_SPEED;
+            if (scaled < -MAX_MOTOR_SPEED) return -MAX_MOTOR_SPEED;
+            return scaled;
+        }
+
         private _setMotorSpeed(left: number, right: number): void {
-            this._motorLeft = left;
-            this._motorRight = right;
-            this._motors.setSpeed(left, right);
+            this._motorLeft = this._clampSpeed(left);
+            this._motorRight = this._clampSpeed(right);
+            this._motors.setSpeed(this._motorLeft, this._motorRight);
         }
 
         // --- Movement ---
@@ -149,6 +156,11 @@ namespace Butia {
         readGraySensor(connector: IConnector): number {
             const s = this._getGraySensor(this._resolvePin(connector));
             return s.read();
+        }
+
+        readButton(connector: IConnector): boolean {
+            const pin = this._resolvePin(connector) as DigitalPin;
+            return pins.digitalReadPin(pin) === 1;
         }
 
         onDistanceLessThan(connector: IConnector, threshold: number, handler: () => void): void {

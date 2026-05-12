@@ -17,5 +17,6 @@ interface IRobot {
     readDistanceSensor(connector: IConnector): number
     readGraySensor(connector: IConnector): number
     readLightSensor(connector: IConnector): number
+    readButton(connector: IConnector): boolean
     onDistanceLessThan(connector: IConnector, threshold: number, handler: () => void): void
 }
