@@ -20,6 +20,9 @@ interface ILightSensor extends IPolledSensor {}
 interface IGraySensor extends IPolledSensor {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface IButtonSensor extends IPolledSensor {}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IActuator extends IRobotComponent {}
 
 declare namespace Buffer {

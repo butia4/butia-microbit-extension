@@ -19,7 +19,7 @@ class GPIOMotorDriver implements IMotorDriver {
     }
 
     private _setMotor(motorPins: DigitalPin[], speed: number): void {
-        const value = Math.min(100, Math.max(-100, speed));
+        const value = Math.min(MAX_MOTOR_SPEED, Math.max(-MAX_MOTOR_SPEED, speed));
         const pwm = Math.floor(Math.abs(value) * 1023 / 100);
 
         if (value > 0) {

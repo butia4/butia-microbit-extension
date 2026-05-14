@@ -7,6 +7,7 @@ namespace Butia {
         private _lights: {pin:AnalogPin | DigitalPin, sensor: ILightSensor}[];
         private _grays: {pin:AnalogPin | DigitalPin, sensor: IGraySensor}[];
         private _distances: {pin:AnalogPin | DigitalPin, sensor: IDistanceSensor}[];
+        private _buttons: {pin:AnalogPin | DigitalPin, sensor: IButtonSensor}[];
         private _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
@@ -21,6 +22,7 @@ namespace Butia {
             this._lights = [];
             this._grays = [];
             this._distances = [];
+            this._buttons = [];
             this._motorLeft = 0;
             this._motorRight = 0;
             this._pinUsage = [];
@@ -61,6 +63,7 @@ namespace Butia {
         protected _newLightSensor(pin: AnalogPin | DigitalPin): ILightSensor { return new LightSensor(pin); }
         protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor { return new GraySensor(pin); }
         protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor { return new DistanceSensor(pin); }
+        protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor { return new ButtonSensor(pin as DigitalPin); }
 
         private _getLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
             for (const entry of this._lights) {
@@ -92,17 +95,20 @@ namespace Butia {
             return sensor;
         }
 
-        private _clampSpeed(speed: number): number {
-            const scaled = speed * MAX_MOTOR_SPEED / 100;
-            if (scaled > MAX_MOTOR_SPEED) return MAX_MOTOR_SPEED;
-            if (scaled < -MAX_MOTOR_SPEED) return -MAX_MOTOR_SPEED;
-            return scaled;
+        private _getButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor {
+            for (const entry of this._buttons) {
+                if (entry.pin === pin) return entry.sensor;
+            }
+            this._claimPin(pin, "button");
+            const sensor = this._newButtonSensor(pin);
+            this._buttons.push({ pin, sensor });
+            return sensor;
         }
 
         private _setMotorSpeed(left: number, right: number): void {
-            this._motorLeft = this._clampSpeed(left);
-            this._motorRight = this._clampSpeed(right);
-            this._motors.setSpeed(this._motorLeft, this._motorRight);
+            this._motorLeft = left;
+            this._motorRight = right;
+            this._motors.setSpeed(left, right);
         }
 
         // --- Movement ---
@@ -159,8 +165,8 @@ namespace Butia {
         }
 
         readButton(connector: IConnector): boolean {
-            const pin = this._resolvePin(connector) as DigitalPin;
-            return pins.digitalReadPin(pin) === 1;
+            const s = this._getButtonSensor(this._resolvePin(connector));
+            return s.read() === 1;
         }
 
         onDistanceLessThan(connector: IConnector, threshold: number, handler: () => void): void {
