@@ -12,6 +12,7 @@
         "src/core/constants.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
+        "src/hardware/button-sensor-butia.ts",
         "src/hardware/distance-sensor-butia.ts",
         "src/hardware/gpio-motor-driver.ts",
         "src/hardware/gray-sensor-butia.ts",
@@ -35,6 +36,5 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "blocksprj",
-    "simUrl": "https://github.com/butia4/butia-microbit-extension"
+    "preferredEditor": "blocksprj"
 }

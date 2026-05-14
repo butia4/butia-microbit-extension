@@ -34,9 +34,7 @@ namespace Butia {
                 ]);
         }
         start(): void {
-            //registerSim()
             super.start();
-            //startSendSimLoop()
         }
     }
 

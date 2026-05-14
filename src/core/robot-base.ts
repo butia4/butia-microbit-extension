@@ -7,6 +7,7 @@ namespace Butia {
         private _lights: {pin:AnalogPin | DigitalPin, sensor: ILightSensor}[];
         private _grays: {pin:AnalogPin | DigitalPin, sensor: IGraySensor}[];
         private _distances: {pin:AnalogPin | DigitalPin, sensor: IDistanceSensor}[];
+        private _buttons: {pin:AnalogPin | DigitalPin, sensor: IButtonSensor}[];
         private _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
@@ -21,21 +22,22 @@ namespace Butia {
             this._lights = [];
             this._grays = [];
             this._distances = [];
+            this._buttons = [];
             this._motorLeft = 0;
             this._motorRight = 0;
             this._pinUsage = [];
         }
 
         // --- Private helpers ---
-         private _resolvePin(connector: IConnector): AnalogPin|DigitalPin {
+        private _resolvePin(connector: IConnector): AnalogPin|DigitalPin {
             for (const cp of this._connectorConfig) {
                 if (cp.connector.name === connector.name) return cp.pin;
             }
             control.fail("Conector " + connector.name + " no encontrado.");
             return 0 as AnalogPin;
         }
+
         private _claimPin(pin: AnalogPin | DigitalPin, type: string): void {
-          
             let valid = false;
             for (const cp of this._connectorConfig) {
                 if (cp.pin === pin) {
@@ -46,7 +48,6 @@ namespace Butia {
             if (!valid) {
                 control.fail("Pin " + pin + " no pertenece a ningún conector configurado.");
             }
-
             for (const entry of this._pinUsage) {
                 if (entry.pin === pin) {
                     if (entry.type !== type) {
@@ -58,15 +59,18 @@ namespace Butia {
             this._pinUsage.push({ pin, type });
         }
 
+        // --- Sensor factories (overridable for testing) ---
+        protected _newLightSensor(pin: AnalogPin | DigitalPin): ILightSensor { return new LightSensor(pin); }
+        protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor { return new GraySensor(pin); }
+        protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor { return new DistanceSensor(pin); }
+        protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor { return new ButtonSensor(pin as DigitalPin); }
+
         private _getLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
-    
             for (const entry of this._lights) {
-                if (entry.pin === pin) {
-                    return entry.sensor;
-                }
+                if (entry.pin === pin) return entry.sensor;
             }
-            this._claimPin(pin, "light")
-            const sensor = new LightSensor(pin);
+            this._claimPin(pin, "light");
+            const sensor = this._newLightSensor(pin);
             this._lights.push({ pin, sensor });
             return sensor;
         }
@@ -75,8 +79,8 @@ namespace Butia {
             for (const entry of this._grays) {
                 if (entry.pin === pin) return entry.sensor;
             }
-            this._claimPin(pin, "gray")
-            const sensor = new GraySensor(pin);
+            this._claimPin(pin, "gray");
+            const sensor = this._newGraySensor(pin);
             this._grays.push({ pin, sensor });
             return sensor;
         }
@@ -85,9 +89,19 @@ namespace Butia {
             for (const entry of this._distances) {
                 if (entry.pin === pin) return entry.sensor;
             }
-            this._claimPin(pin, "distance")
-            const sensor = new DistanceSensor(pin);
+            this._claimPin(pin, "distance");
+            const sensor = this._newDistanceSensor(pin);
             this._distances.push({ pin, sensor });
+            return sensor;
+        }
+
+        private _getButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor {
+            for (const entry of this._buttons) {
+                if (entry.pin === pin) return entry.sensor;
+            }
+            this._claimPin(pin, "button");
+            const sensor = this._newButtonSensor(pin);
+            this._buttons.push({ pin, sensor });
             return sensor;
         }
 
@@ -150,45 +164,34 @@ namespace Butia {
             return s.read();
         }
 
-        // --- Events ---
-        onLevelReached(sensor: number, pin: number, handler: () => void): void {
-            control.onEvent(3194, sensor * 1000 + pin * 100 + 1, handler);
+        readButton(connector: IConnector): boolean {
+            const s = this._getButtonSensor(this._resolvePin(connector));
+            return s.read() === 1;
         }
 
-        onLevelUnreached(sensor: number, pin: number, handler: () => void): void {
-            control.onEvent(3194, sensor * 1000 + pin * 100, handler);
-        }
-
-        onButton(pin: number, handler: () => void): void {
-            control.onEvent(3194, 3 * 1000 + pin * 100 + 1, handler);
+        onDistanceLessThan(connector: IConnector, threshold: number, handler: () => void): void {
+            control.inBackground(() => {
+                let triggered = false;
+                while (true) {
+                    const d = this.readDistanceSensor(connector);
+                    if (d > 0 && d < threshold) {
+                        if (!triggered) {
+                            triggered = true;
+                            handler();
+                        }
+                    } else {
+                        triggered = false;
+                    }
+                    basic.pause(100);
+                }
+            });
         }
 
         // --- Getters ---
         public motorLeft(): number { return this._motorLeft; }
         public motorRight(): number { return this._motorRight; }
 
-        // --- Overridable stubs ---
+        // --- Overridable stub ---
         start(): void {}
-
-        setSimDrivers(_line: ILineSensor, _distance: IDistanceSensor): void {
-            control.fail("Method not implemented");
-        }
-
-        setAssist(_flag: RobotAssist, _enabled: boolean): void {
-            control.fail("Method not implemented");
-        }
-
-        readButton(_connector: IConnector): boolean {
-            control.fail("Method not implemented");
-            return false;
-        }
-
-        startMonitoring(_sensor: number, _pin: number, _threshold: number): void {
-            control.fail("Method not implemented");
-        }
-
-        startMonitoringButton(_pin: number): void {
-            control.fail("Method not implemented");
-        }
     }
 }
