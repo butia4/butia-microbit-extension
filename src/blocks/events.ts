@@ -3,7 +3,7 @@
 namespace ButiaEvents {
 
     //% blockId="butia_evt_distance"
-    //% block="Al detectar distancia %op %threshold cm en %connector"
+    //% block="Sensor de distancia en %connector  %op  %threshold cm"
     //% threshold.defl=20 threshold.min=1 threshold.max=400
     //% weight=65
     //% group="Eventos"
