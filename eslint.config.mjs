@@ -32,9 +32,10 @@ export default [
   },
   // PXT uses a global scope model with no ES imports/exports. Cross-file symbols
   // (interfaces, base classes, pin constants, singletons) appear unused to ESLint
-  // because it only sees one file at a time. Rule is disabled for src/ only.
+  // because it only sees one file at a time. Same applies to shared test mocks
+  // in test/_mocks.ts which are consumed by the *.test.ts files.
   {
-    files: ["src/**/*.ts"],
+    files: ["src/**/*.ts", "test/**/*.ts"],
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
     },
