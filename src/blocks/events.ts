@@ -11,4 +11,22 @@ namespace ButiaEvents {
         Butia.RobotDriver.getCurrentRobot().onDistance(connector, op, threshold, handler);
     }
 
+    //% blockId="butia_evt_light"
+    //% block="Sensor de luz en %connector %op %threshold"
+    //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% weight=60
+    //% group="Eventos"
+    export function onLight(connector: Butia.Connector, op: Comparison, threshold: number, handler: () => void): void {
+        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, threshold, handler);
+    }
+
+    //% blockId="butia_evt_gray"
+    //% block="Sensor de grises en %connector %op %threshold"
+    //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% weight=60
+    //% group="Eventos"
+    export function onGray(connector: Butia.Connector, op: Comparison, threshold: number, handler: () => void): void {
+        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, handler);
+    }
+
 }
