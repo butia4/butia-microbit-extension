@@ -17,8 +17,8 @@ declare const enum Comparison {
 }
 
 declare const enum ButtonState {
-    //% block="presionar"
+    //% block="presione"
     Pressed = 0,
-    //% block="soltar"
+    //% block="suelte"
     Released = 1,
 }

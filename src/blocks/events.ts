@@ -3,7 +3,7 @@
 namespace ButiaEvents {
 
     //% blockId="butia_evt_distance"
-    //% block="Cuando la distancia en %connector sea %op %threshold cm"
+    //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% weight=65
     //% group="Eventos"
@@ -17,7 +17,7 @@ namespace ButiaEvents {
     }
 
     //% blockId="butia_evt_light"
-    //% block="Cuando la luz en %connector sea %op %threshold"
+    //% block="Cuando el sensor de luz en %connector sea %op %threshold"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% weight=60
     //% group="Eventos"
@@ -31,7 +31,7 @@ namespace ButiaEvents {
     }
 
     //% blockId="butia_evt_gray"
-    //% block="Cuando el sensor de grises en %connector sean %op %threshold"
+    //% block="Cuando el sensor de grises en %connector sea %op %threshold"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% weight=55
     //% group="Eventos"
