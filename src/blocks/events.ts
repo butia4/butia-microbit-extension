@@ -29,4 +29,12 @@ namespace ButiaEvents {
         Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, handler);
     }
 
+    //% blockId="butia_evt_button"
+    //% block="Sensor de Botón en %connector al %state"
+    //% weight=70
+    //% group="Eventos"
+    export function onButton(connector: Butia.Connector, state: ButtonState, handler: () => void): void {
+        Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, handler);
+    }
+
 }
