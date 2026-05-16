@@ -12,6 +12,7 @@ namespace Butia {
         private _motorLeft: number;
         private _motorRight: number;
         private _pinUsage: { pin: AnalogPin | DigitalPin; type: string }[];
+        private _eventMonitor: EventMonitor;
         // --- Constructor ---
         constructor(
             motors: IMotorDriver,
@@ -26,7 +27,12 @@ namespace Butia {
             this._motorLeft = 0;
             this._motorRight = 0;
             this._pinUsage = [];
+            this._eventMonitor = this._newEventMonitor();
         }
+
+        // Overridable factory — tests use this to inject a monitor that
+        // doesn't auto-start the background fiber.
+        protected _newEventMonitor(): EventMonitor { return new EventMonitor(); }
 
         // --- Private helpers ---
         private _resolvePin(connector: IConnector): AnalogPin|DigitalPin {
@@ -169,22 +175,70 @@ namespace Butia {
             return s.read() === 1;
         }
 
-        onDistanceLessThan(connector: IConnector, threshold: number, handler: () => void): void {
-            control.inBackground(() => {
-                let triggered = false;
-                while (true) {
-                    const d = this.readDistanceSensor(connector);
-                    if (d > 0 && d < threshold) {
-                        if (!triggered) {
-                            triggered = true;
-                            handler();
-                        }
-                    } else {
-                        triggered = false;
-                    }
-                    basic.pause(100);
-                }
-            });
+        // --- Events ---
+        
+        onDistance(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getDistanceSensor(pin);
+            const subId = computeSubId(SENSOR_TYPE_DISTANCE, pin as number, comparisonToDir(op));
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => {
+                    const d = sensor.read();
+                    if (d <= 0) return false;
+                    return evalComparison(op, d, threshold);
+                },
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        onLight(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getLightSensor(pin);
+            const subId = computeSubId(SENSOR_TYPE_LIGHT, pin as number, comparisonToDir(op));
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => evalComparison(op, sensor.read(), threshold),
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        onGray(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getGraySensor(pin);
+            const subId = computeSubId(SENSOR_TYPE_GRAY, pin as number, comparisonToDir(op));
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => evalComparison(op, sensor.read(), threshold),
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        onConnectorButton(connector: IConnector, state: ButtonState, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getButtonSensor(pin);
+            const dir = state === ButtonState.Pressed ? DIR_GREATER_OR_PRESSED : DIR_LESS_OR_RELEASED;
+            const subId = computeSubId(SENSOR_TYPE_BUTTON, pin as number, dir);
+            const target = state === ButtonState.Pressed ? 1 : 0;
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => sensor.read() === target,
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        // Exposed for tests — drives one polling cycle without sleeping.
+        // Returns the subIds that fired this cycle.
+        _stepEventMonitor(): number[] {
+            return this._eventMonitor.pollOnce();
         }
 
         // --- Getters ---

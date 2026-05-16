@@ -10,6 +10,7 @@
         "src/blocks/imperative.ts",
         "src/core/connector.ts",
         "src/core/constants.ts",
+        "src/core/event-monitor.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
         "src/hardware/button-sensor-butia.ts",
@@ -25,6 +26,8 @@
         "README.md"
     ],
     "testFiles": [
+        "test/_mocks.ts",
+        "test/event-monitor.test.ts",
         "test/mock.test.ts",
         "test/robot.test.ts",
         "test/sensor.test.ts"
