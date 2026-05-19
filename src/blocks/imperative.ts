@@ -3,32 +3,29 @@
 namespace Butia {
 
     //% blockId="butia_imp_move_forward"
-    //% block="Avanzar a velocidad %speed || durante %duration ms"
+    //% block="Avanzar a velocidad %speed || durante %duration"
     //% speed.min=0 speed.max=100 speed.defl=50
-    //% duration.shadow=timePicker expandableArgumentMode="toggle"
     //% weight=100
     //% group="Motores"
-    export function moveForward(speed: number, duration?: number): void {
+    export function moveForward(speed: number, duration?: DurationSeconds): void {
         Butia.RobotDriver.getCurrentRobot().moveForward(speed, duration);
-    }
+}
 
     //% blockId="butia_imp_move_backward"
-    //% block="Retroceder a velocidad %speed || durante %duration ms"
+    //% block="Retroceder a velocidad %speed || durante %duration"
     //% speed.min=0 speed.max=100 speed.defl=50
-    //% duration.shadow=timePicker expandableArgumentMode="toggle"
     //% weight=95
     //% group="Motores"
-    export function moveBackward(speed: number, duration?: number): void {
+    export function moveBackward(speed: number, duration?: DurationSeconds): void {
         Butia.RobotDriver.getCurrentRobot().moveBackward(speed, duration);
     }
 
     //% blockId="butia_imp_turn"
-    //% block="Girar hacia %direction a velocidad %speed || durante %duration ms"
+    //% block="Girar hacia %direction a velocidad %speed || durante %duration"
     //% speed.min=0 speed.max=100 speed.defl=40
-    //% duration.shadow=timePicker expandableArgumentMode="toggle"
     //% weight=90
     //% group="Motores"
-    export function turn(direction: TurnDirection, speed: number, duration?: number): void {
+    export function turn(direction: TurnDirection, speed: number, duration?: DurationSeconds): void {
         Butia.RobotDriver.getCurrentRobot().turn(direction, speed, duration);
     }
 
