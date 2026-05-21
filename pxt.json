@@ -6,7 +6,6 @@
         "core": "*"
     },
     "files": [
-        "src/blocks/events.ts",
         "src/blocks/imperative.ts",
         "src/core/connector.ts",
         "src/core/constants.ts",
