@@ -3,33 +3,39 @@
 namespace Butia {
 
     //% blockId="butia_imp_move_forward"
-    //% block="Avanzar a velocidad %speed || durante %duration ms"
+    //% block="Avanzar a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
-    //% duration.shadow=timePicker expandableArgumentMode="toggle"
+    //% duration.min=0
+    //% duration.defl=2
     //% weight=100
     //% group="Motores"
     export function moveForward(speed: number, duration?: number): void {
-        Butia.RobotDriver.getCurrentRobot().moveForward(speed, duration);
+        const ms = duration ? duration * 1000 : undefined;
+        Butia.RobotDriver.getCurrentRobot().moveForward(speed, ms);
     }
 
     //% blockId="butia_imp_move_backward"
-    //% block="Retroceder a velocidad %speed || durante %duration ms"
+    //% block="Retroceder a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
-    //% duration.shadow=timePicker expandableArgumentMode="toggle"
+    //% duration.min=0
+    //% duration.defl=2
     //% weight=95
     //% group="Motores"
     export function moveBackward(speed: number, duration?: number): void {
-        Butia.RobotDriver.getCurrentRobot().moveBackward(speed, duration);
+        const ms = duration ? duration * 1000 : undefined;
+        Butia.RobotDriver.getCurrentRobot().moveBackward(speed, ms);
     }
 
     //% blockId="butia_imp_turn"
-    //% block="Girar hacia %direction a velocidad %speed || durante %duration ms"
+    //% block="Girar hacia %direction a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=40
-    //% duration.shadow=timePicker expandableArgumentMode="toggle"
+    //% duration.min=0
+    //% duration.defl=2
     //% weight=90
     //% group="Motores"
     export function turn(direction: TurnDirection, speed: number, duration?: number): void {
-        Butia.RobotDriver.getCurrentRobot().turn(direction, speed, duration);
+        const ms = duration ? duration * 1000 : undefined;
+        Butia.RobotDriver.getCurrentRobot().turn(direction, speed, ms);
     }
 
     //% blockId="butia_imp_motor_tank"
