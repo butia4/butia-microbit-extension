@@ -1,4 +1,4 @@
-//% color="#3d6fc4" icon="" weight=90
+//% color="#84c324" icon="\uf410"
 //% groups="['Sensores', 'Motores']"
 namespace Butia {
 
@@ -80,5 +80,58 @@ namespace Butia {
     //% group="Sensores"
     export function readButton(connector: Butia.Connector): boolean {
         return Butia.RobotDriver.getCurrentRobot().readButton(connector);
+    }
+    //% blockId="butia_evt_distance"
+    //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm"
+    //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% weight=65
+    //% advanced=true
+    export function onDistance(
+        connector: Butia.Connector,
+        op: Comparison,
+        threshold: number,
+        handler: () => void
+    ): void {
+        Butia.RobotDriver.getCurrentRobot().onDistance(connector, op, threshold, handler);
+    }
+
+    //% blockId="butia_evt_light"
+    //% block="Cuando el sensor de luz en %connector sea %op %threshold"
+    //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% weight=60
+    //% advanced=true
+    export function onLight(
+        connector: Butia.Connector,
+        op: Comparison,
+        threshold: number,
+        handler: () => void
+    ): void {
+        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, threshold, handler);
+    }
+
+    //% blockId="butia_evt_gray"
+    //% block="Cuando el sensor de grises en %connector sea %op %threshold"
+    //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% weight=55
+    //% advanced=true
+    export function onGray(
+        connector: Butia.Connector,
+        op: Comparison,
+        threshold: number,
+        handler: () => void
+    ): void {
+        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, handler);
+    }
+
+    //% blockId="butia_evt_button"
+    //% block="Cuando se %state el botón en %connector"
+    //% weight=70
+    //% advanced=true
+    export function onButton(
+        state: ButtonState,
+        connector: Butia.Connector,
+        handler: () => void
+    ): void {
+        Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, handler);
     }
 }
