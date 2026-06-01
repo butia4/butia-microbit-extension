@@ -9,7 +9,8 @@
     },
     "include": [
         "src/**/*.ts",
-        "test/**/*.ts"
+        "test/**/*.ts",
+        "typings/**/*.d.ts"
     ],
     "files": [
         "pxt_modules/core/shims.d.ts",
