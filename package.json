@@ -23,6 +23,7 @@
     "postinstall": "node -e \"require('fs').writeFileSync('node_modules/pxtcli.json', JSON.stringify({targetdir:'pxt-microbit'}))\"",
     "setup": "pxt install",
     "build": "pxt build",
+    "build:dev": "sed -i 's/_logEnabled = false/_logEnabled = true/' src/core/logger.ts && pxt build; sed -i 's/_logEnabled = true/_logEnabled = false/' src/core/logger.ts",
     "test": "pxt test",
     "deploy": "pxt deploy",
     "typecheck": "tsc --noEmit",

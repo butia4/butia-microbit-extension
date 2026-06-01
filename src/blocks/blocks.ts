@@ -1,4 +1,4 @@
-//% color="#84c324" icon="\uf410"
+//% color="#84c324" icon="\uf057"
 //% groups="['Sensores', 'Motores']"
 namespace Butia {
 

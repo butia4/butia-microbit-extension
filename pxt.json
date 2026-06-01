@@ -3,13 +3,15 @@
     "version": "0.1.0",
     "description": "MakeCode extension for the Butia v4 educational robotics kit — imperative and event-based block paradigms.",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "datalogger": "*"
     },
     "files": [
-        "src/blocks/imperative.ts",
+        "src/blocks/blocks.ts",
         "src/core/connector.ts",
         "src/core/constants.ts",
         "src/core/event-monitor.ts",
+        "src/core/logger.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
         "src/hardware/button-sensor-butia.ts",
