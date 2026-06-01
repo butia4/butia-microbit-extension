@@ -2,7 +2,7 @@
 //% groups="['Sensores', 'Motores']"
 namespace Butia {
 
-//% blockId="butia_imp_move_forward"
+    //% blockId="butia_imp_move_forward"
     //% block="Avanzar a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
