@@ -28,10 +28,12 @@ assertTest(rD._stepEventMonitor().length === 0, "onDistance Less: above threshol
 sD.setValue(10);
 assertTest(rD._stepEventMonitor().length === 1, "onDistance Less: crosses below fires");
 assertTest(rD._stepEventMonitor().length === 0, "onDistance Less: sustained no-refire");
-sD.setValue(50); rD._stepEventMonitor();
+sD.setValue(50); rD._stepEventMonitor(); // fallCount=1
+sD.setValue(50); rD._stepEventMonitor(); // fallCount=2 → FALL confirmed, lastTriggered=false
 sD.setValue(10);
 assertTest(rD._stepEventMonitor().length === 1, "onDistance Less: refires after exit/re-enter");
-sD.setValue(50); rD._stepEventMonitor();
+sD.setValue(50); rD._stepEventMonitor(); // fallCount=1
+sD.setValue(50); rD._stepEventMonitor(); // fallCount=2 → FALL confirmed, lastTriggered=false
 sD.setValue(0);
 assertTest(rD._stepEventMonitor().length === 0, "onDistance Less: zero reading ignored");
 sD.setValue(-5);

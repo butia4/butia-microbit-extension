@@ -38,10 +38,17 @@ namespace Butia {
         return value <= threshold;
     }
 
+    // FALL fires only after FALL_DEBOUNCE consecutive false readings — prevents
+    // cross-talk noise (one sensor's ADC bleed making the other flap to false
+    // for a single cycle) from resetting lastTriggered prematurely.
+    export const FALL_DEBOUNCE = 2;
+
     export interface IMonitor {
         subId: number;
         evaluate: () => boolean;
         lastTriggered: boolean;
+        _fallCount: number;
+        cooldownUntil: number;
     }
 
     // Pure: used by both control.onEvent (handler side) and control.raiseEvent
@@ -73,10 +80,20 @@ namespace Butia {
             for (const m of this._monitors) {
                 const triggered = m.evaluate();
                 if (triggered && !m.lastTriggered) {
+                    m._fallCount = 0;
+                    m.lastTriggered = true;
+                    Butia._log("rise", "" + m.subId);
                     control.raiseEvent(BUTIA_EVENT_ID, m.subId);
                     fired.push(m.subId);
+                } else if (!triggered && m.lastTriggered) {
+                    m._fallCount++;
+                    if (m._fallCount >= FALL_DEBOUNCE) {
+                        m.lastTriggered = false;
+                        m._fallCount = 0;
+                        m.cooldownUntil = 0;
+                        Butia._log("fall", "" + m.subId);
+                    }
                 }
-                m.lastTriggered = triggered;
             }
             return fired;
         }

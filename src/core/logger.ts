@@ -1,6 +1,6 @@
 namespace Butia {
     // Set to true to enable datalogger output, false to disable.
-    export const _logEnabled = false;
+    export const _logEnabled = true;
 
     if (_logEnabled) {
         // datalogger.deleteLog();

@@ -13,6 +13,7 @@ namespace Butia {
         private _motorRight: number;
         private _pinUsage: { pin: AnalogPin | DigitalPin; type: string }[];
         private _eventMonitor: EventMonitor;
+        private _handlerActive: boolean;
         // --- Constructor ---
         constructor(
             motors: IMotorDriver,
@@ -27,6 +28,7 @@ namespace Butia {
             this._motorLeft = 0;
             this._motorRight = 0;
             this._pinUsage = [];
+            this._handlerActive = false;
             this._eventMonitor = this._newEventMonitor();
         }
 
@@ -188,9 +190,17 @@ namespace Butia {
                     if (d <= 0) return false;
                     return evalComparison(op, d, threshold);
                 },
-                lastTriggered: false
+                lastTriggered: false,
+                _fallCount: 0,
+                cooldownUntil: 0
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => {
+                if (this._handlerActive) return;
+                if (!monitor.lastTriggered) return;
+                this._handlerActive = true;
+                handler();
+                this._handlerActive = false;
+            });
             this._eventMonitor.register(monitor);
         }
 
@@ -201,9 +211,17 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                lastTriggered: false
+                lastTriggered: false,
+                _fallCount: 0,
+                cooldownUntil: 0
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => {
+                if (this._handlerActive) return;
+                if (!monitor.lastTriggered) return;
+                this._handlerActive = true;
+                handler();
+                this._handlerActive = false;
+            });
             this._eventMonitor.register(monitor);
         }
 
@@ -214,9 +232,17 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                lastTriggered: false
+                lastTriggered: false,
+                _fallCount: 0,
+                cooldownUntil: 0
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => {
+                if (this._handlerActive) return;
+                if (!monitor.lastTriggered) return;
+                this._handlerActive = true;
+                handler();
+                this._handlerActive = false;
+            });
             this._eventMonitor.register(monitor);
         }
 
@@ -229,9 +255,17 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => sensor.read() === target,
-                lastTriggered: false
+                lastTriggered: false,
+                _fallCount: 0,
+                cooldownUntil: 0
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => {
+                if (this._handlerActive) return;
+                if (!monitor.lastTriggered) return;
+                this._handlerActive = true;
+                handler();
+                this._handlerActive = false;
+            });
             this._eventMonitor.register(monitor);
         }
 
