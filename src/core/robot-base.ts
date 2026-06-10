@@ -235,6 +235,141 @@ namespace Butia {
             this._eventMonitor.register(monitor);
         }
 
+        // --- Reactive (Mientras) motor rules ---
+        resolveWhile(
+            sensorType: ReactiveSensorType,
+            connector: IConnector,
+            op: Comparison,
+            threshold: number,
+            action: ReactiveAction,
+            target: MotorTarget,
+            speed: number
+        ) {
+            const pin = this._resolvePin(connector);
+            const spd = action === ReactiveAction.Stop ? 0 : (speed === undefined ? 50 : speed);
+
+            let condition: () => boolean;
+
+            if (sensorType === ReactiveSensorType.Gray) {
+                const sensor = this._getGraySensor(pin);
+                condition = () => evalComparison(op, sensor.read(), threshold);
+
+            } else if (sensorType === ReactiveSensorType.Distance) {
+                const sensor = this._getDistanceSensor(pin);
+                condition = () => evalComparison(op, sensor.read(), threshold);
+
+            } else if (sensorType === ReactiveSensorType.Light) {
+                const sensor = this._getLightSensor(pin);
+                condition = () => evalComparison(op, sensor.read(), threshold);
+
+            } else {
+                const sensor = this._getButtonSensor(pin);
+                const targetValue =
+                    op === Comparison.Less
+                        ? ButtonState.Released
+                        : ButtonState.Pressed;
+
+                condition = () =>
+                    sensor.read() ===
+                    (targetValue === ButtonState.Pressed ? 1 : 0);
+            }
+
+            this._registerPrimitiveRule(
+                condition,
+                action,
+                target,
+                spd
+            );
+        }
+
+        /*whileGrayLineLossWithClearPath(
+            grayConnector: IConnector,
+            grayThreshold: number,
+            distanceConnector: IConnector,
+            clearDistance: number,
+            target: MotorTarget
+        ): void {
+            const grayPin = this._resolvePin(grayConnector);
+            const graySensor = this._getGraySensor(grayPin);
+            const distPin = this._resolvePin(distanceConnector);
+            const distSensor = this._getDistanceSensor(distPin);
+            this._registerPrimitiveRule(
+                () => {
+                    if (!evalComparison(Comparison.GreaterOrEqual, graySensor.read(), grayThreshold)) {
+                        return false;
+                    }
+                    const d = distSensor.read();
+                    return d <= 0 || d >= clearDistance;
+                },
+                ReactiveAction.Stop,
+                target,
+                0,
+                true
+            );
+        }
+
+        whileArcAround(
+            connector: IConnector,
+            op: Comparison,
+            threshold: number,
+            side: ArcSide,
+            speed: number
+        ): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getDistanceSensor(pin);
+            const arc = new ArcManeuver(side, speed);
+            const rule: IReactiveRule = {
+                evaluate: () => {
+                    const d = sensor.read();
+                    if (d <= 0) return false;
+                    return evalComparison(op, d, threshold);
+                },
+                action: ReactiveAction.ArcAround,
+                target: MotorTarget.Both,
+                speed: speed,
+                priority: () => computePriority(ReactiveAction.ArcAround, MotorTarget.Both),
+                suppressLineLoss: true,
+                motorIntent: () => arc.getIntent(),
+                tick: () => arc.tick(),
+                reset: () => arc.reset(),
+            };
+            this._ensureReactiveHandler();
+            this._eventMonitor.registerReactiveRule(rule);
+        }
+
+        stopReactiveMode(): void {
+            this._eventMonitor.disableReactive();
+            this.motorStop();
+        }*/
+
+        private _ensureReactiveHandler(): void {
+            this._eventMonitor.setReactiveIntentHandler((intent) => {
+                this._setMotorSpeed(intent.left, intent.right);
+            });
+        }
+
+        private _registerPrimitiveRule(
+            evaluate: () => boolean,
+            action: ReactiveAction,
+            target: MotorTarget,
+            speed: number,
+            lineLossStop?: boolean
+        ): void {
+            const rule: IReactiveRule = {
+                evaluate: evaluate,
+                action: action,
+                target: target,
+                speed: speed,
+                priority: () => computePriority(action, target),
+                lineLossStop: lineLossStop,
+                motorIntent: () => buildMotorIntent(action, target, speed),
+                tick: () => {},
+                reset: () => {},
+            };
+            this._ensureReactiveHandler();
+            this._eventMonitor.registerReactiveRule(rule);
+        }
+
         // Exposed for tests — drives one polling cycle without sleeping.
         // Returns the subIds that fired this cycle.
         _stepEventMonitor(): number[] {

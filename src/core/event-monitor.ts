@@ -1,12 +1,14 @@
 // EventMonitor: centralized sensor polling and event dispatch.
 //
 // A single background fiber (lazy-started on the first register call) iterates
-// a dynamic list of sensor monitors every 100 ms. Each monitor encapsulates
+// a dynamic list of sensor monitors every 50 ms. Each monitor encapsulates
 // its own evaluation closure, so the poller stays agnostic to sensor type.
 // Rising-edge detection prevents repeated firing while the condition holds.
+// Step 2 evaluates level-triggered reactive motor rules via subsumption.
 
 namespace Butia {
     export const BUTIA_EVENT_ID = 6500;
+    export const POLL_INTERVAL_MS = 50;
 
     // Sensor type tags used to build deterministic event sub-IDs.
     export const SENSOR_TYPE_LIGHT = 1;
@@ -52,16 +54,44 @@ namespace Butia {
 
     export class EventMonitor {
         private _monitors: IMonitor[];
+        private _reactiveRules: IReactiveRule[];
+        private _reactiveEnabled: boolean;
+        private _reactiveIntentHandler: ((intent: IMotorIntent) => void) | null;
         private _started: boolean;
 
         constructor() {
             this._monitors = [];
+            this._reactiveRules = [];
+            this._reactiveEnabled = false;
+            this._reactiveIntentHandler = null;
             this._started = false;
         }
 
         register(monitor: IMonitor): void {
             this._monitors.push(monitor);
             this._ensureStarted();
+        }
+
+        setReactiveIntentHandler(handler: (intent: IMotorIntent) => void): void {
+            this._reactiveIntentHandler = handler;
+        }
+
+        registerReactiveRule(rule: IReactiveRule): void {
+            this._reactiveRules.push(rule);
+            this._reactiveEnabled = true;
+            this._ensureStarted();
+        }
+
+        disableReactive(): void {
+            for (const rule of this._reactiveRules) {
+                rule.reset();
+            }
+            this._reactiveRules = [];
+            this._reactiveEnabled = false;
+        }
+
+        isReactiveEnabled(): boolean {
+            return this._reactiveEnabled;
         }
 
         // Runs a single polling cycle synchronously. Returns the list of
@@ -78,6 +108,21 @@ namespace Butia {
                 }
                 m.lastTriggered = triggered;
             }
+
+            if (this._reactiveEnabled && this._reactiveIntentHandler) {
+                const active: IReactiveRule[] = [];
+                for (const rule of this._reactiveRules) {
+                    if (rule.evaluate()) {
+                        //rule.tick();
+                        active.push(rule);
+                    } else {
+                        //rule.reset();
+                    }
+                }
+                const intent = arbitrate(active);
+                this._reactiveIntentHandler(intent);
+            }
+
             return fired;
         }
 
@@ -87,7 +132,7 @@ namespace Butia {
             control.inBackground(() => {
                 while (true) {
                     this.pollOnce();
-                    basic.pause(100);
+                    basic.pause(POLL_INTERVAL_MS);
                 }
             });
         }
