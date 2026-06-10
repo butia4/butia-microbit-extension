@@ -152,8 +152,8 @@ namespace Butia {
         threshold: number,
         action: ReactiveAction,
         target: MotorTarget,
+        handler?: () => void,
         speed?: number,
-        handler?: () => void
     ): void {
         const spd = action === ReactiveAction.Stop ? 0 : (speed === undefined ? 50 : speed);
         Butia.RobotDriver.getCurrentRobot().resolveWhile(sensor,connector, op, threshold, action, target, spd);
