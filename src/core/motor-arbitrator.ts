@@ -16,10 +16,10 @@ namespace Butia {
         const leftIdx = _pickChannelWinner(competitors, MotorTarget.Left);
         const rightIdx = _pickChannelWinner(competitors, MotorTarget.Right);
 
-        return {
-            left: leftIdx >= 0 ? competitors[leftIdx].motorIntent().left : 0,
-            right: rightIdx >= 0 ? competitors[rightIdx].motorIntent().right : 0,
-        };
+        const leftIntent = leftIdx !== NO_WINNER ? competitors[leftIdx].motorIntent() : { left: 0, right: 0 };
+        const rightIntent = rightIdx !== NO_WINNER ? competitors[rightIdx].motorIntent() : { left: 0, right: 0 };
+
+        return { left: leftIntent.left, right: rightIntent.right };
     }
 
     function _hasLineLossSuppression(active: IReactiveRule[]): boolean {
