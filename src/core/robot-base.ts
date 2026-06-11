@@ -244,7 +244,7 @@ namespace Butia {
             action: ReactiveAction,
             target: MotorTarget,
             speed: number
-        ) {
+        ): void {
             const pin = this._resolvePin(connector);
             const spd = action === ReactiveAction.Stop ? 0 : (speed === undefined ? 50 : speed);
 
@@ -377,8 +377,8 @@ namespace Butia {
         }
 
         // --- Getters ---
-        public motorLeft(): number { return this._motorLeft; }
-        public motorRight(): number { return this._motorRight; }
+        motorLeft(): number { return this._motorLeft; }
+        motorRight(): number { return this._motorRight; }
 
         // --- Overridable stub ---
         start(): void {}

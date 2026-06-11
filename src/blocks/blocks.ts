@@ -56,6 +56,18 @@ namespace Butia {
         Butia.RobotDriver.getCurrentRobot().motorStop();
     }
 
+    //% blockId="butia_imp_stop_single"
+    //% block="Apagar Motor %motor"
+    //% weight=79
+    //% group="Motores"
+    export function motorStopSingle(motor: MotorSide): void {
+        if (motor === MotorSide.Left) {
+            Butia.RobotDriver.getCurrentRobot().motorTank(0, Butia.RobotDriver.getCurrentRobot().motorRight());
+        } else {
+            Butia.RobotDriver.getCurrentRobot().motorTank(Butia.RobotDriver.getCurrentRobot().motorLeft(), 0);
+        }
+    }
+
     //% blockId="butia_imp_read_gray"
     //% block="Sensor de grises en %connector"
     //% weight=70

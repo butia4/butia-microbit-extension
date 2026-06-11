@@ -30,4 +30,6 @@ interface IRobot {
     //whileGrayLineLossWithClearPath(grayConnector: IConnector, grayThreshold: number, distanceConnector: IConnector, clearDistance: number, target: MotorTarget): void
     //whileArcAround(connector: IConnector, op: Comparison, threshold: number, side: ArcSide, speed: number): void
     //stopReactiveMode(): void
+    motorLeft(): number
+    motorRight(): number
 }

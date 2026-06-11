@@ -66,3 +66,10 @@ declare const enum ReactiveSensorType {
     //% block="botón"
     Button = 3,
 }
+
+declare const enum MotorSide {
+    //% block="Izquierdo"
+    Left = 0,
+    //% block="Derecho"
+    Right = 1,
+}
