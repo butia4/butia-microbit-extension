@@ -6,11 +6,11 @@ namespace Butia {
     //% block="Avanzar a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
-    //% duration.defl=2
+    //% duration.defl=0
     //% weight=100
     //% group="Motores"
     export function moveForward(speed: number, duration?: number): void {
-        const ms = duration ? duration * 1000 : undefined;
+        const ms = duration ? duration * 1000 : 0;
         Butia.RobotDriver.getCurrentRobot().moveForward(speed, ms);
     }
 
@@ -18,11 +18,11 @@ namespace Butia {
     //% block="Retroceder a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
-    //% duration.defl=2
+    //% duration.defl=0
     //% weight=95
     //% group="Motores"
     export function moveBackward(speed: number, duration?: number): void {
-        const ms = duration ? duration * 1000 : undefined;
+        const ms = duration ? duration * 1000 : 0;
         Butia.RobotDriver.getCurrentRobot().moveBackward(speed, ms);
     }
 
@@ -30,7 +30,7 @@ namespace Butia {
     //% block="Girar hacia %direction a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=40
     //% duration.min=0
-    //% duration.defl=2
+    //% duration.defl=0
     //% weight=90
     //% group="Motores"
     export function turn(direction: TurnDirection, speed: number, duration?: number): void {

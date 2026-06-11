@@ -118,17 +118,17 @@ namespace Butia {
         }
 
         // --- Movement ---
-        moveForward(speed: number, duration?: number): void {
+        moveForward(speed: number, duration: number): void {
             this._setMotorSpeed(speed, speed);
-            if (duration) {
+            if (duration!==0) {
                 basic.pause(duration);
                 this._setMotorSpeed(0, 0);
             }
         }
 
-        moveBackward(speed: number = 70, duration?: number): void {
+        moveBackward(speed: number = 70, duration: number): void {
             this._setMotorSpeed(-speed, -speed);
-            if (duration !== undefined) {
+            if (duration !== 0) {
                 basic.pause(duration);
                 this._setMotorSpeed(0, 0);
             }
