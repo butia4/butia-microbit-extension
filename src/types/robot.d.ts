@@ -22,4 +22,12 @@ interface IRobot {
     onLight(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void
     onGray(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void
     onConnectorButton(connector: IConnector, state: ButtonState, handler: () => void): void
+    resolveWhile(sensor: ReactiveSensorType,connector: IConnector, op: Comparison, threshold: number, action: ReactiveAction, target: MotorTarget, speed: number): void
+    //whileGray(connector: IConnector, op: Comparison, threshold: number, action: ReactiveAction, target: MotorTarget, speed: number): void
+    //whileDistance(connector: IConnector, op: Comparison, threshold: number, action: ReactiveAction, target: MotorTarget, speed: number): void
+    //whileLight(connector: IConnector, op: Comparison, threshold: number, action: ReactiveAction, target: MotorTarget, speed: number): void
+    //whileButton(connector: IConnector, state: ButtonState, action: ReactiveAction, target: MotorTarget, speed: number): void
+    //whileGrayLineLossWithClearPath(grayConnector: IConnector, grayThreshold: number, distanceConnector: IConnector, clearDistance: number, target: MotorTarget): void
+    //whileArcAround(connector: IConnector, op: Comparison, threshold: number, side: ArcSide, speed: number): void
+    //stopReactiveMode(): void
 }
