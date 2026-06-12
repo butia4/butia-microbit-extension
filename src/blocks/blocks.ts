@@ -49,7 +49,7 @@ namespace Butia {
     }
 
     //% blockId="butia_imp_stop"
-    //% block="Apagar Motor"
+    //% block="Detener Motores"
     //% weight=80
     //% group="Motores"
     export function motorStop(): void {
@@ -57,7 +57,7 @@ namespace Butia {
     }
 
     //% blockId="butia_imp_stop_single"
-    //% block="Apagar Motor %motor"
+    //% block="Detener Motor %motor"
     //% weight=79
     //% group="Motores"
     export function motorStopSingle(motor: MotorSide): void {
@@ -85,7 +85,7 @@ namespace Butia {
     }
 
     //% blockId="butia_imp_distance"
-    //% block="Sensor de Distancia en %connector"
+    //% block="Sensor de distancia en %connector"
     //% weight=69
     //% group="Sensores"
     export function obstacleDistance(connector: Butia.Connector): number {
@@ -99,7 +99,7 @@ namespace Butia {
     export function readButton(connector: Butia.Connector): boolean {
         return Butia.RobotDriver.getCurrentRobot().readButton(connector);
     }
-    //% blockId="butia_evt_distance"
+    /*//% blockId="butia_evt_distance"
     //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% weight=65
@@ -151,9 +151,9 @@ namespace Butia {
         handler: () => void
     ): void {
         Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, handler);
-    }
+    }*/
     //% blockId="butia_react_sensor_motor"
-    //% block="Mientras sensor de $sensor en %connector sea %op %threshold $action $target || a velocidad %speed"
+    //% block="Mientras sensor de $sensor en %connector sea %op %threshold $action $target a velocidad %speed"
     //% speed.defl=50 speed.min=0 speed.max=100
     //% weight=100
     //% advanced=true
@@ -164,13 +164,10 @@ namespace Butia {
         threshold: number,
         action: ReactiveAction,
         target: MotorTarget,
-        handler?: () => void,
-        speed?: number,
+        speed: number,
+        handler: () => void
     ): void {
-        const spd = action === ReactiveAction.Stop ? 0 : (speed === undefined ? 50 : speed);
-        Butia.RobotDriver.getCurrentRobot().resolveWhile(sensor,connector, op, threshold, action, target, spd);
-
-        
+        Butia.RobotDriver.getCurrentRobot().resolveWhile(sensor, connector, op, threshold, action, target, speed);
     }
 
 
