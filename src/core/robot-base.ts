@@ -12,6 +12,7 @@ namespace Butia {
         private _motorLeft: number;
         private _motorRight: number;
         private _pinUsage: { pin: AnalogPin | DigitalPin; type: string }[];
+        private _eventMonitor: EventMonitor;
         // --- Constructor ---
         constructor(
             motors: IMotorDriver,
@@ -26,7 +27,12 @@ namespace Butia {
             this._motorLeft = 0;
             this._motorRight = 0;
             this._pinUsage = [];
+            this._eventMonitor = this._newEventMonitor();
         }
+
+        // Overridable factory — tests use this to inject a monitor that
+        // doesn't auto-start the background fiber.
+        protected _newEventMonitor(): EventMonitor { return new EventMonitor(); }
 
         // --- Private helpers ---
         private _resolvePin(connector: IConnector): AnalogPin|DigitalPin {
@@ -112,17 +118,17 @@ namespace Butia {
         }
 
         // --- Movement ---
-        moveForward(speed: number, duration?: number): void {
+        moveForward(speed: number, duration: number): void {
             this._setMotorSpeed(speed, speed);
-            if (duration) {
+            if (duration!==0) {
                 basic.pause(duration);
                 this._setMotorSpeed(0, 0);
             }
         }
 
-        moveBackward(speed: number = 70, duration?: number): void {
+        moveBackward(speed: number = 70, duration: number): void {
             this._setMotorSpeed(-speed, -speed);
-            if (duration !== undefined) {
+            if (duration !== 0) {
                 basic.pause(duration);
                 this._setMotorSpeed(0, 0);
             }
@@ -169,27 +175,210 @@ namespace Butia {
             return s.read() === 1;
         }
 
-        onDistanceLessThan(connector: IConnector, threshold: number, handler: () => void): void {
-            control.inBackground(() => {
-                let triggered = false;
-                while (true) {
-                    const d = this.readDistanceSensor(connector);
-                    if (d > 0 && d < threshold) {
-                        if (!triggered) {
-                            triggered = true;
-                            handler();
-                        }
-                    } else {
-                        triggered = false;
+        // --- Events ---
+        
+        onDistance(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getDistanceSensor(pin);
+            const subId = computeSubId(SENSOR_TYPE_DISTANCE, pin as number, comparisonToDir(op));
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => {
+                    const d = sensor.read();
+                    if (d <= 0) return false;
+                    return evalComparison(op, d, threshold);
+                },
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        onLight(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getLightSensor(pin);
+            const subId = computeSubId(SENSOR_TYPE_LIGHT, pin as number, comparisonToDir(op));
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => evalComparison(op, sensor.read(), threshold),
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        onGray(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getGraySensor(pin);
+            const subId = computeSubId(SENSOR_TYPE_GRAY, pin as number, comparisonToDir(op));
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => evalComparison(op, sensor.read(), threshold),
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        onConnectorButton(connector: IConnector, state: ButtonState, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getButtonSensor(pin);
+            const dir = state === ButtonState.Pressed ? DIR_GREATER_OR_PRESSED : DIR_LESS_OR_RELEASED;
+            const subId = computeSubId(SENSOR_TYPE_BUTTON, pin as number, dir);
+            const target = state === ButtonState.Pressed ? 1 : 0;
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => sensor.read() === target,
+                lastTriggered: false
+            };
+            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            this._eventMonitor.register(monitor);
+        }
+
+        // --- Reactive (Mientras) motor rules ---
+        resolveWhile(
+            sensorType: ReactiveSensorType,
+            connector: IConnector,
+            op: Comparison,
+            threshold: number,
+            action: ReactiveAction,
+            target: MotorTarget,
+            speed: number
+        ): void {
+            const pin = this._resolvePin(connector);
+            const spd = action === ReactiveAction.Stop ? 0 : (speed === undefined ? 50 : speed);
+
+            let condition: () => boolean;
+
+            if (sensorType === ReactiveSensorType.Gray) {
+                const sensor = this._getGraySensor(pin);
+                condition = () => evalComparison(op, sensor.read(), threshold);
+
+            } else if (sensorType === ReactiveSensorType.Distance) {
+                const sensor = this._getDistanceSensor(pin);
+                condition = () => evalComparison(op, sensor.read(), threshold);
+
+            } else if (sensorType === ReactiveSensorType.Light) {
+                const sensor = this._getLightSensor(pin);
+                condition = () => evalComparison(op, sensor.read(), threshold);
+
+            } else {
+                const sensor = this._getButtonSensor(pin);
+                const targetValue =
+                    op === Comparison.Less
+                        ? ButtonState.Released
+                        : ButtonState.Pressed;
+
+                condition = () =>
+                    sensor.read() ===
+                    (targetValue === ButtonState.Pressed ? 1 : 0);
+            }
+
+            this._registerPrimitiveRule(
+                condition,
+                action,
+                target,
+                spd
+            );
+        }
+
+        /*whileGrayLineLossWithClearPath(
+            grayConnector: IConnector,
+            grayThreshold: number,
+            distanceConnector: IConnector,
+            clearDistance: number,
+            target: MotorTarget
+        ): void {
+            const grayPin = this._resolvePin(grayConnector);
+            const graySensor = this._getGraySensor(grayPin);
+            const distPin = this._resolvePin(distanceConnector);
+            const distSensor = this._getDistanceSensor(distPin);
+            this._registerPrimitiveRule(
+                () => {
+                    if (!evalComparison(Comparison.GreaterOrEqual, graySensor.read(), grayThreshold)) {
+                        return false;
                     }
-                    basic.pause(100);
-                }
+                    const d = distSensor.read();
+                    return d <= 0 || d >= clearDistance;
+                },
+                ReactiveAction.Stop,
+                target,
+                0,
+                true
+            );
+        }
+
+        whileArcAround(
+            connector: IConnector,
+            op: Comparison,
+            threshold: number,
+            side: ArcSide,
+            speed: number
+        ): void {
+            const pin = this._resolvePin(connector);
+            const sensor = this._getDistanceSensor(pin);
+            const arc = new ArcManeuver(side, speed);
+            const rule: IReactiveRule = {
+                evaluate: () => {
+                    const d = sensor.read();
+                    if (d <= 0) return false;
+                    return evalComparison(op, d, threshold);
+                },
+                action: ReactiveAction.ArcAround,
+                target: MotorTarget.Both,
+                speed: speed,
+                priority: () => computePriority(ReactiveAction.ArcAround, MotorTarget.Both),
+                suppressLineLoss: true,
+                motorIntent: () => arc.getIntent(),
+                tick: () => arc.tick(),
+                reset: () => arc.reset(),
+            };
+            this._ensureReactiveHandler();
+            this._eventMonitor.registerReactiveRule(rule);
+        }
+
+        stopReactiveMode(): void {
+            this._eventMonitor.disableReactive();
+            this.motorStop();
+        }*/
+
+        private _ensureReactiveHandler(): void {
+            this._eventMonitor.setReactiveIntentHandler((intent) => {
+                this._setMotorSpeed(intent.left, intent.right);
             });
         }
 
+        private _registerPrimitiveRule(
+            evaluate: () => boolean,
+            action: ReactiveAction,
+            target: MotorTarget,
+            speed: number,
+            lineLossStop?: boolean
+        ): void {
+            const rule: IReactiveRule = {
+                evaluate: evaluate,
+                action: action,
+                target: target,
+                speed: speed,
+                priority: () => computePriority(action, target),
+                lineLossStop: lineLossStop,
+                motorIntent: () => buildMotorIntent(action, target, speed),
+                tick: () => {},
+                reset: () => {},
+            };
+            this._ensureReactiveHandler();
+            this._eventMonitor.registerReactiveRule(rule);
+        }
+
+        // Exposed for tests — drives one polling cycle without sleeping.
+        // Returns the subIds that fired this cycle.
+        _stepEventMonitor(): number[] {
+            return this._eventMonitor.pollOnce();
+        }
+
         // --- Getters ---
-        public motorLeft(): number { return this._motorLeft; }
-        public motorRight(): number { return this._motorRight; }
+        motorLeft(): number { return this._motorLeft; }
+        motorRight(): number { return this._motorRight; }
 
         // --- Overridable stub ---
         start(): void {}
