@@ -188,9 +188,15 @@ namespace Butia {
                     if (d <= 0) return false;
                     return evalComparison(op, d, threshold);
                 },
-                lastTriggered: false
+                //lastTriggered: false
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => { 
+                try {
+                    handler();
+                } finally {
+                    this._eventMonitor.setEventRaising(false);
+                }
+            });
             this._eventMonitor.register(monitor);
         }
 
@@ -201,9 +207,15 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                lastTriggered: false
+                //lastTriggered: false
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => {
+                try {
+                    handler();
+                } finally {
+                    this._eventMonitor.setEventRaising(false);
+                }
+            });
             this._eventMonitor.register(monitor);
         }
 
@@ -214,9 +226,15 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                lastTriggered: false
+                //lastTriggered: false
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => {
+                try {
+                    handler();
+                } finally {
+                    this._eventMonitor.setEventRaising(false);
+                }
+            });
             this._eventMonitor.register(monitor);
         }
 
@@ -229,15 +247,21 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => sensor.read() === target,
-                lastTriggered: false
+                //lastTriggered: false
             };
-            control.onEvent(BUTIA_EVENT_ID, subId, handler);
+            control.onEvent(BUTIA_EVENT_ID, subId, () => {
+                try {
+                    handler();
+                } finally {
+                    this._eventMonitor.setEventRaising(false);
+                }
+            });
             this._eventMonitor.register(monitor);
         }
         
         // Exposed for tests — drives one polling cycle without sleeping.
         // Returns the subIds that fired this cycle.
-        _stepEventMonitor(): number[] {
+        _stepEventMonitor(): number {
             return this._eventMonitor.pollOnce();
         }
 

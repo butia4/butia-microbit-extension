@@ -43,7 +43,7 @@ namespace Butia {
     export interface IMonitor {
         subId: number;
         evaluate: () => boolean;
-        lastTriggered: boolean;
+        //lastTriggered: boolean;
     }
 
     // Pure: used by both control.onEvent (handler side) and control.raiseEvent
@@ -54,34 +54,44 @@ namespace Butia {
 
     export class EventMonitor {
         private _monitors: IMonitor[];
-        private _started: boolean;
-
+        private _started: boolean;  
+        private _eventRaising: boolean;
+        //private _lastTriggeredEvent: number;
         constructor() {
             this._monitors = [];
             this._started = false;
+            this._eventRaising = false;
+            //this._lastTriggeredEvent = 0;
+        }
+        setEventRaising(value: boolean): void {
+            this._eventRaising = value;
         }
 
         register(monitor: IMonitor): void {
             this._monitors.push(monitor);
             this._ensureStarted();
         }
-
+        
 
         // Runs a single polling cycle synchronously. Returns the list of
         // subIds that fired this cycle so tests can assert rising-edge
         // behavior without depending on the PXT event scheduler. The
         // background loop ignores the return value.
-        pollOnce(): number[] {
-            const fired: number[] = [];
+        pollOnce(): number {
+            // Returns the subId that fired this cycle, or 0 if none.
+            if (this._eventRaising) return 0;
             for (const m of this._monitors) {
                 const triggered = m.evaluate();
-                if (triggered && !m.lastTriggered) {
-                    control.raiseEvent(BUTIA_EVENT_ID, m.subId);
-                    fired.push(m.subId);
+                if (triggered /*&& m.subId !== this._lastTriggeredEvent*/) {
+                    const sid = m.subId;
+                    this._eventRaising = true;  // prevent re-entrant event handling
+                    control.raiseEvent(BUTIA_EVENT_ID, sid);
+                    //this._lastTriggeredEvent = sid;
+                    return sid;  // only one event per cycle, to avoid re-entrancy
                 }
-                m.lastTriggered = triggered;
+                //m.lastTriggered = triggered;
             }
-            return fired;
+            return 0;
         }
 
         protected _ensureStarted(): void {
