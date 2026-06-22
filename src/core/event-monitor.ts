@@ -54,16 +54,10 @@ namespace Butia {
 
     export class EventMonitor {
         private _monitors: IMonitor[];
-        private _reactiveRules: IReactiveRule[];
-        private _reactiveEnabled: boolean;
-        private _reactiveIntentHandler: ((intent: IMotorIntent) => void) | null;
         private _started: boolean;
 
         constructor() {
             this._monitors = [];
-            this._reactiveRules = [];
-            this._reactiveEnabled = false;
-            this._reactiveIntentHandler = null;
             this._started = false;
         }
 
@@ -72,27 +66,6 @@ namespace Butia {
             this._ensureStarted();
         }
 
-        setReactiveIntentHandler(handler: (intent: IMotorIntent) => void): void {
-            this._reactiveIntentHandler = handler;
-        }
-
-        registerReactiveRule(rule: IReactiveRule): void {
-            this._reactiveRules.push(rule);
-            this._reactiveEnabled = true;
-            this._ensureStarted();
-        }
-
-        disableReactive(): void {
-            for (const rule of this._reactiveRules) {
-                rule.reset();
-            }
-            this._reactiveRules = [];
-            this._reactiveEnabled = false;
-        }
-
-        isReactiveEnabled(): boolean {
-            return this._reactiveEnabled;
-        }
 
         // Runs a single polling cycle synchronously. Returns the list of
         // subIds that fired this cycle so tests can assert rising-edge
@@ -108,21 +81,6 @@ namespace Butia {
                 }
                 m.lastTriggered = triggered;
             }
-
-            if (this._reactiveEnabled && this._reactiveIntentHandler) {
-                const active: IReactiveRule[] = [];
-                for (const rule of this._reactiveRules) {
-                    if (rule.evaluate()) {
-                        //rule.tick();
-                        active.push(rule);
-                    } else {
-                        //rule.reset();
-                    }
-                }
-                const intent = arbitrate(active);
-                this._reactiveIntentHandler(intent);
-            }
-
             return fired;
         }
 

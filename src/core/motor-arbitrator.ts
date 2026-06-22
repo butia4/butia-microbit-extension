@@ -1,6 +1,6 @@
 // MotorArbitrator: Brooks-style subsumption per motor channel (left / right).
 
-namespace Butia {
+/*namespace Butia {
     const NO_WINNER = -1;
 
     export function arbitrate(active: IReactiveRule[]): IMotorIntent {
@@ -51,4 +51,4 @@ namespace Butia {
         if (rule.target === MotorTarget.Both) return true;
         return rule.target === channel;
     }
-}
+}*/

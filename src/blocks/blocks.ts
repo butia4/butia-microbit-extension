@@ -99,7 +99,7 @@ namespace Butia {
     export function readButton(connector: Butia.Connector): boolean {
         return Butia.RobotDriver.getCurrentRobot().readButton(connector);
     }
-    /*//% blockId="butia_evt_distance"
+    //% blockId="butia_evt_distance"
     //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% weight=65
@@ -151,71 +151,8 @@ namespace Butia {
         handler: () => void
     ): void {
         Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, handler);
-    }*/
-    //% blockId="butia_react_sensor_motor"
-    //% block="Mientras sensor de $sensor en %connector sea %op %threshold $action $target a velocidad %speed"
-    //% speed.defl=50 speed.min=0 speed.max=100
-    //% weight=100
-    //% advanced=true
-    export function whileSensorMotor(
-        sensor: ReactiveSensorType,
-        connector: Butia.Connector,
-        op: Comparison,
-        threshold: number,
-        action: ReactiveAction,
-        target: MotorTarget,
-        speed: number,
-        handler: () => void
-    ): void {
-        Butia.RobotDriver.getCurrentRobot().resolveWhile(sensor, connector, op, threshold, action, target, speed);
     }
 
 
-    /*//% blockId="butia_react_arc_around"
-    //% block="Mientras sensor de distancia en %connector sea %op %threshold rodear hacia %side a velocidad %speed"
-    //% threshold.defl=20 threshold.min=1 threshold.max=100
-    //% speed.defl=50 speed.min=0 speed.max=100
-    //% weight=90
-    //% advanced=true
-    export function whileArcAround(
-        connector: Butia.Connector,
-        op: Comparison,
-        threshold: number,
-        side: ArcSide,
-        speed: number,
-        handler?: () => void
-    ): void {
-        Butia.RobotDriver.getCurrentRobot().whileArcAround(connector, op, threshold, side, speed);
-    }*/
 
-    /*//% blockId="butia_react_line_loss_clear"
-    //% block="Mientras pierde línea en %grayConnector ≥ %grayThreshold y camino libre adelante en %distanceConnector ≥ %clearDistance detener %target"
-    //% grayThreshold.defl=30 grayThreshold.min=1 grayThreshold.max=100
-    //% clearDistance.defl=25 clearDistance.min=1 clearDistance.max=100
-    //% weight=85
-    //% advanced=true
-    export function whileLineLossWithClearPath(
-        grayConnector: Butia.Connector,
-        grayThreshold: number,
-        distanceConnector: Butia.Connector,
-        clearDistance: number,
-        target: MotorTarget,
-        handler: () => void
-    ): void {
-        Butia.RobotDriver.getCurrentRobot().whileGrayLineLossWithClearPath(
-            grayConnector,
-            grayThreshold,
-            distanceConnector,
-            clearDistance,
-            target
-        );
-    }
-
-    //% blockId="butia_react_stop"
-    //% block="al detener modo reactivo"
-    //% weight=80
-    //% advanced=true
-    export function stopReactiveMode(): void {
-        Butia.RobotDriver.getCurrentRobot().stopReactiveMode();
-    }*/
 }
