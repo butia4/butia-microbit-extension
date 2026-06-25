@@ -8,6 +8,10 @@ const eCfg: Butia.ConnectorPin[] = [
     new Butia.ConnectorPin(Butia.J2, AnalogPin.P2),
 ];
 
+let s: number;
+let sFirst: number;
+let sSecond: number;
+
 // --- computeSubId determinism ---
 
 const sA = Butia.computeSubId(Butia.SENSOR_TYPE_LIGHT, AnalogPin.P1, Butia.DIR_GREATER_OR_PRESSED);
@@ -24,18 +28,24 @@ const sD = new MockSensor(AnalogPin.P1, 50);
 rD.mockDistance(AnalogPin.P1, sD);
 rD.onDistance(Butia.J1, Comparison.Less, 20, () => { });
 
-assertTest(rD._stepEventMonitor().length === 0, "onDistance Less: above threshold no-fire");
+s = rD._stepEventMonitor();
+assertTest(s === 0, "onDistance Less: above threshold no-fire");
 sD.setValue(10);
-assertTest(rD._stepEventMonitor().length === 1, "onDistance Less: crosses below fires");
-assertTest(rD._stepEventMonitor().length === 0, "onDistance Less: sustained no-refire");
+s = rD._stepEventMonitor();
+assertTest(s !== 0, "onDistance Less: crosses below fires");
+s = rD._stepEventMonitor();
+assertTest(s === 0, "onDistance Less: sustained no-refire");
 sD.setValue(50); rD._stepEventMonitor();
 sD.setValue(10);
-assertTest(rD._stepEventMonitor().length === 1, "onDistance Less: refires after exit/re-enter");
+s = rD._stepEventMonitor();
+assertTest(s !== 0, "onDistance Less: refires after exit/re-enter");
 sD.setValue(50); rD._stepEventMonitor();
 sD.setValue(0);
-assertTest(rD._stepEventMonitor().length === 0, "onDistance Less: zero reading ignored");
+s = rD._stepEventMonitor();
+assertTest(s === 0, "onDistance Less: zero reading ignored");
 sD.setValue(-5);
-assertTest(rD._stepEventMonitor().length === 0, "onDistance Less: negative reading ignored");
+s = rD._stepEventMonitor();
+assertTest(s === 0, "onDistance Less: negative reading ignored");
 
 // --- onLight: Greater and Less ---
 
@@ -47,9 +57,12 @@ rL.mockLight(AnalogPin.P2, sL2);
 rL.onLight(Butia.J1, Comparison.Greater, 70, () => { });
 rL.onLight(Butia.J2, Comparison.Less, 30, () => { });
 
-assertTest(rL._stepEventMonitor().length === 0, "onLight: neither fires initially");
+s = rL._stepEventMonitor();
+assertTest(s === 0, "onLight: neither fires initially");
 sL1.setValue(85); sL2.setValue(10);
-assertTest(rL._stepEventMonitor().length === 2, "onLight: both Greater and Less fire");
+sFirst = rL._stepEventMonitor();
+sSecond = rL._stepEventMonitor();
+assertTest(sFirst !== 0 && sSecond !== 0, "onLight: both Greater and Less fire (one per cycle)");
 
 // --- onGray Greater ---
 
@@ -57,9 +70,11 @@ const rG = new MockRobot(new MockMotorDriver(), eCfg);
 const sG = new MockSensor(AnalogPin.P1, 20);
 rG.mockGray(AnalogPin.P1, sG);
 rG.onGray(Butia.J1, Comparison.Greater, 50, () => { });
-assertTest(rG._stepEventMonitor().length === 0, "onGray Greater: below no-fire");
+s = rG._stepEventMonitor();
+assertTest(s === 0, "onGray Greater: below no-fire");
 sG.setValue(75);
-assertTest(rG._stepEventMonitor().length === 1, "onGray Greater: fires");
+s = rG._stepEventMonitor();
+assertTest(s !== 0, "onGray Greater: fires");
 
 // --- evalComparison: >= and <= fire at boundary equality ---
 
@@ -79,9 +94,35 @@ rB.mockButton(AnalogPin.P2, sB2);
 rB.onConnectorButton(Butia.J1, ButtonState.Pressed, () => { });
 rB.onConnectorButton(Butia.J2, ButtonState.Released, () => { });
 
-assertTest(rB._stepEventMonitor().length === 0, "onConnectorButton: initial no-fire");
+s = rB._stepEventMonitor();
+assertTest(s === 0, "onConnectorButton: initial no-fire");
 sB1.setValue(1); sB2.setValue(0);
-assertTest(rB._stepEventMonitor().length === 2, "onConnectorButton: press and release fire");
-assertTest(rB._stepEventMonitor().length === 0, "onConnectorButton: sustained no-refire");
+sFirst = rB._stepEventMonitor();
+sSecond = rB._stepEventMonitor();
+assertTest(sFirst !== 0 && sSecond !== 0, "onConnectorButton: press and release fire (one per cycle)");
+s = rB._stepEventMonitor();
+assertTest(s === 0, "onConnectorButton: sustained no-refire");
+
+// --- handler exception resets _eventRaising ---
+
+const rE = new MockRobot(new MockMotorDriver(), eCfg);
+const sE = new MockSensor(AnalogPin.P1, 50);
+rE.mockDistance(AnalogPin.P1, sE);
+rE.onDistance(Butia.J1, Comparison.Less, 20, () => { throw "handler-exception"; });
+
+sE.setValue(10);
+let threw = false;
+try {
+    rE._stepEventMonitor();
+} catch (e) {
+    threw = true;
+}
+assertTest(threw, "handler throws as expected");
+
+// Toggle out and in so the event can re-fire if _eventRaising was reset
+sE.setValue(50); rE._stepEventMonitor();
+sE.setValue(10);
+s = rE._stepEventMonitor();
+assertTest(s !== 0, "_eventRaising reset after handler exception");
 
 basic.showString("ALL PASS events");
