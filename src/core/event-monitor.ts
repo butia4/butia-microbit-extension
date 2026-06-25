@@ -43,6 +43,7 @@ namespace Butia {
     export interface IMonitor {
         subId: number;
         evaluate: () => boolean;
+        priority: number;
         //lastTriggered: boolean;
     }
 
@@ -56,12 +57,12 @@ namespace Butia {
         private _monitors: IMonitor[];
         private _started: boolean;  
         private _eventRaising: boolean;
-        //private _lastTriggeredEvent: number;
+        private _lastPriorityEvent: number;
         constructor() {
             this._monitors = [];
             this._started = false;
             this._eventRaising = false;
-            //this._lastTriggeredEvent = 0;
+            this._lastPriorityEvent = 0;
         }
         setEventRaising(value: boolean): void {
             this._eventRaising = value;
@@ -82,9 +83,10 @@ namespace Butia {
             if (this._eventRaising) return 0;
             for (const m of this._monitors) {
                 const triggered = m.evaluate();
-                if (triggered /*&& m.subId !== this._lastTriggeredEvent*/) {
+                if (triggered && m.priority >= this._lastPriorityEvent) {
                     const sid = m.subId;
                     this._eventRaising = true;  // prevent re-entrant event handling
+                    this._lastPriorityEvent = m.priority;
                     control.raiseEvent(BUTIA_EVENT_ID, sid);
                     //this._lastTriggeredEvent = sid;
                     return sid;  // only one event per cycle, to avoid re-entrancy

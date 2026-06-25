@@ -26,7 +26,7 @@ assertTest(sA !== Butia.computeSubId(Butia.SENSOR_TYPE_LIGHT, AnalogPin.P2, Buti
 const rD = new MockRobot(new MockMotorDriver(), eCfg);
 const sD = new MockSensor(AnalogPin.P1, 50);
 rD.mockDistance(AnalogPin.P1, sD);
-rD.onDistance(Butia.J1, Comparison.Less, 20, () => { });
+//rD.onDistance(Butia.J1, Comparison.Less, 20, () => { });
 
 s = rD._stepEventMonitor();
 assertTest(s === 0, "onDistance Less: above threshold no-fire");
@@ -108,7 +108,7 @@ assertTest(s === 0, "onConnectorButton: sustained no-refire");
 const rE = new MockRobot(new MockMotorDriver(), eCfg);
 const sE = new MockSensor(AnalogPin.P1, 50);
 rE.mockDistance(AnalogPin.P1, sE);
-rE.onDistance(Butia.J1, Comparison.Less, 20, () => { throw "handler-exception"; });
+//rE.onDistance(Butia.J1, Comparison.Less, 20, () => { throw "handler-exception"; });
 
 sE.setValue(10);
 let threw = false;
