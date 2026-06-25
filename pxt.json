@@ -12,9 +12,9 @@
         "src/core/connector.ts",
         "src/core/constants.ts",
         "src/core/event-monitor.ts",
+        "src/core/logger.ts",
         "src/core/motor-arbitrator.ts",
         "src/core/reactive-rule.ts",
-        "src/core/logger.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
         "src/hardware/button-sensor-butia.ts",
@@ -24,6 +24,10 @@
         "src/hardware/light-sensor-butia.ts",
         "src/main.ts",
         "src/robotdriver.ts",
+        "src/sim/sim-motor-driver.ts",
+        "src/sim/sim-robot.ts",
+        "src/sim/sim-sensors.ts",
+        "src/sim/sim-state.ts",
         "src/types/components.d.ts",
         "src/types/enums.d.ts",
         "src/types/robot.d.ts",
@@ -34,7 +38,8 @@
         "test/event-monitor.test.ts",
         "test/mock.test.ts",
         "test/robot.test.ts",
-        "test/sensor.test.ts"
+        "test/sensor.test.ts",
+        "test/sim-bridge.test.ts"
     ],
     "targetVersions": {
         "target": "8.0.21",

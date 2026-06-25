@@ -379,6 +379,7 @@ namespace Butia {
         // --- Getters ---
         motorLeft(): number { return this._motorLeft; }
         motorRight(): number { return this._motorRight; }
+        protected _getConnectorConfig(): IConnectorPin[] { return this._connectorConfig; }
 
         // --- Overridable stub ---
         start(): void {}
