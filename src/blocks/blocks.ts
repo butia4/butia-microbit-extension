@@ -117,8 +117,9 @@ namespace Butia {
     }
 
     //% blockId="butia_evt_light"
-    //% block="Cuando el sensor de luz en %connector sea %op %threshold" con prioridad %priority"
+    //% block="Cuando el sensor de luz en %connector sea %op %threshold con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% priority.defl=1 threshold.min=1 priority.max=5
     //% weight=60
     //% advanced=true
     export function onLight(
@@ -132,8 +133,9 @@ namespace Butia {
     }
 
     //% blockId="butia_evt_gray"
-    //% block="Cuando el sensor de grises en %connector sea %op %threshold" con prioridad %priority"
+    //% block="Cuando el sensor de grises en %connector sea %op %threshold con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% priority.defl=1 threshold.min=1 priority.max=5
     //% weight=55
     //% advanced=true
     export function onGray(
@@ -147,7 +149,8 @@ namespace Butia {
     }
 
     //% blockId="butia_evt_button"
-    //% block="Cuando se %state el botón en %connector" con prioridad %priority"
+    //% block="Cuando se %state el botón en %connector con prioridad %priority"
+    //% priority.defl=1 threshold.min=1 priority.max=5
     //% weight=70
     //% advanced=true
     export function onButton(

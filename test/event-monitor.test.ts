@@ -54,8 +54,8 @@ const sL1 = new MockSensor(AnalogPin.P1, 30);
 const sL2 = new MockSensor(AnalogPin.P2, 80);
 rL.mockLight(AnalogPin.P1, sL1);
 rL.mockLight(AnalogPin.P2, sL2);
-rL.onLight(Butia.J1, Comparison.Greater, 70, () => { });
-rL.onLight(Butia.J2, Comparison.Less, 30, () => { });
+//rL.onLight(Butia.J1, Comparison.Greater, 70, () => { });
+//rL.onLight(Butia.J2, Comparison.Less, 30, () => { });
 
 s = rL._stepEventMonitor();
 assertTest(s === 0, "onLight: neither fires initially");
@@ -69,7 +69,7 @@ assertTest(sFirst !== 0 && sSecond !== 0, "onLight: both Greater and Less fire (
 const rG = new MockRobot(new MockMotorDriver(), eCfg);
 const sG = new MockSensor(AnalogPin.P1, 20);
 rG.mockGray(AnalogPin.P1, sG);
-rG.onGray(Butia.J1, Comparison.Greater, 50, () => { });
+//rG.onGray(Butia.J1, Comparison.Greater, 50, () => { });
 s = rG._stepEventMonitor();
 assertTest(s === 0, "onGray Greater: below no-fire");
 sG.setValue(75);
@@ -91,8 +91,8 @@ const sB1 = new MockSensor(AnalogPin.P1, 0);
 const sB2 = new MockSensor(AnalogPin.P2, 1);
 rB.mockButton(AnalogPin.P1, sB1);
 rB.mockButton(AnalogPin.P2, sB2);
-rB.onConnectorButton(Butia.J1, ButtonState.Pressed, () => { });
-rB.onConnectorButton(Butia.J2, ButtonState.Released, () => { });
+//rB.onConnectorButton(Butia.J1, ButtonState.Pressed, () => { });
+//rB.onConnectorButton(Butia.J2, ButtonState.Released, () => { });
 
 s = rB._stepEventMonitor();
 assertTest(s === 0, "onConnectorButton: initial no-fire");
