@@ -44,6 +44,7 @@ namespace Butia {
         subId: number;
         evaluate: () => boolean;
         priority: number;
+        handler: () => void;
         //lastTriggered: boolean;
     }
 
@@ -57,12 +58,14 @@ namespace Butia {
         private _monitors: IMonitor[];
         private _started: boolean;  
         private _eventRaising: boolean;
-        private _lastPriorityEvent: number;
+        //private _lastPriorityEvent: number;
+        //private _lastTriggeredEvent: number;
         constructor() {
             this._monitors = [];
             this._started = false;
             this._eventRaising = false;
-            this._lastPriorityEvent = 0;
+            //this._lastPriorityEvent = 0;
+            //this._lastTriggeredEvent = 0;
         }
         setEventRaising(value: boolean): void {
             this._eventRaising = value;
@@ -81,19 +84,20 @@ namespace Butia {
         pollOnce(): number {
             // Returns the subId that fired this cycle, or 0 if none.
             if (this._eventRaising) return 0;
+            let subTriggered = [this._monitors[0]];
             for (const m of this._monitors) {
                 const triggered = m.evaluate();
-                if (triggered && m.priority >= this._lastPriorityEvent) {
-                    const sid = m.subId;
-                    this._eventRaising = true;  // prevent re-entrant event handling
-                    this._lastPriorityEvent = m.priority;
-                    control.raiseEvent(BUTIA_EVENT_ID, sid);
-                    //this._lastTriggeredEvent = sid;
-                    return sid;  // only one event per cycle, to avoid re-entrancy
+               
+                if (triggered && subTriggered[0].priority<=m.priority) {
+                    subTriggered[0] = m;
+
                 }
-                //m.lastTriggered = triggered;
             }
-            return 0;
+            this._eventRaising = true;
+            subTriggered[0].handler();
+            //control.raiseEvent(BUTIA_EVENT_ID, subTriggered[0].subId);
+
+            return subTriggered[0].subId;
         }
 
         protected _ensureStarted(): void {

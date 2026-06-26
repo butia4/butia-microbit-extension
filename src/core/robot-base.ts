@@ -188,16 +188,12 @@ namespace Butia {
                     if (d <= 0) return false;
                     return evalComparison(op, d, threshold);
                 },
-                priority
-                //lastTriggered: false
-            };
-            control.onEvent(BUTIA_EVENT_ID, subId, () => { 
-                try {
+                priority,
+                handler:() => { 
                     handler();
-                } finally {
                     this._eventMonitor.setEventRaising(false);
-                }
-            });
+                },
+            };
             this._eventMonitor.register(monitor);
         }
 
@@ -209,7 +205,11 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                priority
+                priority,
+                handler:() => { 
+                    handler();
+                    this._eventMonitor.setEventRaising(false);
+                }
                 //lastTriggered: false
             };
             control.onEvent(BUTIA_EVENT_ID, subId, () => {
@@ -230,7 +230,11 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                priority
+                priority,
+                handler:() => { 
+                    handler();
+                    this._eventMonitor.setEventRaising(false);
+                }
                 //lastTriggered: false
             };
             control.onEvent(BUTIA_EVENT_ID, subId, () => {
@@ -253,7 +257,11 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => sensor.read() === target,
-                priority
+                priority,
+                handler:() => { 
+                    handler();
+                    this._eventMonitor.setEventRaising(false);
+                }
                 //lastTriggered: false
             };
             control.onEvent(BUTIA_EVENT_ID, subId, () => {
