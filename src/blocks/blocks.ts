@@ -117,7 +117,7 @@ namespace Butia {
     }
 
     //% blockId="butia_evt_light"
-    //% block="Cuando el sensor de luz en %connector sea %op %threshold"
+    //% block="Cuando el sensor de luz en %connector sea %op %threshold" con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% weight=60
     //% advanced=true
@@ -125,13 +125,14 @@ namespace Butia {
         connector: Butia.Connector,
         op: Comparison,
         threshold: number,
+        priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, threshold, handler);
+        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, priority?priority:1,threshold, handler);
     }
 
     //% blockId="butia_evt_gray"
-    //% block="Cuando el sensor de grises en %connector sea %op %threshold"
+    //% block="Cuando el sensor de grises en %connector sea %op %threshold" con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% weight=55
     //% advanced=true
@@ -139,21 +140,23 @@ namespace Butia {
         connector: Butia.Connector,
         op: Comparison,
         threshold: number,
+        priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, handler);
+        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, priority?priority:1,threshold, handler);
     }
 
     //% blockId="butia_evt_button"
-    //% block="Cuando se %state el botón en %connector"
+    //% block="Cuando se %state el botón en %connector" con prioridad %priority"
     //% weight=70
     //% advanced=true
     export function onButton(
         state: ButtonState,
         connector: Butia.Connector,
+        priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, handler);
+        Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, priority?priority:1,handler);
     }
 
 
