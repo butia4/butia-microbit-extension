@@ -43,6 +43,8 @@ namespace Butia {
     export interface IMonitor {
         subId: number;
         evaluate: () => boolean;
+        priority: number;
+        handler: () => void;
         //lastTriggered: boolean;
     }
 
@@ -56,11 +58,13 @@ namespace Butia {
         private _monitors: IMonitor[];
         private _started: boolean;  
         private _eventRaising: boolean;
+        //private _lastPriorityEvent: number;
         //private _lastTriggeredEvent: number;
         constructor() {
             this._monitors = [];
             this._started = false;
             this._eventRaising = false;
+            //this._lastPriorityEvent = 0;
             //this._lastTriggeredEvent = 0;
         }
         setEventRaising(value: boolean): void {
@@ -80,18 +84,20 @@ namespace Butia {
         pollOnce(): number {
             // Returns the subId that fired this cycle, or 0 if none.
             if (this._eventRaising) return 0;
+            let bestMonitor: IMonitor = this._monitors[0];
+            let anyTriggered = false;
             for (const m of this._monitors) {
-                const triggered = m.evaluate();
-                if (triggered /*&& m.subId !== this._lastTriggeredEvent*/) {
-                    const sid = m.subId;
-                    this._eventRaising = true;  // prevent re-entrant event handling
-                    control.raiseEvent(BUTIA_EVENT_ID, sid);
-                    //this._lastTriggeredEvent = sid;
-                    return sid;  // only one event per cycle, to avoid re-entrancy
+                if (m.evaluate()) {
+                    if (!anyTriggered || bestMonitor.priority <= m.priority) {
+                        bestMonitor = m;
+                    }
+                    anyTriggered = true;
                 }
-                //m.lastTriggered = triggered;
             }
-            return 0;
+            if (!anyTriggered) return 0;
+            this._eventRaising = true;
+            bestMonitor.handler();
+            return bestMonitor.subId;
         }
 
         protected _ensureStarted(): void {

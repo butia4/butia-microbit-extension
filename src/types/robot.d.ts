@@ -18,10 +18,10 @@ interface IRobot {
     readGraySensor(connector: IConnector): number
     readLightSensor(connector: IConnector): number
     readButton(connector: IConnector): boolean
-    onDistance(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void
-    onLight(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void
-    onGray(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void
-    onConnectorButton(connector: IConnector, state: ButtonState, handler: () => void): void
+    onDistance(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
+    onLight(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
+    onGray(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
+    onConnectorButton(connector: IConnector, state: ButtonState, priority:number,handler: () => void): void
     motorLeft(): number
     motorRight(): number
 }

@@ -177,7 +177,7 @@ namespace Butia {
 
         // --- Events ---
         
-        onDistance(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+        onDistance(connector: IConnector, op: Comparison, threshold: number,priority:number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getDistanceSensor(pin);
             const subId = computeSubId(SENSOR_TYPE_DISTANCE, pin as number, comparisonToDir(op));
@@ -188,57 +188,48 @@ namespace Butia {
                     if (d <= 0) return false;
                     return evalComparison(op, d, threshold);
                 },
-                //lastTriggered: false
-            };
-            control.onEvent(BUTIA_EVENT_ID, subId, () => { 
-                try {
+                priority,
+                handler:() => { 
                     handler();
-                } finally {
                     this._eventMonitor.setEventRaising(false);
-                }
-            });
+                },
+            };
             this._eventMonitor.register(monitor);
         }
 
-        onLight(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+        onLight(connector: IConnector, op: Comparison, threshold: number,priority:number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getLightSensor(pin);
             const subId = computeSubId(SENSOR_TYPE_LIGHT, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                //lastTriggered: false
-            };
-            control.onEvent(BUTIA_EVENT_ID, subId, () => {
-                try {
+                priority,
+                handler:() => { 
                     handler();
-                } finally {
                     this._eventMonitor.setEventRaising(false);
                 }
-            });
+            };
             this._eventMonitor.register(monitor);
         }
 
-        onGray(connector: IConnector, op: Comparison, threshold: number, handler: () => void): void {
+        onGray(connector: IConnector, op: Comparison, threshold: number,priority:number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getGraySensor(pin);
             const subId = computeSubId(SENSOR_TYPE_GRAY, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
-                //lastTriggered: false
-            };
-            control.onEvent(BUTIA_EVENT_ID, subId, () => {
-                try {
+                priority,
+                handler:() => { 
                     handler();
-                } finally {
                     this._eventMonitor.setEventRaising(false);
                 }
-            });
+            };
             this._eventMonitor.register(monitor);
         }
 
-        onConnectorButton(connector: IConnector, state: ButtonState, handler: () => void): void {
+        onConnectorButton(connector: IConnector, state: ButtonState, priority:number,handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getButtonSensor(pin);
             const dir = state === ButtonState.Pressed ? DIR_GREATER_OR_PRESSED : DIR_LESS_OR_RELEASED;
@@ -247,15 +238,12 @@ namespace Butia {
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => sensor.read() === target,
-                //lastTriggered: false
-            };
-            control.onEvent(BUTIA_EVENT_ID, subId, () => {
-                try {
+                priority,
+                handler:() => { 
                     handler();
-                } finally {
                     this._eventMonitor.setEventRaising(false);
                 }
-            });
+            };
             this._eventMonitor.register(monitor);
         }
         
