@@ -129,7 +129,7 @@ namespace Butia {
         priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, priority?priority:1,threshold, handler);
+        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, threshold, priority?priority:1, handler);
     }
 
     //% blockId="butia_evt_gray"
@@ -145,7 +145,7 @@ namespace Butia {
         priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, priority?priority:1,threshold, handler);
+        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, priority?priority:1, handler);
     }
 
     //% blockId="butia_evt_button"

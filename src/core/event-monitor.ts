@@ -84,20 +84,20 @@ namespace Butia {
         pollOnce(): number {
             // Returns the subId that fired this cycle, or 0 if none.
             if (this._eventRaising) return 0;
-            let subTriggered = [this._monitors[0]];
+            let bestMonitor: IMonitor = this._monitors[0];
+            let anyTriggered = false;
             for (const m of this._monitors) {
-                const triggered = m.evaluate();
-               
-                if (triggered && subTriggered[0].priority<=m.priority) {
-                    subTriggered[0] = m;
-
+                if (m.evaluate()) {
+                    if (!anyTriggered || bestMonitor.priority <= m.priority) {
+                        bestMonitor = m;
+                    }
+                    anyTriggered = true;
                 }
             }
+            if (!anyTriggered) return 0;
             this._eventRaising = true;
-            subTriggered[0].handler();
-            //control.raiseEvent(BUTIA_EVENT_ID, subTriggered[0].subId);
-
-            return subTriggered[0].subId;
+            bestMonitor.handler();
+            return bestMonitor.subId;
         }
 
         protected _ensureStarted(): void {
