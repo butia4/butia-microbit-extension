@@ -2,7 +2,7 @@
 // is a no-op on hardware — control.simmessages.send is simulator-only.
 //% shim=TD_NOOP
 function _butiaSimSend(msg: string): void {
-    control.simmessages.send("butia", Buffer.fromUTF8(msg), false);
+    control.simmessages.send("butia4/butia-microbit-extension", Buffer.fromUTF8(msg), false);
 }
 
 // Builds the JSON state message sent from PXT to the botsim.
@@ -27,6 +27,8 @@ class SimMotorDriver implements IMotorDriver {
     init(): void {}
 
     setSpeed(left: number, right: number): void {
+        SimState.motorLeft = left;
+        SimState.motorRight = right;
         SimState.sensorTypeMap = this._getSensorTypes();
         const msg = buildButiaStateMessage(left, right, SimState.sensorTypeMap, SimState.runId);
         _butiaSimSend(msg);

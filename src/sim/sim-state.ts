@@ -2,11 +2,15 @@ namespace SimState {
     export let runId: string = "";
     export let sensorCache: { [connName: string]: number } = {};
     export let sensorTypeMap: { [connName: string]: string } = {};
+    export let motorLeft: number = 0;
+    export let motorRight: number = 0;
 
     export function reset(): void {
         runId = "";
         sensorCache = {};
         sensorTypeMap = {};
+        motorLeft = 0;
+        motorRight = 0;
     }
 }
 

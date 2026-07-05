@@ -8,13 +8,10 @@
     },
     "files": [
         "src/blocks/blocks.ts",
-        "src/core/arc-maneuver.ts",
         "src/core/connector.ts",
         "src/core/constants.ts",
         "src/core/event-monitor.ts",
         "src/core/logger.ts",
-        "src/core/motor-arbitrator.ts",
-        "src/core/reactive-rule.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
         "src/hardware/button-sensor-butia.ts",

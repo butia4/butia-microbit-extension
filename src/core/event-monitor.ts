@@ -43,7 +43,8 @@ namespace Butia {
     export interface IMonitor {
         subId: number;
         evaluate: () => boolean;
-        lastTriggered: boolean;
+        priority: number;
+        handler: () => void;
     }
 
     // Pure: used by both control.onEvent (handler side) and control.raiseEvent
@@ -54,76 +55,50 @@ namespace Butia {
 
     export class EventMonitor {
         private _monitors: IMonitor[];
-        private _reactiveRules: IReactiveRule[];
-        private _reactiveEnabled: boolean;
-        private _reactiveIntentHandler: ((intent: IMotorIntent) => void) | null;
         private _started: boolean;
-
+        private _eventRaising: boolean;
         constructor() {
             this._monitors = [];
-            this._reactiveRules = [];
-            this._reactiveEnabled = false;
-            this._reactiveIntentHandler = null;
             this._started = false;
+            this._eventRaising = false;
         }
 
         register(monitor: IMonitor): void {
             this._monitors.push(monitor);
             this._ensureStarted();
         }
-
-        setReactiveIntentHandler(handler: (intent: IMotorIntent) => void): void {
-            this._reactiveIntentHandler = handler;
-        }
-
-        registerReactiveRule(rule: IReactiveRule): void {
-            this._reactiveRules.push(rule);
-            this._reactiveEnabled = true;
-            this._ensureStarted();
-        }
-
-        disableReactive(): void {
-            for (const rule of this._reactiveRules) {
-                rule.reset();
-            }
-            this._reactiveRules = [];
-            this._reactiveEnabled = false;
-        }
-
-        isReactiveEnabled(): boolean {
-            return this._reactiveEnabled;
-        }
+        
 
         // Runs a single polling cycle synchronously. Returns the list of
         // subIds that fired this cycle so tests can assert rising-edge
         // behavior without depending on the PXT event scheduler. The
         // background loop ignores the return value.
-        pollOnce(): number[] {
-            const fired: number[] = [];
+        pollOnce(): number {
+            // Returns the subId that fired this cycle, or 0 if none.
+            if (this._eventRaising) return 0;
+            let bestMonitor: IMonitor = this._monitors[0];
+            let anyTriggered = false;
             for (const m of this._monitors) {
-                const triggered = m.evaluate();
-                if (triggered && !m.lastTriggered) {
-                    control.raiseEvent(BUTIA_EVENT_ID, m.subId);
-                    fired.push(m.subId);
-                }
-                m.lastTriggered = triggered;
-            }
-
-            if (this._reactiveEnabled && this._reactiveIntentHandler) {
-                const active: IReactiveRule[] = [];
-                for (const rule of this._reactiveRules) {
-                    if (rule.evaluate()) {
-                        //rule.tick();
-                        active.push(rule);
-                    } else {
-                        //rule.reset();
+                if (m.evaluate()) {
+                    if (!anyTriggered || bestMonitor.priority <= m.priority) {
+                        bestMonitor = m;
                     }
+                    anyTriggered = true;
                 }
-                const intent = arbitrate(active);
-                this._reactiveIntentHandler(intent);
             }
-
-            return fired;
+            if (!anyTriggered) return 0;
+            this._eventRaising = true;
+            try {
+                // Runs synchronously on this fiber (not via control.raiseEvent)
+                // so priority arbitration can guarantee only one handler runs
+                // at a time. A handler that blocks (e.g. a motor move with a
+                // duration) delays evaluation of every other monitor until it
+                // returns — keep event handlers short.
+                bestMonitor.handler();
+            } finally {
+                this._eventRaising = false;
+            }
+            return bestMonitor.subId;
         }
 
         protected _ensureStarted(): void {

@@ -11,10 +11,25 @@ interface SimSensorEntry {
 function _butiaSimInit(): void {
     SimState.runId = "" + Math.random();
     SimState.sensorCache = {};
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Buffer.toString() not resolvable in PXT type system inside TD_NOOP
-    control.simmessages.onReceived("butia", (data: any) => {
+    control.simmessages.onReceived("butia4/butia-microbit-extension", (data: Buffer) => {
         applyButiaSensorsMessage(data.toString());
     });
+    // Background loop: keeps the botsim iframe alive by sending state continuously,
+    // even when no motor blocks are active. Matches microbit-robot's sendSim() pattern.
+    control.inBackground(() => {
+        while (true) {
+            const msg = buildButiaStateMessage(SimState.motorLeft, SimState.motorRight, SimState.sensorTypeMap, SimState.runId);
+            _butiaSimSend(msg);
+            basic.pause(50);
+        }
+    });
+}
+
+// Swaps the hardware robot for ButiaSimRobot when running in the PXT simulator.
+// TD_NOOP ensures this is a no-op on physical hardware.
+//% shim=TD_NOOP
+function _registerButiaSimRobot(driver: Butia.RobotDriver): void {
+    driver._setSimRobot(new Butia.ButiaSimRobot());
 }
 
 namespace Butia {
