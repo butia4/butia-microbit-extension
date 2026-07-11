@@ -173,6 +173,7 @@ export class RangeSensor {
             this._targetLabel,
             botPos,
             botAngle,
+            "wave",
         )
     }
 }

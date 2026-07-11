@@ -87,6 +87,7 @@ export class SurfaceSensor implements DistanceSensor {
             this._targetLabel,
             this.bot.pos,
             this.bot.angle,
+            "target",
         )
     }
 

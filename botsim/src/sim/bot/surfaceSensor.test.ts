@@ -117,7 +117,7 @@ describe("SurfaceSensor", () => {
         expect(noAngleSensor.read()).toBe(SURFACE_ON_VALUE)
     })
 
-    it("always builds a beam mesh, using the default angle when spec.angle is unset", async () => {
+    it("always builds a beam mesh, but never shows it — surface sensors only ever show the ping", async () => {
         vi.resetModules()
         const { SurfaceSensor } = await import("./surfaceSensor")
 
@@ -130,6 +130,6 @@ describe("SurfaceSensor", () => {
         sensor.read()
         const waveLabel = [...shapes.keys()].find(k => k.startsWith("surface.wave."))
         expect(waveLabel).toBeDefined()
-        expect(shapes.get(waveLabel as string)?.visible).toBe(true) // used=true once read() runs, regardless of detection
+        expect(shapes.get(waveLabel as string)?.visible).toBe(false) // cone/wave is never shown for surface sensors, only the ping
     })
 })

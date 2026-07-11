@@ -15,13 +15,19 @@ export const GRAY_MAX_RANGE = 5 // cm, matches SURFACE_ON_VALUE
 
 const PING_RADIUS = 3 // cm
 
+// Nudges only the wave/cone mesh's anchor a bit to the right of the sensor's
+// actual mount point (`pos`, from sensorMounts), independent of it — the
+// ping/target always tracks `pos` live (recomputed every frame), so tuning
+// sensorMounts alone can't reposition the cone. Tune this value directly.
+const WAVE_OFFSET_X = 2.5 // cm
+
 // Wave/ping color pairs per sensor type — kept together so they're easy to
 // compare/tune for visual distinguishability.
 export const SONAR_COLORS: Record<"range" | "gray" | "color" | "surface", { wave: Rgb; ping: Rgb }> = {
-    range:   { wave: { r: 0x68, g: 0xae, b: 0xd4 }, ping: { r: 0xff, g: 0x3f, b: 0x3f } },
-    gray:    { wave: { r: 0xb0, g: 0xb0, b: 0xb0 }, ping: { r: 0xff, g: 0x3f, b: 0x3f } },
-    color:   { wave: { r: 0xf2, g: 0xa6, b: 0x5c }, ping: { r: 0xff, g: 0x3f, b: 0x3f } },
-    surface: { wave: { r: 0x6c, g: 0xd6, b: 0x8a }, ping: { r: 0xff, g: 0x3f, b: 0x3f } },
+    range:   { wave: { r: 0x68, g: 0xae, b: 0xd4 }, ping: { r: 0x68, g: 0xae, b: 0xd4 } },
+    gray:    { wave: { r: 0xb0, g: 0xb0, b: 0xb0 }, ping: { r: 0xb0, g: 0xb0, b: 0xb0 } },
+    color:   { wave: { r: 0xf2, g: 0xa6, b: 0x5c }, ping: { r: 0xf2, g: 0xa6, b: 0x5c } },
+    surface: { wave: { r: 0x6c, g: 0xd6, b: 0x8a }, ping: { r: 0x6c, g: 0xd6, b: 0x8a } },
 }
 
 // Ported near-verbatim from microbit-robot/botsim/src/sim/bot/rangeSensor.ts
@@ -119,7 +125,7 @@ export function buildSonarVisuals(
         ...defaultEntityShape(),
         ...defaultPolygonShape(),
         label: waveLabel,
-        offset: pos,
+        offset: { x: pos.x + WAVE_OFFSET_X, y: pos.y },
         verts,
         roles: [],
         physics: { ...defaultShapePhysics(), sensor: true, density: 0 },
@@ -166,6 +172,12 @@ export function buildSonarVisuals(
 /**
  * Toggles the wave/ping meshes' visibility and positions the ping at the
  * nearest detected point, mirroring RangeSensor's original updateVisuals().
+ *
+ * `mode` picks which of the two visuals is allowed to show — the wave (cone)
+ * and the target (ping) are never both visible at once:
+ *   - "both": either can show (gray/color sensors) — original behavior.
+ *   - "wave": only the cone shows (forward-facing RangeSensor) — no ping.
+ *   - "target": only the ping shows (downward-facing SurfaceSensor) — no cone.
  */
 export function updateSonarVisuals(
     shapes: RenderObject["shapes"] | undefined,
@@ -175,15 +187,16 @@ export function updateSonarVisuals(
     targetLabel: string,
     botPos: Vec2Like,
     botAngle: number,
+    mode: "both" | "wave" | "target" = "both",
 ): void {
     if (!shapes) return // e.g. in unit tests, where entity is a lightweight mock
 
     const wave = shapes.get(waveLabel)
-    if (wave) wave.visible = used
+    if (wave) wave.visible = used && mode !== "target"
 
     const target = shapes.get(targetLabel)
     if (target) {
-        target.visible = used && !!nearest
+        target.visible = used && !!nearest && mode !== "wave"
         if (nearest) {
             const local = Vec2.scale(Vec2.untransformDeg(nearest, botPos, botAngle), RENDER_SCALE)
             target.position.set(local.x, local.y)
