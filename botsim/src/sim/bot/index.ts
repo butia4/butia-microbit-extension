@@ -7,7 +7,8 @@ import { Vec2Like } from "../../types/vec2"
 import { Chassis } from "./chassis"
 import { Wheel } from "./wheel"
 import { GraySensor } from "./graySensor"
-import { RangeSensor, MAX_RANGE } from "./rangeSensor"
+import { RangeSensor, MAX_RANGE, DistanceSensor } from "./rangeSensor"
+import { SurfaceSensor } from "./surfaceSensor"
 
 export type SpawnSpec = { pos: Vec2Like; angle: number }
 
@@ -25,7 +26,7 @@ export class Bot {
     private chassis: Chassis
     private wheels = new Map<"left" | "right", Wheel>()
     private graySensors = new Map<ConnectorSlot, GraySensor>()
-    private rangeSensors = new Map<ConnectorSlot, RangeSensor>()
+    private rangeSensors = new Map<ConnectorSlot, DistanceSensor>()
     private activeSensorMap: Record<string, SensorType> = {}
 
     public get pos(): Vec2Like { return this.entity.physicsObj.pos }
@@ -38,7 +39,8 @@ export class Bot {
             physics: { mouseJoint: { getBodyB(): Planck.Body | undefined } | undefined }
         },
         spawn: SpawnSpec,
-        public spec: BotSpec
+        public spec: BotSpec,
+        sensorModes: Partial<Record<ConnectorSlot, "forward" | "surface">> = {}
     ) {
         const chassisShape = Chassis.makeShapeSpec(spec)
         const wheelShapes = spec.wheels.map(ws => Wheel.makeShapeSpec(spec, ws))
@@ -63,10 +65,16 @@ export class Bot {
                 this as unknown as any,
                 { pos: conn.pos, name: conn.name }
             ))
-            this.rangeSensors.set(conn.name, new RangeSensor(
-                this as unknown as any,
-                { pos: conn.pos, beamAngle: 30, maxRange: MAX_RANGE }
-            ))
+            const mode = sensorModes[conn.name] ?? "forward"
+            this.rangeSensors.set(conn.name, mode === "surface"
+                ? new SurfaceSensor(
+                    this as unknown as any,
+                    { pos: conn.pos, name: conn.name }
+                )
+                : new RangeSensor(
+                    this as unknown as any,
+                    { pos: conn.pos, beamAngle: 30, maxRange: MAX_RANGE }
+                ))
         }
     }
 

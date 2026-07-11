@@ -9,17 +9,23 @@ interface SimSensorEntry {
 // type issues while still working correctly in the sim's JS runtime.
 //% shim=TD_NOOP
 function _butiaSimInit(): void {
+    SimState.reset();
     SimState.runId = "" + Math.random();
-    SimState.sensorCache = {};
     control.simmessages.onReceived("butia4/butia-microbit-extension", (data: Buffer) => {
         applyButiaSensorsMessage(data.toString());
     });
     // Background loop: keeps the botsim iframe alive by sending state continuously,
     // even when no motor blocks are active. Matches microbit-robot's sendSim() pattern.
+    // Also resends mapselect every tick (once one is selected) instead of just
+    // once, since a one-shot send can race the botsim iframe's mount and be
+    // silently dropped by postMessage — see sim-state.ts's selectedMapId comment.
     control.inBackground(() => {
         while (true) {
             const msg = buildButiaStateMessage(SimState.motorLeft, SimState.motorRight, SimState.sensorTypeMap, SimState.runId);
             _butiaSimSend(msg);
+            if (SimState.selectedMapId !== 0) {
+                _butiaSimSend(buildButiaMapSelectMessage(SimState.selectedMapId));
+            }
             basic.pause(50);
         }
     });

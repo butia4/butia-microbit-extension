@@ -98,17 +98,21 @@ const msg15 = JSON.parse(buildButiaMapSelectMessage(1));
 assertTest(msg15.type === "mapselect", "sim-mapselect-msg-type");
 assertTest(msg15.id === 1, "sim-mapselect-msg-id");
 
-// TASK-T16: _butiaSimSelectMap is idempotent — only the first call sends
+// TASK-T16: _butiaSimSelectMap is idempotent — only the first call records the id
 SimState.reset();
 assertTest(!SimState.mapSelected, "sim-mapselect-initial-unset");
+assertTest(SimState.selectedMapId === 0, "sim-mapselect-initial-id-unset");
 _butiaSimSelectMap(1);
 assertTest(SimState.mapSelected, "sim-mapselect-sets-flag");
-_butiaSimSelectMap(1);
-assertTest(SimState.mapSelected, "sim-mapselect-repeat-noop");
+assertTest(SimState.selectedMapId === 1, "sim-mapselect-records-id");
+_butiaSimSelectMap(2);
+assertTest(SimState.selectedMapId === 1, "sim-mapselect-repeat-noop");
 
-// TASK-T17: SimState.reset() clears mapSelected
+// TASK-T17: SimState.reset() clears mapSelected and selectedMapId
 SimState.mapSelected = true;
+SimState.selectedMapId = 1;
 SimState.reset();
 assertTest(!SimState.mapSelected, "sim-state-reset-mapselected");
+assertTest(SimState.selectedMapId === 0, "sim-state-reset-selected-map-id");
 
 basic.showString("ALL PASS sim-bridge");

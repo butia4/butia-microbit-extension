@@ -5,6 +5,9 @@ export default defineConfig({
     plugins: [react()],
     base: "./",
     server: { port: 5173 },
+    // Single-bundle iframe app (physics engine + React) legitimately exceeds
+    // the default 500kB heuristic — code-splitting isn't warranted here.
+    build: { chunkSizeWarningLimit: 1000 },
     test: {
         environment: "jsdom",
         globals: true,

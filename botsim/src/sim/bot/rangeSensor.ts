@@ -13,6 +13,13 @@ import { addShaderProgram, BasicVertexShader, CommonFragmentShaderGlobals, creat
 
 export const MAX_RANGE = 400 // cm
 
+// Shared read interface so `Bot` can hold either a `RangeSensor` (cone-raycast)
+// or a `SurfaceSensor` (point-overlap) behind one map type without casts.
+export interface DistanceSensor {
+    read(): number
+    readonly value: number
+}
+
 const waveColor = { r: 0x68, g: 0xae, b: 0xd4 }
 const pingColor = { r: 0xff, g: 0x3f, b: 0x3f }
 const pingRadius = 3 // cm

@@ -35,4 +35,6 @@ declare const enum MotorSide {
 declare const enum SimMap {
     //% block="Seguidor de línea"
     SeguidorDeLinea = 1,
+    //% block="Mesa"
+    Mesa = 2,
 }

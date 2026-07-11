@@ -1,12 +1,12 @@
-// Sends a mapselect message to the botsim via simmessages, once per run.
-// TD_NOOP so the call is a no-op on hardware — control.simmessages.send is
-// simulator-only. Idempotent: only the first call sends a message.
+// Records the selected map for the run, once. TD_NOOP so the call is a
+// no-op on hardware. The actual mapselect message is sent (and resent) by
+// the background loop in _butiaSimInit — see sim-state.ts's selectedMapId
+// comment for why a one-shot send isn't reliable.
 //% shim=TD_NOOP
 function _butiaSimSelectMap(id: number): void {
     if (SimState.mapSelected) return;
     SimState.mapSelected = true;
-    const msg = buildButiaMapSelectMessage(id);
-    _butiaSimSend(msg);
+    SimState.selectedMapId = id;
 }
 
 // Builds the JSON mapselect message sent from PXT to the botsim.
