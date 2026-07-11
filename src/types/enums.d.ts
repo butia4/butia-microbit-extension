@@ -1,7 +1,7 @@
 declare const enum TurnDirection {
-    //% block="derecha"
-    Left = 0,
     //% block="izquierda"
+    Left = 0,
+    //% block="derecha"
     Right = 1,
 }
 
