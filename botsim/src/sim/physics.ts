@@ -33,7 +33,7 @@ export class PhysicsObject {
 
     public get forward(): Vec2Like {
         const angle = this.body.getAngle()
-        return { x: -Math.sin(angle), y: -Math.cos(angle) }
+        return { x: Math.sin(angle), y: -Math.cos(angle) }
     }
 
     constructor(private world: Planck.World, spec: EntitySpec) {
