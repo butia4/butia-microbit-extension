@@ -13,7 +13,7 @@ describe("resolveMap", () => {
         const map = resolveMap(2)
         expect(map).toBe(TABLE_MAP)
         expect(map?.id).toBe(2)
-        expect(map?.sensorModes).toEqual({ J1: "surface", J2: "surface" })
+        expect(map?.sensorModes).toEqual({ left: "surface", right: "surface" })
     })
 
     it("returns undefined for an unregistered id", () => {

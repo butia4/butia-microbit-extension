@@ -33,7 +33,7 @@ describe("ColorSensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
         const value = sensor.read()
         expect(value).toBe(0)
     })
@@ -46,7 +46,7 @@ describe("ColorSensor", () => {
             getUserData: () => ({ roles: ["follow-line"] }),
         }
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J2.color" }) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "left.color" }) }),
             getFixtureB: () => followLineFixture,
             next: null,
         }
@@ -56,7 +56,7 @@ describe("ColorSensor", () => {
                 physicsObj: {
                     body: {
                         getContactList: () => ({ contact, next: null }),
-                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.color" }) })),
+                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "left.color" }) })),
                     },
                 },
             },
@@ -64,8 +64,8 @@ describe("ColorSensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
-        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.color"
+        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.color"
         const value = sensor.read()
         expect(value).toBe(1023)
     })
@@ -78,7 +78,7 @@ describe("ColorSensor", () => {
             getUserData: () => ({ roles: ["follow-line"] }),
         }
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J2.color" }) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "left.color" }) }),
             getFixtureB: () => followLineFixture,
             next: null,
         }
@@ -87,7 +87,7 @@ describe("ColorSensor", () => {
                 physicsObj: {
                     body: {
                         getContactList: () => ({ contact, next: null }),
-                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.color" }) })),
+                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "left.color" }) })),
                     },
                 },
             },
@@ -95,10 +95,10 @@ describe("ColorSensor", () => {
             angle: 0,
         } as unknown as any
 
-        const noAngleSensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
-        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.color"
-        const angleSensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2", angle: 45 })
-        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.color"
+        const noAngleSensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.color"
+        const angleSensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left", angle: 45 })
+        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.color"
 
         expect(noAngleSensor.read()).toBe(angleSensor.read())
         expect(noAngleSensor.read()).toBe(1023)
@@ -123,7 +123,7 @@ describe("ColorSensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
         expect(shapes.size).toBe(2) // wave + target meshes always built
 
         sensor.read()

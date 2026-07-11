@@ -54,11 +54,10 @@ const baseSpec: BotSpec = {
     mass: 500,
     chassis: { shape: "circle", radius: 5 },
     wheels: [],
-    connectors: [
-        { name: "J1", pos: { x: 0, y: -5 } },
-        { name: "J2", pos: { x: 0, y: 5 } },
-        { name: "J3", pos: { x: 5, y: 0 } },
-    ],
+    sensorMounts: {
+        left: { pos: { x: -3, y: -5 } },
+        right: { pos: { x: 3, y: -5 } },
+    },
 }
 
 function makeMockSim() {
@@ -79,7 +78,7 @@ function makeMockSim() {
 }
 
 describe("Bot sensor construction", () => {
-    it("falls back to RangeSensor for every connector when sensorModes is absent (DEFAULT_MAP regression)", async () => {
+    it("exposes exactly 2 mount positions (left, right), each pre-built with a RangeSensor when sensorModes is absent (DEFAULT_MAP regression)", async () => {
         const { Bot } = await import("./index")
         const { RangeSensor } = await import("./rangeSensor")
         const { SurfaceSensor } = await import("./surfaceSensor")
@@ -87,13 +86,14 @@ describe("Bot sensor construction", () => {
         const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
         const rangeSensors = (bot as unknown as { rangeSensors: Map<string, unknown> }).rangeSensors
 
-        for (const name of ["J1", "J2", "J3"]) {
-            expect(rangeSensors.get(name)).toBeInstanceOf(RangeSensor)
-            expect(rangeSensors.get(name)).not.toBeInstanceOf(SurfaceSensor)
+        expect([...rangeSensors.keys()].sort()).toEqual(["left", "right"])
+        for (const side of ["left", "right"]) {
+            expect(rangeSensors.get(side)).toBeInstanceOf(RangeSensor)
+            expect(rangeSensors.get(side)).not.toBeInstanceOf(SurfaceSensor)
         }
     })
 
-    it("branches per-connector on a mixed sensorModes map", async () => {
+    it("branches per-mount on a mixed sensorModes map", async () => {
         const { Bot } = await import("./index")
         const { RangeSensor } = await import("./rangeSensor")
         const { SurfaceSensor } = await import("./surfaceSensor")
@@ -102,19 +102,19 @@ describe("Bot sensor construction", () => {
             makeMockSim(),
             { pos: { x: 45, y: 45 }, angle: 0 },
             baseSpec,
-            { J1: "surface" }
+            { left: "surface" }
         )
         const rangeSensors = (bot as unknown as { rangeSensors: Map<string, unknown> }).rangeSensors
 
-        expect(rangeSensors.get("J1")).toBeInstanceOf(SurfaceSensor)
-        expect(rangeSensors.get("J2")).toBeInstanceOf(RangeSensor)
-        expect(rangeSensors.get("J3")).toBeInstanceOf(RangeSensor)
+        expect(rangeSensors.get("left")).toBeInstanceOf(SurfaceSensor)
+        expect(rangeSensors.get("right")).toBeInstanceOf(RangeSensor)
     })
 
-    it("routes \"light\" sensorType reads to colorSensors, not graySensors", async () => {
+    it("routes \"light\" sensorType reads to colorSensors, not graySensors, resolving connName -> mount via portAssignment", async () => {
         const { Bot } = await import("./index")
 
         const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
+        bot.setPortAssignment("J1", "J2")
         bot.setSensorMap({ J1: "light", J2: "gray" })
 
         const result = bot.readSensors()
@@ -123,5 +123,18 @@ describe("Bot sensor construction", () => {
         // values prove there's no cross-routing between the two maps.
         expect(result.J1).toBe(222)
         expect(result.J2).toBe(111)
+    })
+
+    it("an unassigned J-port reads as disconnected (MAX_RANGE), via the existing miss-path fallback", async () => {
+        const { Bot } = await import("./index")
+        const { MAX_RANGE } = await import("./rangeSensor")
+
+        const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
+        bot.setPortAssignment("J1", "J2")
+        bot.setSensorMap({ J3: "distance" })
+
+        const result = bot.readSensors()
+
+        expect(result.J3).toBe(MAX_RANGE)
     })
 })

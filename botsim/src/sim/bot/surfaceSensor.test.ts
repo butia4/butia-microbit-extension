@@ -39,7 +39,7 @@ describe("SurfaceSensor", () => {
         const { MAX_RANGE } = await import("./rangeSensor")
 
         const mockBot = makeMockBot(0, null)
-        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J1" })
+        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
         expect(sensor.read()).toBe(MAX_RANGE)
     })
 
@@ -51,14 +51,14 @@ describe("SurfaceSensor", () => {
             getUserData: () => ({ roles: ["table-surface"] }),
         }
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J1.surface" }) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "left.surface" }) }),
             getFixtureB: () => tableFixture,
             next: null,
         }
 
         const mockBot = makeMockBot(0, { contact, next: null })
-        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J1" })
-        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J1.surface"
+        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
 
         expect(sensor.read()).toBe(SURFACE_ON_VALUE)
     })
@@ -71,15 +71,15 @@ describe("SurfaceSensor", () => {
             getUserData: () => ({ roles: ["table-surface"] }),
         }
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J1.surface" }) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "left.surface" }) }),
             getFixtureB: () => tableFixture,
             next: null,
         }
 
         for (const angle of [0, 45, 90, 180, 270]) {
             const mockBot = makeMockBot(angle, { contact, next: null })
-            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J1" })
-            ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J1.surface"
+            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+            ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
             expect(sensor.read()).toBe(SURFACE_ON_VALUE)
         }
     })
@@ -91,7 +91,7 @@ describe("SurfaceSensor", () => {
 
         for (const angle of [0, 45, 90, 180, 270]) {
             const mockBot = makeMockBot(angle, null)
-            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J1" })
+            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
             expect(sensor.read()).toBe(MAX_RANGE)
         }
     })
@@ -102,16 +102,16 @@ describe("SurfaceSensor", () => {
 
         const tableFixture = { getUserData: () => ({ roles: ["table-surface"] }) }
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J1.surface" }) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "left.surface" }) }),
             getFixtureB: () => tableFixture,
             next: null,
         }
 
         const mockBot = makeMockBot(0, { contact, next: null })
-        const noAngleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J1" })
-        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J1.surface"
-        const angleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J1", angle: 45 })
-        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J1.surface"
+        const noAngleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
+        const angleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left", angle: 45 })
+        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
 
         expect(noAngleSensor.read()).toBe(angleSensor.read())
         expect(noAngleSensor.read()).toBe(SURFACE_ON_VALUE)
@@ -124,7 +124,7 @@ describe("SurfaceSensor", () => {
         const { renderObj, shapes } = makeMockRenderObj()
         const mockBot = makeMockBot(0, null, renderObj)
 
-        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J1" })
+        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
         expect(shapes.size).toBe(2) // wave + target meshes always built
 
         sensor.read()

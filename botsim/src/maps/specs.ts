@@ -1,6 +1,6 @@
 import { Vec2Like } from "../types/vec2"
 import { EntitySpec } from "../sim/specs"
-import { ConnectorSlot } from "../bots/specs"
+import { MountSide } from "../bots/specs"
 
 export type SpawnSpec = { pos: Vec2Like; angle: number }
 
@@ -12,8 +12,10 @@ export type MapSpec = {
     color: string
     spawns: SpawnSpec[]
     entities: EntitySpec[]
-    // Optional per-connector sensor mode override. Absent connectors (or an
-    // absent field entirely) default to "forward" (existing cone-raycast
-    // behavior) — see Bot's constructor.
-    sensorModes?: Partial<Record<ConnectorSlot, "forward" | "surface">>
+    // Optional per-mount sensor mode override, keyed by physical mount
+    // (left/right) — not by J-port. The mode follows whichever J-port is
+    // currently wired to that mount for the run. Absent mounts (or an absent
+    // field entirely) default to "forward" (existing cone-raycast behavior)
+    // — see Bot's constructor.
+    sensorModes?: Partial<Record<MountSide, "forward" | "surface">>
 }

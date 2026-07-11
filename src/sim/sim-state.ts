@@ -10,6 +10,10 @@ namespace SimState {
     // of being sent once, since a one-shot send can race the botsim iframe's
     // mount and get silently dropped by postMessage (no queue/replay).
     export let selectedMapId: number = 0;
+    // "" = unset sentinel. Set once (alongside selectedMapId) by
+    // _butiaSimSelectMap and resent every tick by the same background loop.
+    export let selectedLeftPort: string = "";
+    export let selectedRightPort: string = "";
 
     export function reset(): void {
         runId = "";
@@ -19,6 +23,8 @@ namespace SimState {
         motorRight = 0;
         mapSelected = false;
         selectedMapId = 0;
+        selectedLeftPort = "";
+        selectedRightPort = "";
     }
 }
 

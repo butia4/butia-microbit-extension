@@ -33,7 +33,7 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
         const value = sensor.read()
         expect(value).toBe(0)
     })
@@ -49,7 +49,7 @@ describe("GraySensor", () => {
         }
 
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J2.sensor" }), getBody: () => ({}) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "left.sensor" }), getBody: () => ({}) }),
             getFixtureB: () => followLineFixture,
             next: null,
         }
@@ -59,7 +59,7 @@ describe("GraySensor", () => {
                 physicsObj: {
                     body: {
                         getContactList: () => ({ contact, next: null }),
-                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.sensor" }) })),
+                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "left.sensor" }) })),
                     },
                 },
             },
@@ -67,9 +67,9 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
         // Manually set the fixture label so contact matching works
-        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.sensor"
+        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.sensor"
         const value = sensor.read()
         expect(value).toBe(1023)
     })
@@ -82,7 +82,7 @@ describe("GraySensor", () => {
             getUserData: () => ({ roles: ["follow-line"] }),
         }
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J2.sensor" }) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "left.sensor" }) }),
             getFixtureB: () => followLineFixture,
             next: null,
         }
@@ -91,7 +91,7 @@ describe("GraySensor", () => {
                 physicsObj: {
                     body: {
                         getContactList: () => ({ contact, next: null }),
-                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.sensor" }) })),
+                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "left.sensor" }) })),
                     },
                 },
             },
@@ -99,10 +99,10 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const noAngleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
-        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.sensor"
-        const angleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2", angle: 45 })
-        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.sensor"
+        const noAngleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.sensor"
+        const angleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left", angle: 45 })
+        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.sensor"
 
         expect(noAngleSensor.read()).toBe(angleSensor.read())
         expect(noAngleSensor.read()).toBe(1023)
@@ -127,7 +127,7 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
         expect(shapes.size).toBe(2) // wave + target meshes always built
 
         sensor.read()

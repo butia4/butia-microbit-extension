@@ -7,6 +7,7 @@ import { BUTIA_BOT_SPEC } from "./bots/butiaBotSpec"
 import { init as initMakeCode, sendSensors } from "./services/makecodeService"
 import { ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
 import { resolveMap } from "./maps/registry"
+import { ConnectorSlot } from "./bots/specs"
 
 let currRunId: string | undefined
 
@@ -68,7 +69,7 @@ export function App() {
             // clean Simulation slate.
             armedRef.current = true
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC)
+            sim.spawnBot(BUTIA_BOT_SPEC, undefined, msg.leftPort as ConnectorSlot, msg.rightPort as ConnectorSlot)
             sim.start()
             setArmed(true)
         }

@@ -8,7 +8,7 @@ interface SimSensorEntry {
 // message handler. Using `any` for the data parameter avoids Buffer.toString()
 // type issues while still working correctly in the sim's JS runtime.
 //% shim=TD_NOOP
-function _butiaSimInit(): void {
+function _butiaSimInit(getSensorTypes: () => { [connName: string]: string }): void {
     SimState.reset();
     SimState.runId = "" + Math.random();
     control.simmessages.onReceived("butia4/butia-microbit-extension", (data: Buffer) => {
@@ -19,12 +19,20 @@ function _butiaSimInit(): void {
     // Also resends mapselect every tick (once one is selected) instead of just
     // once, since a one-shot send can race the botsim iframe's mount and be
     // silently dropped by postMessage — see sim-state.ts's selectedMapId comment.
+    //
+    // sensorTypeMap is rebuilt here every tick (not just inside
+    // SimMotorDriver.setSpeed()) to avoid a startup deadlock: a program that
+    // only registers onDistance/onGray/onLight handlers — and never calls an
+    // unconditional motor command — would otherwise never send its active
+    // sensors to botsim, so onDistance's `read() <= 0` guard would never see
+    // a real value and the handler would never fire.
     control.inBackground(() => {
         while (true) {
+            SimState.sensorTypeMap = getSensorTypes();
             const msg = buildButiaStateMessage(SimState.motorLeft, SimState.motorRight, SimState.sensorTypeMap, SimState.runId);
             _butiaSimSend(msg);
             if (SimState.selectedMapId !== 0) {
-                _butiaSimSend(buildButiaMapSelectMessage(SimState.selectedMapId));
+                _butiaSimSend(buildButiaMapSelectMessage(SimState.selectedMapId, SimState.selectedLeftPort, SimState.selectedRightPort));
             }
             basic.pause(50);
         }
@@ -63,7 +71,7 @@ namespace Butia {
         }
 
         start(): void {
-            _butiaSimInit();
+            _butiaSimInit(() => this._buildSensorTypeMap());
             super.start();
         }
 

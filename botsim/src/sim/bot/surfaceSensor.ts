@@ -1,5 +1,5 @@
 import Planck from "planck-js"
-import { ConnectorSensorSpec } from "../../bots/specs"
+import { MountSensorSpec } from "../../bots/specs"
 import { Vec2 } from "../../types/vec2"
 import { nextId } from "../../util"
 import { defaultShapePhysics, EntityCircleShapeSpec, defaultCircleShape, defaultEntityShape, defaultColorBrush } from "../specs"
@@ -30,7 +30,7 @@ export class SurfaceSensor implements DistanceSensor {
 
     public get value(): number { return this._value }
 
-    constructor(private bot: BotRef, private spec: ConnectorSensorSpec) {
+    constructor(private bot: BotRef, private spec: MountSensorSpec) {
         const id = nextId()
         this._fixtureLabel = spec.name + ".surface." + id
         this._waveLabel = "surface.wave." + id

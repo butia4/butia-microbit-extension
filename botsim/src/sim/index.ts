@@ -3,7 +3,7 @@ import Renderer from "./renderer"
 import { Entity } from "./entity"
 import { EntitySpec, defaultStaticPhysics, defaultShapePhysics, defaultColorBrush } from "./specs"
 import { MapSpec } from "../maps/specs"
-import { BotSpec } from "../bots/specs"
+import { BotSpec, ConnectorSlot } from "../bots/specs"
 import { Bot, SpawnSpec } from "./bot"
 
 export class Simulation {
@@ -15,6 +15,12 @@ export class Simulation {
     private _entities: Entity[] = []
     private _bot: Bot | null = null
     private _map: MapSpec | null = null
+    // Persists the last-known left/right port assignment across a mid-run
+    // reset() (new state.id): the run keeps the SAME assignment it armed
+    // with, it is not re-negotiated. This is about surviving a reset, not
+    // enabling live reassignment — reset() reuses these, it never accepts
+    // new ones.
+    private _lastPorts: { left: ConnectorSlot; right: ConnectorSlot } | null = null
     private lastTime = 0
     private lastPhysicsTime = 0
     private _lastMousePos: { x: number; y: number } = { x: 0, y: 0 }
@@ -84,13 +90,33 @@ export class Simulation {
         }
     }
 
-    public spawnBot(spec: BotSpec, spawn?: SpawnSpec): Bot {
+    public spawnBot(spec: BotSpec, spawn?: SpawnSpec, leftPort?: ConnectorSlot, rightPort?: ConnectorSlot): Bot {
         if (this._bot) {
             this._bot.destroy()
             this._bot = null
         }
         const spawnPt = spawn ?? (this._map?.spawns[0] ?? { pos: { x: 45, y: 45 }, angle: 0 })
         this._bot = new Bot(this, spawnPt, spec, this._map?.sensorModes ?? {})
+        if (leftPort && rightPort) {
+            this._lastPorts = { left: leftPort, right: rightPort }
+        }
+        if (this._lastPorts) {
+            this._bot.setPortAssignment(this._lastPorts.left, this._lastPorts.right)
+        }
+        // Planck only populates Fixture contacts (used by GraySensor/
+        // ColorSensor/SurfaceSensor's overlap detection) after at least one
+        // world.step() — without this, the very first readSensors() call
+        // right after a (re)spawn sees every contact-based sensor as
+        // "disconnected" (MAX_RANGE/0), even when the robot is already
+        // spawned on top of e.g. the table surface. A zero-duration step
+        // runs collision detection without advancing time/position, so
+        // contacts settle before any sensor is ever read. This mattered in
+        // practice: the extension's onDistance handlers can call motor
+        // blocks with an explicit duration, which block its polling fiber
+        // for that whole duration — so a single spurious "disconnected"
+        // read right after spawn could lock in a wrong-direction move for
+        // seconds instead of self-correcting on the next poll.
+        this._physics.update(0)
         return this._bot
     }
 

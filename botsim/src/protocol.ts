@@ -17,6 +17,8 @@ export interface ButiaSensorsMsg {
 export interface ButiaMapSelectMsg {
     type: "mapselect"
     id: number
+    leftPort: string
+    rightPort: string
 }
 
 export function decodePacket(data: unknown): ButiaStateMsg | ButiaMapSelectMsg | null {
