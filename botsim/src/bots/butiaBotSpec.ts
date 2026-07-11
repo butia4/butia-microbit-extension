@@ -10,9 +10,9 @@ export const BUTIA_BOT_SPEC: BotSpec = {
         cornerRadius: 1.2, // cm
     },
     wheels: toWheels({
-        separation: 14, // cm between inner wheel edges — placeholder
-        diameter: 6.5,  // cm
-        width: 2,       // cm
+        separation: 10,  // cm between inner wheel edges — placeholder
+        diameter: 4,    // cm
+        width: 1.2,     // cm
         y: 2,           // offset toward rear
     }),
     sensorMounts: {
