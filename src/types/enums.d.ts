@@ -29,3 +29,10 @@ declare const enum MotorSide {
     //% block="Derecho"
     Right = 1,
 }
+
+// Named `SimMap` (not `Map`) to avoid shadowing the ES2015 `Map<K,V>` built-in.
+// Value 0 is reserved as an "unset" sentinel for the botsim wire protocol.
+declare const enum SimMap {
+    //% block="Seguidor de línea"
+    SeguidorDeLinea = 1,
+}

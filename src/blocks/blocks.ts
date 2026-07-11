@@ -1,5 +1,5 @@
 //% color="#84c324" icon="\uf057"
-//% groups="['Sensores', 'Motores']"
+//% groups="['Sensores', 'Motores', 'Simulador']"
 namespace Butia {
 
     //% blockId="butia_imp_move_forward"
@@ -161,6 +161,12 @@ namespace Butia {
         Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, priority, handler);
     }
 
-
+    //% blockId="butia_sim_set_map"
+    //% block="usar mapa %map"
+    //% weight=50
+    //% group="Simulador"
+    export function setMap(map: SimMap): void {
+        _butiaSimSelectMap(map);
+    }
 
 }

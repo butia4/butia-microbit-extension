@@ -4,6 +4,7 @@ namespace SimState {
     export let sensorTypeMap: { [connName: string]: string } = {};
     export let motorLeft: number = 0;
     export let motorRight: number = 0;
+    export let mapSelected: boolean = false;
 
     export function reset(): void {
         runId = "";
@@ -11,6 +12,7 @@ namespace SimState {
         sensorTypeMap = {};
         motorLeft = 0;
         motorRight = 0;
+        mapSelected = false;
     }
 }
 

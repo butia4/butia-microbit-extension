@@ -93,4 +93,22 @@ const typeMap = simRobot._buildSensorTypeMap();
 assertTest(typeMap["J2"] === "distance", "sim-robot-map-j2");
 assertTest(typeMap["J5"] === "gray", "sim-robot-map-j5");
 
+// TASK-T15: buildButiaMapSelectMessage encodes type and id correctly
+const msg15 = JSON.parse(buildButiaMapSelectMessage(1));
+assertTest(msg15.type === "mapselect", "sim-mapselect-msg-type");
+assertTest(msg15.id === 1, "sim-mapselect-msg-id");
+
+// TASK-T16: _butiaSimSelectMap is idempotent — only the first call sends
+SimState.reset();
+assertTest(!SimState.mapSelected, "sim-mapselect-initial-unset");
+_butiaSimSelectMap(1);
+assertTest(SimState.mapSelected, "sim-mapselect-sets-flag");
+_butiaSimSelectMap(1);
+assertTest(SimState.mapSelected, "sim-mapselect-repeat-noop");
+
+// TASK-T17: SimState.reset() clears mapSelected
+SimState.mapSelected = true;
+SimState.reset();
+assertTest(!SimState.mapSelected, "sim-state-reset-mapselected");
+
 basic.showString("ALL PASS sim-bridge");
