@@ -10,6 +10,16 @@ import {
 
 Planck.Settings.maxPolygonVertices = 64
 
+// planck-js@0.3 types don't export FrictionJoint on the default namespace, so
+// callers get back this narrow handle instead of the full Planck.Joint type.
+export interface FrictionJointHandle {
+    setMaxForce(force: number): void
+    getMaxForce(): number
+    setMaxTorque(torque: number): void
+    getMaxTorque(): number
+    m_bodyB: { setAngularDamping(v: number): void; setLinearDamping(v: number): void }
+}
+
 // -------------------------------------------------------------------
 // PhysicsObject — wraps a single Planck body
 // -------------------------------------------------------------------
@@ -110,7 +120,7 @@ export class PhysicsObject {
         }
     }
 
-    public addFrictionJoint(localPos: Vec2Like): object | undefined {
+    public addFrictionJoint(localPos: Vec2Like): FrictionJointHandle | undefined {
         const ground = this.world.createBody()
         const def = {
             bodyA: this.body,
@@ -123,7 +133,9 @@ export class PhysicsObject {
         }
         // planck-js@0.3 types don't export FrictionJoint on the default namespace
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return this.world.createJoint(new (Planck as any).FrictionJoint(def)) ?? undefined
+        const joint = this.world.createJoint(new (Planck as any).FrictionJoint(def))
+        if (!joint) return undefined
+        return joint as unknown as FrictionJointHandle
     }
 
     public getWorldPoint(localPos: Vec2Like): Vec2Like {
@@ -166,6 +178,7 @@ export default class Physics {
     // (same issue as FrictionJoint above)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private _mouseJoint: any
+    private _mouseCachedDamping?: { linear: number; angular: number }
 
     public get world() { return this._world }
     public get mouseJoint() { return this._mouseJoint }
@@ -206,6 +219,12 @@ export default class Physics {
 
     private releaseMouseJoint(): void {
         if (this._mouseJoint) {
+            if (this._mouseCachedDamping) {
+                const bodyB = this._mouseJoint.getBodyB() as Planck.Body | undefined
+                bodyB?.setLinearDamping(this._mouseCachedDamping.linear)
+                bodyB?.setAngularDamping(this._mouseCachedDamping.angular)
+                this._mouseCachedDamping = undefined
+            }
             this._world.destroyJoint(this._mouseJoint)
             this._mouseJoint = undefined
         }
@@ -218,6 +237,13 @@ export default class Physics {
             return spec?.roles?.includes("mouse-target") ?? false
         })
         if (!body) return
+
+        this._mouseCachedDamping = {
+            linear: body.getLinearDamping(),
+            angular: body.getAngularDamping(),
+        }
+        body.setLinearDamping(body.getLinearDamping() / 3)
+        body.setAngularDamping((body.getAngularDamping() * 2) / 3)
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const joint = new (Planck as any).MouseJoint({

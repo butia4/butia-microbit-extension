@@ -1,7 +1,8 @@
-import { ButiaSensorsMsg, decodePacket, encodePacket, ButiaStateMsg } from "../protocol"
+import { ButiaSensorsMsg, decodePacket, encodePacket, ButiaStateMsg, ButiaMapSelectMsg } from "../protocol"
 
 type ServiceOptions = {
     onState: (msg: ButiaStateMsg) => void
+    onMapSelect?: (msg: ButiaMapSelectMsg) => void
     onStop?: () => void
     onResume?: () => void
     onPause?: () => void
@@ -37,7 +38,14 @@ export function init(opts: ServiceOptions): () => void {
 function handlePacket(data: unknown, opts: ServiceOptions): void {
     const msg = decodePacket(data)
     if (!msg) return
-    opts.onState(msg)
+    switch (msg.type) {
+        case "state":
+            opts.onState(msg)
+            break
+        case "mapselect":
+            opts.onMapSelect?.(msg)
+            break
+    }
 }
 
 function handleDebugger(msg: { subtype?: string }, opts: ServiceOptions): void {

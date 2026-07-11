@@ -373,6 +373,13 @@ export default class Renderer {
         return { x: rect.width, y: rect.height }
     }
 
+    public setCanvasCursor(cursor: string): void {
+        const view = this.pixi.view as HTMLCanvasElement
+        if (view?.style) {
+            view.style.cursor = cursor
+        }
+    }
+
     constructor() {
         const w = toRenderScale(90 * MAP_ASPECT_RATIO)
         const h = toRenderScale(90)

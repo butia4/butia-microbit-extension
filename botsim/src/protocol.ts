@@ -14,11 +14,17 @@ export interface ButiaSensorsMsg {
     values: Record<string, number>
 }
 
-export function decodePacket(data: unknown): ButiaStateMsg | null {
+export interface ButiaMapSelectMsg {
+    type: "mapselect"
+    id: number
+}
+
+export function decodePacket(data: unknown): ButiaStateMsg | ButiaMapSelectMsg | null {
     try {
         const json = new TextDecoder().decode(new Uint8Array(data as ArrayBuffer))
         const msg = JSON.parse(json)
         if (msg?.type === "state") return msg as ButiaStateMsg
+        if (msg?.type === "mapselect") return msg as ButiaMapSelectMsg
         return null
     } catch {
         return null

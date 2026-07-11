@@ -1,3 +1,4 @@
+import Planck from "planck-js"
 import { BotSpec, ConnectorSlot } from "../../bots/specs"
 import { SensorType } from "../../protocol"
 import { Entity } from "../entity"
@@ -13,7 +14,13 @@ export type SpawnSpec = { pos: Vec2Like; angle: number }
 export class Bot {
     public entity: Entity
     public paused = false
-    public held = false
+
+    // Derived, not stored: true whenever the active mouse-drag joint is
+    // grabbing this bot's body. Avoids a stale flag that never gets reset.
+    public get held(): boolean {
+        const heldBody = this.sim.physics.mouseJoint?.getBodyB()
+        return heldBody === this.entity.physicsObj.body
+    }
 
     private chassis: Chassis
     private wheels = new Map<"left" | "right", Wheel>()
@@ -26,7 +33,10 @@ export class Bot {
     public get forward(): Vec2Like { return this.entity.physicsObj.forward }
 
     constructor(
-        public sim: { createEntity: (spec: EntitySpec) => Entity },
+        public sim: {
+            createEntity: (spec: EntitySpec) => Entity
+            physics: { mouseJoint: { getBodyB(): Planck.Body | undefined } | undefined }
+        },
         spawn: SpawnSpec,
         public spec: BotSpec
     ) {

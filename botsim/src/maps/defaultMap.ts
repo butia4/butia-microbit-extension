@@ -22,12 +22,13 @@ const TRACK_VERTS = [
 ]
 
 export const DEFAULT_MAP: MapSpec = {
+    id: 1,
     name: "Default",
     width: ARENA,
     aspectRatio: MAP_ASPECT_RATIO,
     color: "#E7E9E7",
     spawns: [
-        { pos: { x: CENTER_X, y: CENTER_Y - 20 }, angle: 0 },
+        { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
     entities: [
         // Follow-line closed track path
@@ -41,7 +42,7 @@ export const DEFAULT_MAP: MapSpec = {
                 verts: TRACK_VERTS,
                 width: 3,
                 closed: true,
-                stepSize: 0.5,
+                stepSize: 0.1,
                 offset: { x: 0, y: 0 },
                 angle: 0,
                 physics: { ...defaultShapePhysics(), sensor: true, density: 0 },

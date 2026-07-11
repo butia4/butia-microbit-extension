@@ -8,8 +8,8 @@ describe("decodePacket", () => {
         const result = decodePacket(encoded.buffer)
         expect(result).not.toBeNull()
         expect(result?.type).toBe("state")
-        expect(result?.motorLeft).toBe(50)
-        expect(result?.sensors).toEqual({ J2: "distance" })
+        expect(result && "motorLeft" in result && result.motorLeft).toBe(50)
+        expect(result && "sensors" in result && result.sensors).toEqual({ J2: "distance" })
     })
 
     it("returns null for non-state messages", () => {
@@ -20,6 +20,21 @@ describe("decodePacket", () => {
 
     it("returns null for malformed data", () => {
         expect(decodePacket(new Uint8Array([0xff, 0xfe]).buffer)).toBeNull()
+    })
+
+    it("parses a valid mapselect message", () => {
+        const msg = { type: "mapselect", id: 1 }
+        const encoded = new TextEncoder().encode(JSON.stringify(msg))
+        const result = decodePacket(encoded.buffer)
+        expect(result).not.toBeNull()
+        expect(result?.type).toBe("mapselect")
+        expect((result as { id: number }).id).toBe(1)
+    })
+
+    it("returns null for malformed mapselect shapes", () => {
+        const msg = { type: "mapselectt", id: 1 }
+        const encoded = new TextEncoder().encode(JSON.stringify(msg))
+        expect(decodePacket(encoded.buffer)).toBeNull()
     })
 })
 
@@ -72,6 +87,22 @@ describe("makecodeService.init", () => {
         window.dispatchEvent(new MessageEvent("message", {
             data: { type: "messagepacket", channel: "robot", data: data.buffer }
         }))
+        expect(onState).not.toHaveBeenCalled()
+    })
+
+    it("calls onMapSelect and not onState when a mapselect packet arrives", async () => {
+        vi.resetModules()
+        const { init } = await import("./makecodeService")
+        const onState = vi.fn()
+        const onMapSelect = vi.fn()
+        init({ onState, onMapSelect })
+
+        const msg = { type: "mapselect", id: 1 }
+        const data = new TextEncoder().encode(JSON.stringify(msg))
+        window.dispatchEvent(new MessageEvent("message", {
+            data: { type: "messagepacket", channel: "butia4/butia-microbit-extension", data: data.buffer }
+        }))
+        expect(onMapSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }))
         expect(onState).not.toHaveBeenCalled()
     })
 })

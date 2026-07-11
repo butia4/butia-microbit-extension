@@ -4,6 +4,7 @@ import { EntitySpec } from "../sim/specs"
 export type SpawnSpec = { pos: Vec2Like; angle: number }
 
 export type MapSpec = {
+    id: number
     name: string
     width: number       // cm
     aspectRatio: number // width / height

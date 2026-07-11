@@ -1,11 +1,12 @@
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import "./App.css"
 import { SimContainer } from "./ui/SimContainer"
+import { Placeholder } from "./ui/Placeholder"
 import { Simulation } from "./sim"
-import { DEFAULT_MAP } from "./maps/defaultMap"
 import { BUTIA_BOT_SPEC } from "./bots/butiaBotSpec"
 import { init as initMakeCode, sendSensors } from "./services/makecodeService"
-import { ButiaStateMsg } from "./protocol"
+import { ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
+import { resolveMap } from "./maps/registry"
 
 let currRunId: string | undefined
 
@@ -26,15 +27,66 @@ function handleState(msg: ButiaStateMsg): void {
 }
 
 export function App() {
+    const armedRef = useRef(false)
+    const [armed, setArmed] = useState(false)
+    // Tracks the run id ("state" msg.id) the sim is currently armed for, so a
+    // new run (id change) or an explicit stop can re-hide the simulator until
+    // a fresh "mapselect" message arrives for THAT run. Undefined means no
+    // run has been observed yet.
+    const currentRunIdRef = useRef<string | undefined>(undefined)
+
     useEffect(() => {
         const sim = Simulation.instance
-        sim.loadMap(DEFAULT_MAP)
-        sim.spawnBot(BUTIA_BOT_SPEC)
-        sim.start()
+
+        const disarm = (): void => {
+            if (!armedRef.current) return
+            armedRef.current = false
+            setArmed(false)
+            // Stop the rAF loop and destroy all entities/bot now, not just
+            // hide the UI. Simulation.loop keeps running independently of
+            // React's tree — without this, it would keep calling
+            // entity.renderObj.sync() every frame after SimContainer
+            // unmounts, and a later handleMapSelect() would call spawnBot()
+            // against a bot/entities left over from this run: spawnBot()
+            // destroys the previous bot's render objects but never removes
+            // them from Simulation's internal entities array (only clear()
+            // does that), so the next loop tick crashes with "Cannot read
+            // properties of null (reading 'position')" in RenderObject.sync.
+            sim.stop()
+            sim.clear()
+        }
+
+        const handleMapSelect = (msg: ButiaMapSelectMsg): void => {
+            if (armedRef.current) return
+            const mapSpec = resolveMap(msg.id)
+            if (!mapSpec) return
+
+            // No extra clear() needed here: handleMapSelect only runs while
+            // !armedRef.current, and the only ways to reach that state are
+            // initial mount (entities already empty) or disarm() above
+            // (which just cleared them) — so re-arming always starts from a
+            // clean Simulation slate.
+            armedRef.current = true
+            sim.loadMap(mapSpec)
+            sim.spawnBot(BUTIA_BOT_SPEC)
+            sim.start()
+            setArmed(true)
+        }
 
         const stopMakeCode = initMakeCode({
-            onState: handleState,
-            onStop: () => sim.stop(),
+            onState: (msg) => {
+                // A new run started (msg.id changed) without a mapselect for
+                // it (yet) — go back to hidden/placeholder until one arrives.
+                if (currentRunIdRef.current !== undefined && currentRunIdRef.current !== msg.id) {
+                    disarm()
+                }
+                currentRunIdRef.current = msg.id
+
+                if (!armedRef.current) return
+                handleState(msg)
+            },
+            onMapSelect: handleMapSelect,
+            onStop: () => disarm(),
             onPause: () => sim.pause(),
             onResume: () => sim.resume(),
         })
@@ -48,7 +100,7 @@ export function App() {
 
     return (
         <div className="app" style={{ width: "100vw", height: "100vh" }}>
-            <SimContainer />
+            {armed ? <SimContainer /> : <Placeholder />}
         </div>
     )
 }

@@ -11,3 +11,9 @@
     border-bottom-right-radius: 7% 6%;
     overflow: hidden;
 }
+
+.placeholder {
+    text-align: center;
+    color: #444444;
+    font-family: sans-serif;
+}

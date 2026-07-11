@@ -16,6 +16,8 @@ export class Simulation {
     private _bot: Bot | null = null
     private _map: MapSpec | null = null
     private lastTime = 0
+    private lastPhysicsTime = 0
+    private _lastMousePos: { x: number; y: number } = { x: 0, y: 0 }
 
     public get physics() { return this._physics }
     public get renderer() { return this._renderer }
@@ -96,6 +98,7 @@ export class Simulation {
         if (this.running) return
         this.running = true
         this.lastTime = performance.now()
+        this.lastPhysicsTime = this.lastTime
         this.loop(this.lastTime)
     }
 
@@ -128,12 +131,15 @@ export class Simulation {
         if (!this.running) return
         const dt = Math.min((now - this.lastTime) / 1000, 0.05)
         this.lastTime = now
-        if (!this.paused) {
-            this._physics.update(dt)
-            this._bot?.update(dt)
+        const dtMs = now - this.lastPhysicsTime
+        if (!this.paused && dtMs >= 1000 / 60) {
+            this.lastPhysicsTime = now
+            this._physics.update(1 / 60)
+            this._bot?.update(1 / 60)
+            this._entities.forEach(e => e.renderObj.sync())
         }
         this._renderer.update(dt)
-        this._entities.forEach(e => e.renderObj.sync())
+        this.updateCursor()
         this.animframe = window.requestAnimationFrame(this.loop)
     }
 
@@ -158,14 +164,24 @@ export class Simulation {
     }
 
     public mouseDown(canvasPos: { x: number; y: number }): void {
-        this._physics.mouseDown(this.canvasToSimPos(canvasPos))
+        this._lastMousePos = this.canvasToSimPos(canvasPos)
+        this._physics.mouseDown(this._lastMousePos)
     }
 
     public mouseMove(canvasPos: { x: number; y: number }): void {
-        this._physics.mouseMove(this.canvasToSimPos(canvasPos))
+        this._lastMousePos = this.canvasToSimPos(canvasPos)
+        this._physics.mouseMove(this._lastMousePos)
     }
 
     public mouseUp(canvasPos: { x: number; y: number }): void {
         this._physics.mouseUp(this.canvasToSimPos(canvasPos))
+    }
+
+    private updateCursor(): void {
+        if (this._physics.mouseJoint) {
+            this._renderer.setCanvasCursor("grabbing")
+        } else {
+            this._renderer.setCanvasCursor(this._physics.isMouseTarget(this._lastMousePos) ? "grab" : "default")
+        }
     }
 }
