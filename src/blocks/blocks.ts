@@ -99,6 +99,15 @@ namespace Butia {
     export function readButton(connector: Butia.Connector): boolean {
         return Butia.RobotDriver.getCurrentRobot().readButton(connector);
     }
+
+    //% blockId="butia_imp_read_generic"
+    //% block="Sensor genérico en %connector"
+    //% weight=67
+    //% group="Sensores"
+    export function readGenericSensor(connector: Butia.Connector): number {
+        return Butia.RobotDriver.getCurrentRobot().readGenericSensor(connector);
+    }
+
     //% blockId="butia_evt_distance"
     //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100

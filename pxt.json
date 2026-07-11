@@ -20,6 +20,7 @@
         "src/hardware/gpio-motor-driver.ts",
         "src/hardware/gray-sensor-butia.ts",
         "src/hardware/light-sensor-butia.ts",
+        "src/hardware/generic-sensor-butia.ts",
         "src/main.ts",
         "src/robotdriver.ts",
         "src/types/components.d.ts",
