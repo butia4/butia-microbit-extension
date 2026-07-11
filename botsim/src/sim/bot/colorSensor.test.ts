@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest"
 
-// Mock planck-js before importing GraySensor
+// Mock planck-js before importing ColorSensor
 vi.mock("planck-js", () => ({
     default: {
         Circle: vi.fn(() => ({})),
@@ -17,9 +17,9 @@ function makeMockRenderObj() {
     return { renderObj, shapes }
 }
 
-describe("GraySensor", () => {
+describe("ColorSensor", () => {
     it("returns 0 when no contacts", async () => {
-        const { GraySensor } = await import("./graySensor")
+        const { ColorSensor } = await import("./colorSensor")
         const mockBot = {
             entity: {
                 physicsObj: {
@@ -33,23 +33,20 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
         const value = sensor.read()
         expect(value).toBe(0)
     })
 
     it("returns 1023 when contact with follow-line fixture", async () => {
         vi.resetModules()
-        const { GraySensor } = await import("./graySensor")
+        const { ColorSensor } = await import("./colorSensor")
 
         const followLineFixture = {
             getUserData: () => ({ roles: ["follow-line"] }),
-            getBody: () => ({ getAngle: () => 0, getPosition: () => ({ x: 0, y: 0 }) }),
-            getShape: () => ({ getType: () => "circle" }),
         }
-
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J2.sensor" }), getBody: () => ({}) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "J2.color" }) }),
             getFixtureB: () => followLineFixture,
             next: null,
         }
@@ -59,7 +56,7 @@ describe("GraySensor", () => {
                 physicsObj: {
                     body: {
                         getContactList: () => ({ contact, next: null }),
-                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.sensor" }) })),
+                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.color" }) })),
                     },
                 },
             },
@@ -67,22 +64,21 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
-        // Manually set the fixture label so contact matching works
-        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.sensor"
+        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.color"
         const value = sensor.read()
         expect(value).toBe(1023)
     })
 
     it("detection is identical whether spec.angle is unset or explicitly set (visual-only field)", async () => {
         vi.resetModules()
-        const { GraySensor } = await import("./graySensor")
+        const { ColorSensor } = await import("./colorSensor")
 
         const followLineFixture = {
             getUserData: () => ({ roles: ["follow-line"] }),
         }
         const contact = {
-            getFixtureA: () => ({ getUserData: () => ({ label: "J2.sensor" }) }),
+            getFixtureA: () => ({ getUserData: () => ({ label: "J2.color" }) }),
             getFixtureB: () => followLineFixture,
             next: null,
         }
@@ -91,7 +87,7 @@ describe("GraySensor", () => {
                 physicsObj: {
                     body: {
                         getContactList: () => ({ contact, next: null }),
-                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.sensor" }) })),
+                        createFixture: vi.fn(() => ({ getUserData: () => ({ label: "J2.color" }) })),
                     },
                 },
             },
@@ -99,10 +95,10 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const noAngleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
-        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.sensor"
-        const angleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2", angle: 45 })
-        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.sensor"
+        const noAngleSensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.color"
+        const angleSensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2", angle: 45 })
+        ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "J2.color"
 
         expect(noAngleSensor.read()).toBe(angleSensor.read())
         expect(noAngleSensor.read()).toBe(1023)
@@ -110,7 +106,7 @@ describe("GraySensor", () => {
 
     it("always builds a beam mesh, using the default angle when spec.angle is unset", async () => {
         vi.resetModules()
-        const { GraySensor } = await import("./graySensor")
+        const { ColorSensor } = await import("./colorSensor")
 
         const { renderObj, shapes } = makeMockRenderObj()
         const mockBot = {
@@ -127,11 +123,11 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
+        const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "J2" })
         expect(shapes.size).toBe(2) // wave + target meshes always built
 
         sensor.read()
-        const waveLabel = [...shapes.keys()].find(k => k.startsWith("gray.wave."))
+        const waveLabel = [...shapes.keys()].find(k => k.startsWith("color.wave."))
         expect(waveLabel).toBeDefined()
         expect(shapes.get(waveLabel as string)?.visible).toBe(true) // used=true once read() runs, regardless of detection
     })

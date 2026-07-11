@@ -12,7 +12,12 @@ type BotRef = {
     angle: number
 }
 
-export class GraySensor {
+// Sibling class to GraySensor — same contact-overlap detection pattern and
+// spec shape, but instantiated/read independently so a connector can carry
+// both a gray reading and a light (color) reading simultaneously (design
+// decision: separate classes, not one class with a cosmetic wave-color
+// variant).
+export class ColorSensor {
     public _fixtureLabel: string
     private _waveLabel: string
     private _targetLabel: string
@@ -24,9 +29,9 @@ export class GraySensor {
 
     constructor(private bot: BotRef, private spec: ConnectorSensorSpec) {
         const id = nextId()
-        this._fixtureLabel = spec.name + ".sensor." + id
-        this._waveLabel = "gray.wave." + id
-        this._targetLabel = "gray.target." + id
+        this._fixtureLabel = spec.name + ".color." + id
+        this._waveLabel = "color.wave." + id
+        this._targetLabel = "color.target." + id
         this.createFixture()
         this.buildVisuals()
     }
@@ -63,7 +68,7 @@ export class GraySensor {
             GRAY_MAX_RANGE,
             this._waveLabel,
             this._targetLabel,
-            SONAR_COLORS.gray,
+            SONAR_COLORS.color,
         )
     }
 

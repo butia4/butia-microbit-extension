@@ -5,6 +5,8 @@ export type ConnectorSlot = "J1" | "J2" | "J3" | "J4" | "J5"
 export type ConnectorSensorSpec = {
     name: ConnectorSlot
     pos: Vec2Like   // offset from chassis center, cm
+    angle?: number      // beam/facing orientation, degrees; undefined = sensor-type default, beam is ALWAYS rendered
+    maxRange?: number   // visual beam length, cm; unused by gray/color/surface (they use a fixed constant)
 }
 
 export type CircleChassisSpec = {
@@ -39,9 +41,8 @@ export type BotSpec = {
     connectors: ConnectorSensorSpec[]
 }
 
-export type RangeSensorSpec = {
-    pos: Vec2Like
-    beamAngle: number
+export type RangeSensorSpec = ConnectorSensorSpec & {
+    angle: number
     maxRange: number
 }
 

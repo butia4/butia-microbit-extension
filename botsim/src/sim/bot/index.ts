@@ -7,7 +7,8 @@ import { Vec2Like } from "../../types/vec2"
 import { Chassis } from "./chassis"
 import { Wheel } from "./wheel"
 import { GraySensor } from "./graySensor"
-import { RangeSensor, MAX_RANGE, DistanceSensor } from "./rangeSensor"
+import { ColorSensor } from "./colorSensor"
+import { RangeSensor, MAX_RANGE, DEFAULT_RANGE_ANGLE, DistanceSensor } from "./rangeSensor"
 import { SurfaceSensor } from "./surfaceSensor"
 
 export type SpawnSpec = { pos: Vec2Like; angle: number }
@@ -26,6 +27,7 @@ export class Bot {
     private chassis: Chassis
     private wheels = new Map<"left" | "right", Wheel>()
     private graySensors = new Map<ConnectorSlot, GraySensor>()
+    private colorSensors = new Map<ConnectorSlot, ColorSensor>()
     private rangeSensors = new Map<ConnectorSlot, DistanceSensor>()
     private activeSensorMap: Record<string, SensorType> = {}
 
@@ -63,17 +65,21 @@ export class Bot {
         for (const conn of spec.connectors) {
             this.graySensors.set(conn.name, new GraySensor(
                 this as unknown as any,
-                { pos: conn.pos, name: conn.name }
+                { pos: conn.pos, name: conn.name, angle: conn.angle }
+            ))
+            this.colorSensors.set(conn.name, new ColorSensor(
+                this as unknown as any,
+                { pos: conn.pos, name: conn.name, angle: conn.angle }
             ))
             const mode = sensorModes[conn.name] ?? "forward"
             this.rangeSensors.set(conn.name, mode === "surface"
                 ? new SurfaceSensor(
                     this as unknown as any,
-                    { pos: conn.pos, name: conn.name }
+                    { pos: conn.pos, name: conn.name, angle: conn.angle }
                 )
                 : new RangeSensor(
                     this as unknown as any,
-                    { pos: conn.pos, beamAngle: 30, maxRange: MAX_RANGE }
+                    { pos: conn.pos, name: conn.name, angle: conn.angle ?? DEFAULT_RANGE_ANGLE, maxRange: MAX_RANGE }
                 ))
         }
     }
@@ -93,8 +99,10 @@ export class Bot {
             const slot = connName as ConnectorSlot
             if (sensorType === "distance") {
                 result[connName] = this.rangeSensors.get(slot)?.read() ?? MAX_RANGE
+            } else if (sensorType === "light") {
+                result[connName] = this.colorSensors.get(slot)?.read() ?? 0
             } else {
-                // gray or light — treat identically
+                // gray (default)
                 result[connName] = this.graySensors.get(slot)?.read() ?? 0
             }
         }
