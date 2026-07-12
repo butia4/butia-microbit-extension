@@ -1,4 +1,0 @@
-{
-  "Buffer.fromUTF8": "Create a new buffer from an UTF8-encoded string",
-  "Buffer.toString": "Convert a buffer to string assuming UTF8 encoding"
-}
