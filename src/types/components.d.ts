@@ -20,7 +20,10 @@ interface ILightSensor extends IPolledSensor {}
 interface IGraySensor extends IPolledSensor {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface IButtonSensor extends IPolledSensor {}
+interface IButtonSensor extends IPolledSensor { }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface IGenericSensor extends IPolledSensor {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IActuator extends IRobotComponent {}

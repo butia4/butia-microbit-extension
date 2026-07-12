@@ -8,6 +8,7 @@ namespace Butia {
         private _grays: {pin:AnalogPin | DigitalPin, sensor: IGraySensor}[];
         private _distances: {pin:AnalogPin | DigitalPin, sensor: IDistanceSensor}[];
         private _buttons: {pin:AnalogPin | DigitalPin, sensor: IButtonSensor}[];
+        private _generics: {pin:AnalogPin | DigitalPin, sensor: IGenericSensor}[];
         private _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
@@ -24,6 +25,7 @@ namespace Butia {
             this._grays = [];
             this._distances = [];
             this._buttons = [];
+            this._generics = [];
             this._motorLeft = 0;
             this._motorRight = 0;
             this._pinUsage = [];
@@ -70,6 +72,7 @@ namespace Butia {
         protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor { return new GraySensor(pin); }
         protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor { return new DistanceSensor(pin); }
         protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor { return new ButtonSensor(pin as DigitalPin); }
+        protected _newGenericSensor(pin: AnalogPin | DigitalPin): IGenericSensor { return new GenericSensor(pin); }
 
         private _getLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
             for (const entry of this._lights) {
@@ -108,6 +111,16 @@ namespace Butia {
             this._claimPin(pin, "button");
             const sensor = this._newButtonSensor(pin);
             this._buttons.push({ pin, sensor });
+            return sensor;
+        }
+
+        private _getGenericSensor(pin: AnalogPin | DigitalPin): IGenericSensor {
+            for (const entry of this._generics) {
+                if (entry.pin === pin) return entry.sensor;
+            }
+            this._claimPin(pin, "generic");
+            const sensor = this._newGenericSensor(pin);
+            this._generics.push({ pin, sensor });
             return sensor;
         }
 
@@ -173,6 +186,11 @@ namespace Butia {
         readButton(connector: IConnector): boolean {
             const s = this._getButtonSensor(this._resolvePin(connector));
             return s.read() === 1;
+        }
+
+        readGenericSensor(connector: IConnector): number {
+            const s = this._getGenericSensor(this._resolvePin(connector));
+            return s.read();
         }
 
         // --- Events ---
