@@ -1,7 +1,9 @@
 # Claude Code
 CLAUDE.md
-.claude/
-.atl/
+.claude
+.atl
+.agents
+skills-lock.json
 
 # MakeCode
 built

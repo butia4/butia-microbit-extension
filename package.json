@@ -28,7 +28,8 @@
     "deploy": "pxt deploy",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "sync": "npx tsx scripts/sync-pxt.ts"
+    "sync": "npx tsx scripts/sync-pxt.ts",
+    "serve": "npx tsx scripts/serve.ts"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
