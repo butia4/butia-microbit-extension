@@ -49,7 +49,7 @@ export class Wheel {
     }
 
     public setSpeed(pct: number): void {
-        this.currSpeed = this.spec.maxSpeed * Math.max(-1, Math.min(1, pct / 100))
+        this.currSpeed = Math.max(-this.spec.maxSpeed, Math.min(this.spec.maxSpeed, pct))
     }
 
     public update(dtSecs: number): void {

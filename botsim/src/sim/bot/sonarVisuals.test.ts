@@ -18,16 +18,15 @@ describe("sonarVisuals", () => {
             expect(() => buildSonarVisuals(undefined, { x: 0, y: 0 }, 30, 400, "wave", "target", colors)).not.toThrow()
         })
 
-        it("builds both wave and ping meshes, both starting invisible", async () => {
+        it("builds only the ping mesh, starting invisible — the sonar wave/cone mesh is disabled", async () => {
             const { buildSonarVisuals } = await import("./sonarVisuals")
             const { renderObj, shapes } = makeMockRenderObj()
 
             buildSonarVisuals(renderObj as unknown as any, { x: 0, y: -5 }, 70, 5, "myWave", "myTarget", colors)
 
-            expect(shapes.size).toBe(2)
-            expect(shapes.get("myWave")).toBeDefined()
+            expect(shapes.size).toBe(1)
+            expect(shapes.get("myWave")).toBeUndefined()
             expect(shapes.get("myTarget")).toBeDefined()
-            expect(shapes.get("myWave")?.visible).toBe(false)
             expect(shapes.get("myTarget")?.visible).toBe(false)
         })
     })
@@ -40,17 +39,16 @@ describe("sonarVisuals", () => {
             ).not.toThrow()
         })
 
-        it("toggles wave visibility to match `used`, regardless of nearest", async () => {
+        it("hides the target when `used` but no `nearest`, regardless of the wave label", async () => {
             const { buildSonarVisuals, updateSonarVisuals } = await import("./sonarVisuals")
             const { renderObj, shapes } = makeMockRenderObj()
             buildSonarVisuals(renderObj as unknown as any, { x: 0, y: -5 }, 70, 5, "wave", "target", colors)
 
             updateSonarVisuals(shapes as unknown as any, true, undefined, "wave", "target", { x: 0, y: 0 }, 0)
-            expect(shapes.get("wave")?.visible).toBe(true)
             expect(shapes.get("target")?.visible).toBe(false) // no nearest -> target hidden
 
             updateSonarVisuals(shapes as unknown as any, false, undefined, "wave", "target", { x: 0, y: 0 }, 0)
-            expect(shapes.get("wave")?.visible).toBe(false)
+            expect(shapes.get("target")?.visible).toBe(false)
         })
 
         it("shows and positions the target when `used` and `nearest` are both set", async () => {

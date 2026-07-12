@@ -72,10 +72,12 @@ export function toWheels(spec: {
     diameter: number
     width: number
     y: number
+    maxSpeed?: number
 }): WheelSpec[] {
     const radius = spec.diameter / 2
+    const maxSpeed = spec.maxSpeed ?? 100
     return [
-        { name: "left",  maxSpeed: 100, dashTime: 0.5, pos: { x: -(spec.separation + spec.width) / 2, y: spec.y }, width: spec.width, radius },
-        { name: "right", maxSpeed: 100, dashTime: 0.5, pos: { x:  (spec.separation + spec.width) / 2, y: spec.y }, width: spec.width, radius },
+        { name: "left",  maxSpeed, dashTime: 0.5, pos: { x: -(spec.separation + spec.width) / 2, y: spec.y }, width: spec.width, radius },
+        { name: "right", maxSpeed, dashTime: 0.5, pos: { x:  (spec.separation + spec.width) / 2, y: spec.y }, width: spec.width, radius },
     ]
 }

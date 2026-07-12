@@ -1,10 +1,11 @@
 import { Vec2, Vec2Like } from "../../types/vec2"
 import { RENDER_SCALE } from "../../constants"
-import { toRadians } from "../../util"
+// import { toRadians } from "../../util" // only needed by the disabled sonar wave mesh below
 import {
     defaultEntityShape, defaultPolygonShape, defaultShapePhysics, defaultShaderBrush, EntityPolygonShapeSpec,
 } from "../specs"
-import { appoximateArc, Rgb, rgbToFloatArray, toRenderScale } from "../util"
+import { Rgb, rgbToFloatArray } from "../util"
+// import { appoximateArc, toRenderScale } from "../util" // only needed by the disabled sonar wave mesh below
 import { addShaderProgram, BasicVertexShader, CommonFragmentShaderGlobals, createGraphics, RenderObject } from "../renderer"
 
 // Default beam orientation/range for gray/color/surface sensors, used when a
@@ -19,55 +20,69 @@ const PING_RADIUS = 3 // cm
 // actual mount point (`pos`, from sensorMounts), independent of it — the
 // ping/target always tracks `pos` live (recomputed every frame), so tuning
 // sensorMounts alone can't reposition the cone. Tune this value directly.
-const WAVE_OFFSET_X = 2.5 // cm
+// const WAVE_OFFSET_X = 2.5 // cm // only needed by the disabled sonar wave mesh below
 
 // Wave/ping color pairs per sensor type — kept together so they're easy to
 // compare/tune for visual distinguishability.
+//
+// Chosen for contrast against every map background/foreground the ping can
+// appear over: the default map's light-gray floor (#E7E9E7) and near-black
+// line (#1a1a1a), the table map's dark floor (#2E2E2E) and brown tabletop
+// (#C68642), and the obstacle colors (MICROBIT_COLORS: yellow/green/red/
+// cyan-blue). `gray`'s old muted gray (0xb0b0b0) is what made the line-map
+// pulse hard to see — it sat in the same gray family as the floor itself;
+// all four are now distinct, highly saturated hues spaced around the color
+// wheel so none of them blend into a map or an obstacle.
 export const SONAR_COLORS: Record<"range" | "gray" | "color" | "surface", { wave: Rgb; ping: Rgb }> = {
-    range:   { wave: { r: 0x68, g: 0xae, b: 0xd4 }, ping: { r: 0x68, g: 0xae, b: 0xd4 } },
-    gray:    { wave: { r: 0xb0, g: 0xb0, b: 0xb0 }, ping: { r: 0xb0, g: 0xb0, b: 0xb0 } },
-    color:   { wave: { r: 0xf2, g: 0xa6, b: 0x5c }, ping: { r: 0xf2, g: 0xa6, b: 0x5c } },
-    surface: { wave: { r: 0x6c, g: 0xd6, b: 0x8a }, ping: { r: 0x6c, g: 0xd6, b: 0x8a } },
+    range:   { wave: { r: 0x8c, g: 0x6b, b: 0xff }, ping: { r: 0x8c, g: 0x6b, b: 0xff } }, // violet-blue
+    gray:    { wave: { r: 0xff, g: 0x3d, b: 0xb5 }, ping: { r: 0xff, g: 0x3d, b: 0xb5 } }, // vivid magenta
+    color:   { wave: { r: 0x2f, g: 0xe6, b: 0xc7 }, ping: { r: 0x2f, g: 0xe6, b: 0xc7 } }, // vivid teal
+    surface: { wave: { r: 0xff, g: 0xb3, b: 0x00 }, ping: { r: 0xff, g: 0xb3, b: 0x00 } }, // vivid amber
 }
 
+// Sonar wave shader (cone/beam animation) — disabled per product decision to
+// use pulse-only feedback for all sensor types (see buildSonarVisuals /
+// updateSonarVisuals below). Kept commented, not deleted, in case the wave
+// animation is reintroduced in the future.
+//
 // Ported near-verbatim from microbit-robot/botsim/src/sim/bot/rangeSensor.ts
 // (moved here from rangeSensor.ts so all sonar-beam sensors share one shader
 // registration instead of duplicating it per sensor class).
-addShaderProgram(
-    "sonar_wave",
-    BasicVertexShader,
-    CommonFragmentShaderGlobals +
-        `
-    uniform vec3 uColor;
-    uniform float uMaxRange;
-    uniform float uBeamAngle;
-
-    float dist(vec2 p0, vec2 p1) {
-        return sqrt(pow(p1.x - p0.x, 2.) + pow(p1.y - p0.y, 2.));
-    }
-    float angle(vec2 p0, vec2 p1) {
-        return atan(p1.y - p0.y, p1.x - p0.x) + 1.57;
-    }
-    void main() {
-        vec2 uv = vUvs;
-        uv = vec2(uv.x * uAspectRatio, uv.y);
-        vec2 ofs = vec2(0.265, 1.1); // hand-tuned to appear to emanate from the sensor
-        float maxRange = uMaxRange + ofs.y;
-        float maxAngle = uBeamAngle / 2.;
-        float waveSpeed = 5.;
-        float waveCount = 22.;
-        float d = dist(ofs, uv);
-        float c = mod(uTime * waveSpeed - d * waveCount, 1.);
-        c = 1. - c;
-        c = c * c;
-        c = .2 + c * .66;
-        float alpha = c * .75;
-        float linFade = 1. - smoothstep(0., 1., d - 0.33);
-        float angFade = 1. - smoothstep(0., 1., -0.5 + abs(angle(ofs, uv)) / maxAngle);
-        alpha *= linFade * angFade;
-        gl_FragColor = vec4(uColor * alpha, alpha);
-    }`
-)
+// addShaderProgram(
+//     "sonar_wave",
+//     BasicVertexShader,
+//     CommonFragmentShaderGlobals +
+//         `
+//     uniform vec3 uColor;
+//     uniform float uMaxRange;
+//     uniform float uBeamAngle;
+//
+//     float dist(vec2 p0, vec2 p1) {
+//         return sqrt(pow(p1.x - p0.x, 2.) + pow(p1.y - p0.y, 2.));
+//     }
+//     float angle(vec2 p0, vec2 p1) {
+//         return atan(p1.y - p0.y, p1.x - p0.x) + 1.57;
+//     }
+//     void main() {
+//         vec2 uv = vUvs;
+//         uv = vec2(uv.x * uAspectRatio, uv.y);
+//         vec2 ofs = vec2(0.265, 1.1); // hand-tuned to appear to emanate from the sensor
+//         float maxRange = uMaxRange + ofs.y;
+//         float maxAngle = uBeamAngle / 2.;
+//         float waveSpeed = 5.;
+//         float waveCount = 22.;
+//         float d = dist(ofs, uv);
+//         float c = mod(uTime * waveSpeed - d * waveCount, 1.);
+//         c = 1. - c;
+//         c = c * c;
+//         c = .2 + c * .66;
+//         float alpha = c * .75;
+//         float linFade = 1. - smoothstep(0., 1., d - 0.33);
+//         float angFade = 1. - smoothstep(0., 1., -0.5 + abs(angle(ofs, uv)) / maxAngle);
+//         alpha *= linFade * angFade;
+//         gl_FragColor = vec4(uColor * alpha, alpha);
+//     }`
+// )
 
 addShaderProgram(
     "sonar_ping",
@@ -96,51 +111,57 @@ addShaderProgram(
 )
 
 /**
- * Builds the sonar wave/ping visual meshes and attaches them to the given
- * render object. Unconditional: always builds a mesh (no "no beam"/skip
- * state) — only the beam's angle/range/color are configurable. Callers
- * resolve `angle`/`maxRange` defaults (e.g. `spec.angle ?? DEFAULT_*`) before
- * calling this function.
+ * Builds the pulse (ping) visual mesh and attaches it to the given render
+ * object. Unconditional: always builds a mesh (no "no beam"/skip state).
+ * Callers resolve `angle`/`maxRange` defaults (e.g. `spec.angle ?? DEFAULT_*`)
+ * before calling this function.
+ *
+ * The sonar wave/cone mesh (`_waveLabel`) is disabled per product decision to
+ * use pulse-only feedback for all sensor types — its build logic is kept
+ * commented below rather than deleted, in case it's reintroduced later.
+ * `_pos`/`_angle`/`_maxRange`/`_waveLabel` are only consumed by that disabled
+ * code path; the leading underscore silences `noUnusedParameters` in the
+ * meantime.
  */
 export function buildSonarVisuals(
     renderObj: RenderObject | undefined,
-    pos: Vec2Like,
-    angle: number,
-    maxRange: number,
-    waveLabel: string,
+    _pos: Vec2Like,
+    _angle: number,
+    _maxRange: number,
+    _waveLabel: string,
     targetLabel: string,
     colors: { wave: Rgb; ping: Rgb },
 ): void {
     if (!renderObj) return // e.g. in unit tests, where entity is a lightweight mock
 
-    const hw = 2
-    const pLN = Vec2.like(-hw, 0)
-    const pRN = Vec2.like(hw, 0)
-    const pLF = Vec2.rotateDeg(Vec2.add(pLN, Vec2.like(0, -maxRange)), -angle / 2)
-    const pRF = Vec2.rotateDeg(Vec2.add(pRN, Vec2.like(0, -maxRange)),  angle / 2)
-    const arc = appoximateArc({ x: 0, y: 0 }, maxRange, -angle / 2 - 90, angle / 2 - 90, 4)
-    const verts = [pLN, pRN, pRF, ...arc.reverse(), pLF, pLN]
+    // const hw = 2
+    // const pLN = Vec2.like(-hw, 0)
+    // const pRN = Vec2.like(hw, 0)
+    // const pLF = Vec2.rotateDeg(Vec2.add(pLN, Vec2.like(0, -maxRange)), -angle / 2)
+    // const pRF = Vec2.rotateDeg(Vec2.add(pRN, Vec2.like(0, -maxRange)),  angle / 2)
+    // const arc = appoximateArc({ x: 0, y: 0 }, maxRange, -angle / 2 - 90, angle / 2 - 90, 4)
+    // const verts = [pLN, pRN, pRF, ...arc.reverse(), pLF, pLN]
 
-    const waveSpec: EntityPolygonShapeSpec = {
-        ...defaultEntityShape(),
-        ...defaultPolygonShape(),
-        label: waveLabel,
-        offset: { x: pos.x + WAVE_OFFSET_X, y: pos.y },
-        verts,
-        roles: [],
-        physics: { ...defaultShapePhysics(), sensor: true, density: 0 },
-        brush: {
-            ...defaultShaderBrush(),
-            shader: "sonar_wave",
-            uniforms: {
-                uColor: rgbToFloatArray(colors.wave),
-                uMaxRange: toRenderScale(maxRange),
-                uBeamAngle: toRadians(angle),
-            },
-            visible: false,
-            zIndex: 5,
-        },
-    }
+    // const waveSpec: EntityPolygonShapeSpec = {
+    //     ...defaultEntityShape(),
+    //     ...defaultPolygonShape(),
+    //     label: waveLabel,
+    //     offset: { x: pos.x + WAVE_OFFSET_X, y: pos.y },
+    //     verts,
+    //     roles: [],
+    //     physics: { ...defaultShapePhysics(), sensor: true, density: 0 },
+    //     brush: {
+    //         ...defaultShaderBrush(),
+    //         shader: "sonar_wave",
+    //         uniforms: {
+    //             uColor: rgbToFloatArray(colors.wave),
+    //             uMaxRange: toRenderScale(maxRange),
+    //             uBeamAngle: toRadians(angle),
+    //         },
+    //         visible: false,
+    //         zIndex: 5,
+    //     },
+    // }
     const targetSpec: EntityPolygonShapeSpec = {
         ...defaultEntityShape(),
         ...defaultPolygonShape(),
@@ -163,40 +184,41 @@ export function buildSonarVisuals(
         },
     }
 
-    const waveGfx = createGraphics.polygon.shader(waveSpec, waveSpec.brush)
-    renderObj.addShape(waveLabel, waveGfx)
+    // const waveGfx = createGraphics.polygon.shader(waveSpec, waveSpec.brush)
+    // renderObj.addShape(waveLabel, waveGfx)
     const targetGfx = createGraphics.polygon.shader(targetSpec, targetSpec.brush)
     renderObj.addShape(targetLabel, targetGfx)
 }
 
 /**
- * Toggles the wave/ping meshes' visibility and positions the ping at the
- * nearest detected point, mirroring RangeSensor's original updateVisuals().
+ * Toggles the ping mesh's visibility and positions it at the nearest
+ * detected point, mirroring RangeSensor's original updateVisuals().
  *
- * `mode` picks which of the two visuals is allowed to show — the wave (cone)
- * and the target (ping) are never both visible at once:
- *   - "both": either can show (gray/color sensors) — original behavior.
- *   - "wave": only the cone shows (forward-facing RangeSensor) — no ping.
- *   - "target": only the ping shows (downward-facing SurfaceSensor) — no cone.
+ * The wave/cone visual and its `mode` selection (which used to decide
+ * whether the wave, the ping, or either could show) are disabled per product
+ * decision to use pulse-only feedback for all sensor types — all sensors now
+ * only ever show the ping. Kept commented, not deleted, in case the wave
+ * animation is reintroduced in the future. `_waveLabel` is only consumed by
+ * that disabled code path; the leading underscore silences
+ * `noUnusedParameters` in the meantime.
  */
 export function updateSonarVisuals(
     shapes: RenderObject["shapes"] | undefined,
     used: boolean,
     nearest: Vec2Like | undefined,
-    waveLabel: string,
+    _waveLabel: string,
     targetLabel: string,
     botPos: Vec2Like,
     botAngle: number,
-    mode: "both" | "wave" | "target" = "both",
 ): void {
     if (!shapes) return // e.g. in unit tests, where entity is a lightweight mock
 
-    const wave = shapes.get(waveLabel)
-    if (wave) wave.visible = used && mode !== "target"
+    // const wave = shapes.get(waveLabel)
+    // if (wave) wave.visible = used && mode !== "target"
 
     const target = shapes.get(targetLabel)
     if (target) {
-        target.visible = used && !!nearest && mode !== "wave"
+        target.visible = used && !!nearest
         if (nearest) {
             const local = Vec2.scale(Vec2.untransformDeg(nearest, botPos, botAngle), RENDER_SCALE)
             target.position.set(local.x, local.y)

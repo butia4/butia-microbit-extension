@@ -124,11 +124,10 @@ describe("ColorSensor", () => {
         } as unknown as any
 
         const sensor = new ColorSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
-        expect(shapes.size).toBe(2) // wave + target meshes always built
+        expect(shapes.size).toBe(1) // only the ping/target mesh is built — sonar wave/cone mesh is disabled
 
         sensor.read()
-        const waveLabel = [...shapes.keys()].find(k => k.startsWith("color.wave."))
-        expect(waveLabel).toBeDefined()
-        expect(shapes.get(waveLabel as string)?.visible).toBe(true) // used=true once read() runs, regardless of detection
+        const targetLabel = [...shapes.keys()].find(k => k.startsWith("color.target."))
+        expect(targetLabel).toBeDefined()
     })
 })

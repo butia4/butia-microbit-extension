@@ -83,12 +83,13 @@ export class RangeSensor {
     }
 
     /**
-     * Builds the sonar wave/ping visual meshes and attaches them to the bot's
-     * render object (decision #4: attached after construction via
+     * Builds the pulse (ping) visual mesh and attaches it to the bot's render
+     * object (decision #4: attached after construction via
      * RenderObject.addShape, since RangeSensor is constructed after the bot
-     * entity already exists). Both start invisible and are toggled by
+     * entity already exists). Starts invisible and is toggled by
      * `used`/detection state in `read()`. Delegates mesh-building to the
-     * shared `sonarVisuals.ts` helper.
+     * shared `sonarVisuals.ts` helper (the sonar wave/cone mesh is disabled
+     * there — see that file).
      */
     private buildVisuals(): void {
         buildSonarVisuals(
@@ -173,7 +174,6 @@ export class RangeSensor {
             this._targetLabel,
             botPos,
             botAngle,
-            "wave",
         )
     }
 }

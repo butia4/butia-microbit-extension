@@ -117,7 +117,7 @@ describe("SurfaceSensor", () => {
         expect(noAngleSensor.read()).toBe(SURFACE_ON_VALUE)
     })
 
-    it("always builds a beam mesh, but never shows it — surface sensors only ever show the ping", async () => {
+    it("always builds a ping mesh — sonar wave/cone mesh is disabled for all sensor types", async () => {
         vi.resetModules()
         const { SurfaceSensor } = await import("./surfaceSensor")
 
@@ -125,11 +125,10 @@ describe("SurfaceSensor", () => {
         const mockBot = makeMockBot(0, null, renderObj)
 
         const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
-        expect(shapes.size).toBe(2) // wave + target meshes always built
+        expect(shapes.size).toBe(1) // only the ping/target mesh is built
 
         sensor.read()
-        const waveLabel = [...shapes.keys()].find(k => k.startsWith("surface.wave."))
-        expect(waveLabel).toBeDefined()
-        expect(shapes.get(waveLabel as string)?.visible).toBe(false) // cone/wave is never shown for surface sensors, only the ping
+        const targetLabel = [...shapes.keys()].find(k => k.startsWith("surface.target."))
+        expect(targetLabel).toBeDefined()
     })
 })

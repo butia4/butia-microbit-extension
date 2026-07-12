@@ -59,9 +59,10 @@ export class SurfaceSensor implements DistanceSensor {
     }
 
     /**
-     * Builds the sonar wave/ping visual meshes for this sensor's beam.
+     * Builds the pulse (ping) visual mesh for this sensor's beam.
      * Unconditional: always builds a mesh, even when `spec.angle` is unset
      * (falls back to DEFAULT_GRAY_COLOR_ANGLE) — there is no no-beam state.
+     * The sonar wave/cone mesh is disabled — see `sonarVisuals.ts`.
      */
     private buildVisuals(): void {
         buildSonarVisuals(
@@ -87,7 +88,6 @@ export class SurfaceSensor implements DistanceSensor {
             this._targetLabel,
             this.bot.pos,
             this.bot.angle,
-            "target",
         )
     }
 

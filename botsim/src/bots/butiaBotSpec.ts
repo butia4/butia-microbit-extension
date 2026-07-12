@@ -14,6 +14,11 @@ export const BUTIA_BOT_SPEC: BotSpec = {
         diameter: 4,    // cm
         width: 1.2,     // cm
         y: 2,           // offset toward rear
+        // Simulator-only speed cap — the requested speed (0-100 from blocks,
+        // though nothing stops a higher value) is used as-is up to this
+        // ceiling, then clamped. E.g. requesting 22 drives at 22; requesting
+        // 26 drives at 25. Hardware is unaffected; this only clamps physics.
+        maxSpeed: 25,
     }),
     sensorMounts: {
         left:  { pos: { x: -3, y: -5 } },
