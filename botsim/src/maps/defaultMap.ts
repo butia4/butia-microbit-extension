@@ -1,5 +1,5 @@
-import { MapSpec } from "./specs"
-import { defaultStaticPhysics, defaultDynamicPhysics, defaultShapePhysics, defaultColorBrush } from "../sim/specs"
+import { MapSpec } from "./mapSpec"
+import { defaultStaticPhysics, defaultDynamicPhysics, defaultShapePhysics, defaultColorBrush } from "../sim/entitySpec"
 import { pickRandom } from "../util"
 import { MAP_ASPECT_RATIO, MICROBIT_COLORS } from "../constants"
 

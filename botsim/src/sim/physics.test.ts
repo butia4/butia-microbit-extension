@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import Physics from "./physics"
-import { EntitySpec, defaultShapePhysics, defaultColorBrush } from "./specs"
+import { EntitySpec, defaultShapePhysics, defaultColorBrush } from "./entitySpec"
 
 function makeDraggableSpec(pos = { x: 10, y: 10 }): EntitySpec {
     return {

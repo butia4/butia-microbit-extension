@@ -1,5 +1,5 @@
-import { MapSpec } from "./specs"
-import { defaultShapePhysics, defaultColorBrush } from "../sim/specs"
+import { MapSpec } from "./mapSpec"
+import { defaultShapePhysics, defaultColorBrush } from "../sim/entitySpec"
 import { MAP_ASPECT_RATIO } from "../constants"
 
 const ARENA = 90   // cm

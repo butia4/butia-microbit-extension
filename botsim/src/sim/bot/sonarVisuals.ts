@@ -3,7 +3,7 @@ import { RENDER_SCALE } from "../../constants"
 import { toRadians } from "../../util"
 import {
     defaultEntityShape, defaultPolygonShape, defaultShapePhysics, defaultShaderBrush, EntityPolygonShapeSpec,
-} from "../specs"
+} from "../entitySpec"
 import { Rgb, rgbToFloatArray } from "../util"
 import { appoximateArc, toRenderScale } from "../util"
 import { addShaderProgram, BasicVertexShader, CommonFragmentShaderGlobals, createGraphics, RenderObject } from "../renderer"
@@ -206,24 +206,17 @@ export function buildSonarVisuals(
  * The wave/cone visual and its `mode` selection (which used to decide
  * whether the wave, the ping, or either could show) are disabled per product
  * decision to use pulse-only feedback for all sensor types — all sensors now
- * only ever show the ping. Kept commented, not deleted, in case the wave
- * animation is reintroduced in the future. `_waveLabel` is only consumed by
- * that disabled code path; the leading underscore silences
- * `noUnusedParameters` in the meantime.
+ * only ever show the ping.
  */
 export function updateSonarVisuals(
     shapes: RenderObject["shapes"] | undefined,
     used: boolean,
     nearest: Vec2Like | undefined,
-    _waveLabel: string,
     targetLabel: string,
     botPos: Vec2Like,
     botAngle: number,
 ): void {
     if (!shapes) return // e.g. in unit tests, where entity is a lightweight mock
-
-    // const wave = shapes.get(waveLabel)
-    // if (wave) wave.visible = used && mode !== "target"
 
     const target = shapes.get(targetLabel)
     if (target) {

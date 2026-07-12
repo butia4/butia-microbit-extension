@@ -6,7 +6,7 @@ import {
     EntitySpec, EntityShapeSpec,
     EntityBoxShapeSpec, EntityCircleShapeSpec,
     EntityPolygonShapeSpec, EntityEdgeShapeSpec, EntityPathShapeSpec,
-} from "./specs"
+} from "./entitySpec"
 
 Planck.Settings.maxPolygonVertices = 64
 

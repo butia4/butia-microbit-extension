@@ -3,11 +3,11 @@ import "./App.css"
 import { SimContainer } from "./ui/SimContainer"
 import { Placeholder } from "./ui/Placeholder"
 import { Simulation } from "./sim"
-import { BUTIA_BOT_SPEC } from "./bots/butiaBotSpec"
+import { BUTIA_BOT_SPEC } from "./botSpecs/butiaBotSpec"
 import { init as initMakeCode, sendSensors } from "./services/makecodeService"
 import { ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
 import { resolveMap } from "./maps/registry"
-import { ConnectorSlot } from "./bots/specs"
+import { ConnectorSlot } from "./botSpecs/botSpec"
 
 let currRunId: string | undefined
 

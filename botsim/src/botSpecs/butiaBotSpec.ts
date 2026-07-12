@@ -1,4 +1,4 @@
-import { BotSpec, toWheels } from "./specs"
+import { BotSpec, toWheels } from "./botSpec"
 
 // Placeholder dimensions — update when Butia v4 schematic is confirmed
 export const BUTIA_BOT_SPEC: BotSpec = {

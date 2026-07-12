@@ -3,7 +3,7 @@ import { AABB } from "../types/aabb"
 import { toRadians } from "../util"
 import * as Planck from "planck"
 import { RENDER_SCALE } from "../constants"
-import { BoxShapeSpec } from "./specs"
+import { BoxShapeSpec } from "./entitySpec"
 
 export function toRenderScale(cm: number): number { return cm * RENDER_SCALE }
 

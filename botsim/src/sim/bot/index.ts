@@ -1,8 +1,8 @@
 import * as Planck from "planck"
-import { BotSpec, ConnectorSlot, MountSide } from "../../bots/specs"
+import { BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
 import { SensorType } from "../../protocol"
 import { Entity } from "../entity"
-import { EntitySpec, defaultDynamicPhysics, defaultEntity } from "../specs"
+import { EntitySpec, defaultDynamicPhysics, defaultEntity } from "../entitySpec"
 import { Vec2Like } from "../../types/vec2"
 import { Chassis } from "./chassis"
 import { Wheel } from "./wheel"
@@ -67,7 +67,7 @@ export class Bot {
 
         this.chassis = new Chassis(this, spec.chassis)
         for (const ws of spec.wheels) {
-            this.wheels.set(ws.name, new Wheel(this as unknown as any, ws))
+            this.wheels.set(ws.name, new Wheel(this, ws))
         }
 
         // Pre-create sensors for each physical mount (left, right) — exactly
@@ -75,22 +75,22 @@ export class Bot {
         for (const side of MOUNT_SIDES) {
             const mount = spec.sensorMounts[side]
             this.graySensors.set(side, new GraySensor(
-                this as unknown as any,
+                this,
                 { pos: mount.pos, name: side }
             ))
             this.lightSensors.set(side, new LightSensor(
-                this as unknown as any,
+                this,
                 { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE },
                 showLightCone
             ))
             const mode = sensorModes[side] ?? "forward"
             this.rangeSensors.set(side, mode === "surface"
                 ? new SurfaceSensor(
-                    this as unknown as any,
+                    this,
                     { pos: mount.pos, name: side }
                 )
                 : new RangeSensor(
-                    this as unknown as any,
+                    this,
                     { pos: mount.pos, name: side, angle: DEFAULT_RANGE_ANGLE, maxRange: MAX_RANGE }
                 ))
         }

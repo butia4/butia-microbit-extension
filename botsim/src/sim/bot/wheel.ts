@@ -1,16 +1,8 @@
 import { Vec2 } from "../../types/vec2"
-import { WheelSpec } from "../../bots/specs"
-import { defaultEntityShape, defaultBoxShape, defaultShapePhysics, defaultColorBrush, EntityShapeSpec } from "../specs"
+import { WheelSpec } from "../../botSpecs/botSpec"
+import { defaultEntityShape, defaultBoxShape, defaultShapePhysics, defaultColorBrush, EntityShapeSpec } from "../entitySpec"
 import { FrictionJointHandle } from "../physics"
-
-type BotRef = {
-    entity: { physicsObj: import("../physics").PhysicsObject }
-    pos: import("../../types/vec2").Vec2Like
-    angle: number
-    forward: import("../../types/vec2").Vec2Like
-    held: boolean
-    paused: boolean
-}
+import { BotHandle } from "./botHandle"
 
 // Shared with Chassis.makeShapeSpec so chassis density can subtract the
 // wheels' contribution to the composite body's total mass — otherwise the
@@ -37,7 +29,7 @@ export class Wheel {
         }
     }
 
-    constructor(private bot: BotRef, private spec: WheelSpec) {
+    constructor(private bot: BotHandle, private spec: WheelSpec) {
         this.localPos = spec.pos
         const friction = this.bot.entity.physicsObj.addFrictionJoint(this.spec.pos)
         if (friction) {

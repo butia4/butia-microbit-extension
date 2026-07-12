@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest"
-import type { BotSpec } from "../../bots/specs"
+import type { BotSpec } from "../../botSpecs/botSpec"
 
 // Bot's constructor pulls in Chassis/Wheel (which touch Planck physics
 // joints) and the three sensor classes. For these tests we only care about

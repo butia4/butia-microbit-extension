@@ -1,5 +1,5 @@
-import { BotSpec, SquareChassisSpec } from "../../bots/specs"
-import { BrushSpec, EntityShapeSpec, defaultEntityShape, defaultBoxShape, defaultCircleShape, defaultPolygonShape, defaultColorBrush, defaultTextureBrush, defaultShapePhysics } from "../specs"
+import { BotSpec, SquareChassisSpec } from "../../botSpecs/botSpec"
+import { BrushSpec, EntityShapeSpec, defaultEntityShape, defaultBoxShape, defaultCircleShape, defaultPolygonShape, defaultColorBrush, defaultTextureBrush, defaultShapePhysics } from "../entitySpec"
 import { Vec2Like } from "../../types/vec2"
 import { appoximateArc } from "../util"
 import { WHEEL_DENSITY } from "./wheel"

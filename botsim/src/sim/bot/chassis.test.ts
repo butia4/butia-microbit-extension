@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { Chassis } from "./chassis"
-import { BotSpec } from "../../bots/specs"
+import { BotSpec } from "../../botSpecs/botSpec"
 
 const baseSpec: Omit<BotSpec, "chassis"> = {
     name: "TestBot",

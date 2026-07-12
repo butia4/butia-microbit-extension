@@ -48,7 +48,7 @@ describe("sonarVisuals", () => {
         it("early-returns without error when shapes is undefined", async () => {
             const { updateSonarVisuals } = await import("./sonarVisuals")
             expect(() =>
-                updateSonarVisuals(undefined, true, undefined, "wave", "target", { x: 0, y: 0 }, 0)
+                updateSonarVisuals(undefined, true, undefined, "target", { x: 0, y: 0 }, 0)
             ).not.toThrow()
         })
 
@@ -57,10 +57,10 @@ describe("sonarVisuals", () => {
             const { renderObj, shapes } = makeMockRenderObj()
             buildSonarVisuals(renderObj as unknown as any, { x: 0, y: -5 }, 70, 5, "wave", "target", colors)
 
-            updateSonarVisuals(shapes as unknown as any, true, undefined, "wave", "target", { x: 0, y: 0 }, 0)
+            updateSonarVisuals(shapes as unknown as any, true, undefined, "target", { x: 0, y: 0 }, 0)
             expect(shapes.get("target")?.visible).toBe(false) // no nearest -> target hidden
 
-            updateSonarVisuals(shapes as unknown as any, false, undefined, "wave", "target", { x: 0, y: 0 }, 0)
+            updateSonarVisuals(shapes as unknown as any, false, undefined, "target", { x: 0, y: 0 }, 0)
             expect(shapes.get("target")?.visible).toBe(false)
         })
 
@@ -73,7 +73,7 @@ describe("sonarVisuals", () => {
             const target = shapes.get("target")!
             target.position.set = (x: number, y: number) => { positioned = { x, y } }
 
-            updateSonarVisuals(shapes as unknown as any, true, { x: 10, y: 10 }, "wave", "target", { x: 0, y: 0 }, 0)
+            updateSonarVisuals(shapes as unknown as any, true, { x: 10, y: 10 }, "target", { x: 0, y: 0 }, 0)
 
             expect(target.visible).toBe(true)
             expect(positioned).toBeDefined()

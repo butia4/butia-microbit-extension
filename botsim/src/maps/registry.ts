@@ -1,4 +1,4 @@
-import { MapSpec } from "./specs"
+import { MapSpec } from "./mapSpec"
 import { DEFAULT_MAP } from "./defaultMap"
 import { TABLE_MAP } from "./tableMap"
 import { LIGHT_MAP } from "./lightMap"

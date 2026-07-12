@@ -1,6 +1,6 @@
 import { Vec2Like } from "../types/vec2"
-import { EntitySpec } from "../sim/specs"
-import { MountSide } from "../bots/specs"
+import { EntitySpec } from "../sim/entitySpec"
+import { MountSide } from "../botSpecs/botSpec"
 
 export type SpawnSpec = { pos: Vec2Like; angle: number }
 

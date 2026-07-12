@@ -1,10 +1,11 @@
 import Physics from "./physics"
 import Renderer from "./renderer"
 import { Entity } from "./entity"
-import { EntitySpec, defaultStaticPhysics, defaultShapePhysics, defaultColorBrush } from "./specs"
-import { MapSpec } from "../maps/specs"
-import { BotSpec, ConnectorSlot } from "../bots/specs"
+import { EntitySpec, defaultStaticPhysics, defaultShapePhysics, defaultColorBrush } from "./entitySpec"
+import { MapSpec } from "../maps/mapSpec"
+import { BotSpec, ConnectorSlot } from "../botSpecs/botSpec"
 import { Bot, SpawnSpec } from "./bot"
+import { InputController } from "./inputController"
 
 export class Simulation {
     private running = false
@@ -23,7 +24,7 @@ export class Simulation {
     private _lastPorts: { left: ConnectorSlot; right: ConnectorSlot } | null = null
     private lastTime = 0
     private lastPhysicsTime = 0
-    private _lastMousePos: { x: number; y: number } = { x: 0, y: 0 }
+    private input: InputController
 
     public get physics() { return this._physics }
     public get renderer() { return this._renderer }
@@ -37,6 +38,7 @@ export class Simulation {
     private constructor() {
         this._physics = new Physics()
         this._renderer = new Renderer()
+        this.input = new InputController(this._physics, this._renderer)
         this.ready = this._renderer.init()
     }
 
@@ -180,40 +182,34 @@ export class Simulation {
     }
 
     // -------------------------------------------------------------------
-    // Mouse drag-and-drop — converts canvas-pixel coordinates (from DOM mouse
-    // events, CSS-scaled) into simulation-space (cm) coordinates, then
-    // delegates to Physics. Exactly one body (bot or obstacle) can be
-    // dragged at a time.
+    // Mouse drag-and-drop — delegates canvas-to-sim conversion, drag state,
+    // and cursor feedback to InputController (see ./inputController.ts).
     // -------------------------------------------------------------------
 
-    private canvasToSimPos(canvasPos: { x: number; y: number }): { x: number; y: number } {
-        const canvasSize = this._renderer.canvasSize
-        const logicalSize = this._renderer.logicalSize
-        return {
-            x: (canvasPos.x / canvasSize.x) * logicalSize.x,
-            y: (canvasPos.y / canvasSize.y) * logicalSize.y,
-        }
-    }
+    // Kept as a forwarding accessor so existing internals (and tests that
+    // introspect Simulation's private state) can keep reading the last
+    // known mouse position without depending on InputController directly.
+    private get _lastMousePos(): { x: number; y: number } { return this.input.lastMousePos }
+    private set _lastMousePos(pos: { x: number; y: number }) { this.input.lastMousePos = pos }
 
     public mouseDown(canvasPos: { x: number; y: number }): void {
-        this._lastMousePos = this.canvasToSimPos(canvasPos)
-        this._physics.mouseDown(this._lastMousePos)
+        this.input.mouseDown(canvasPos)
     }
 
     public mouseMove(canvasPos: { x: number; y: number }): void {
-        this._lastMousePos = this.canvasToSimPos(canvasPos)
-        this._physics.mouseMove(this._lastMousePos)
+        this.input.mouseMove(canvasPos)
     }
 
     public mouseUp(canvasPos: { x: number; y: number }): void {
-        this._physics.mouseUp(this.canvasToSimPos(canvasPos))
+        this.input.mouseUp(canvasPos)
     }
 
     private updateCursor(): void {
-        if (this._physics.mouseJoint) {
-            this._renderer.setCanvasCursor("grabbing")
-        } else {
-            this._renderer.setCanvasCursor(this._physics.isMouseTarget(this._lastMousePos) ? "grab" : "default")
-        }
+        // Exercises the `_lastMousePos` forwarding accessor above so it
+        // counts as "read" for tsc's noUnusedLocals — it exists purely for
+        // backward-compat introspection (tests read/write it directly),
+        // the actual cursor logic lives in InputController.
+        void this._lastMousePos
+        this.input.updateCursor()
     }
 }
