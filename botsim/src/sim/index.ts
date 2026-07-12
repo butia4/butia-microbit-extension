@@ -102,7 +102,7 @@ export class Simulation {
             this._bot = null
         }
         const spawnPt = spawn ?? (this._map?.spawns[0] ?? { pos: { x: 45, y: 45 }, angle: 0 })
-        this._bot = new Bot(this, spawnPt, spec, this._map?.sensorModes ?? {})
+        this._bot = new Bot(this, spawnPt, spec, this._map?.sensorModes ?? {}, this._map?.showLightCone ?? false)
         if (leftPort && rightPort) {
             this._lastPorts = { left: leftPort, right: rightPort }
         }

@@ -364,9 +364,26 @@ export class RenderObject {
                 break
             }
             case "circle": {
-                gfx.circle(ox, oy, toRenderScale(s.radius))
-                    .fill(fill)
-                    .stroke({ width: borderW, color: border })
+                const r = toRenderScale(s.radius)
+                if (brush.glow) {
+                    const rgb = numberToRgb(fill)
+                    const gradient = new Pixi.FillGradient({
+                        type: "radial",
+                        center: { x: 0.5, y: 0.5 }, innerRadius: 0,
+                        outerCenter: { x: 0.5, y: 0.5 }, outerRadius: 0.5,
+                        colorStops: [
+                            { offset: 0, color: `rgba(${rgb.r},${rgb.g},${rgb.b},0.95)` },
+                            { offset: 0.55, color: `rgba(${rgb.r},${rgb.g},${rgb.b},0.35)` },
+                            { offset: 1, color: `rgba(${rgb.r},${rgb.g},${rgb.b},0)` },
+                        ],
+                        textureSpace: "local",
+                    })
+                    gfx.circle(ox, oy, r).fill(gradient)
+                } else {
+                    gfx.circle(ox, oy, r)
+                        .fill(fill)
+                        .stroke({ width: borderW, color: border })
+                }
                 break
             }
             case "polygon": {

@@ -32,6 +32,10 @@ vi.mock("./lightSensor", async (importOriginal) => {
     return {
         ...actual,
         LightSensor: class {
+            public showCone: unknown
+            constructor(_bot: unknown, _spec: unknown, showCone?: boolean) {
+                this.showCone = showCone
+            }
             read() { return 222 }
         },
     }
@@ -127,6 +131,34 @@ describe("Bot sensor construction", () => {
         // values prove there's no cross-routing between the two maps.
         expect(result.J1).toBe(222)
         expect(result.J2).toBe(111)
+    })
+
+    it("threads showLightCone only into lightSensors, leaving graySensors/rangeSensors untouched", async () => {
+        const { Bot } = await import("./index")
+
+        const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec, {}, true)
+        const lightSensors = (bot as unknown as { lightSensors: Map<string, { showCone: unknown }> }).lightSensors
+        const graySensors = (bot as unknown as { graySensors: Map<string, unknown> }).graySensors
+        const rangeSensors = (bot as unknown as { rangeSensors: Map<string, unknown> }).rangeSensors
+
+        for (const side of ["left", "right"]) {
+            expect(lightSensors.get(side)?.showCone).toBe(true)
+        }
+        // GraySensor/RangeSensor mocks take no showCone-shaped param at all —
+        // their construction is unaffected, only asserting they still exist.
+        expect(graySensors.size).toBe(2)
+        expect(rangeSensors.size).toBe(2)
+    })
+
+    it("defaults showLightCone to false when omitted", async () => {
+        const { Bot } = await import("./index")
+
+        const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
+        const lightSensors = (bot as unknown as { lightSensors: Map<string, { showCone: unknown }> }).lightSensors
+
+        for (const side of ["left", "right"]) {
+            expect(lightSensors.get(side)?.showCone).toBe(false)
+        }
     })
 
     it("an unassigned J-port reads as disconnected (MAX_RANGE), via the existing miss-path fallback", async () => {

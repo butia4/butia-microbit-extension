@@ -18,7 +18,7 @@ describe("sonarVisuals", () => {
             expect(() => buildSonarVisuals(undefined, { x: 0, y: 0 }, 30, 400, "wave", "target", colors)).not.toThrow()
         })
 
-        it("builds only the ping mesh, starting invisible — the sonar wave/cone mesh is disabled", async () => {
+        it("builds only the ping mesh, starting invisible, when showCone is omitted (default false)", async () => {
             const { buildSonarVisuals } = await import("./sonarVisuals")
             const { renderObj, shapes } = makeMockRenderObj()
 
@@ -26,6 +26,19 @@ describe("sonarVisuals", () => {
 
             expect(shapes.size).toBe(1)
             expect(shapes.get("myWave")).toBeUndefined()
+            expect(shapes.get("myTarget")).toBeDefined()
+            expect(shapes.get("myTarget")?.visible).toBe(false)
+        })
+
+        it("also builds a visible wave/cone mesh when showCone is true", async () => {
+            const { buildSonarVisuals } = await import("./sonarVisuals")
+            const { renderObj, shapes } = makeMockRenderObj()
+
+            buildSonarVisuals(renderObj as unknown as any, { x: 0, y: -5 }, 70, 5, "myWave", "myTarget", colors, true)
+
+            expect(shapes.size).toBe(2)
+            expect(shapes.get("myWave")).toBeDefined()
+            expect(shapes.get("myWave")?.visible).toBe(true)
             expect(shapes.get("myTarget")).toBeDefined()
             expect(shapes.get("myTarget")?.visible).toBe(false)
         })

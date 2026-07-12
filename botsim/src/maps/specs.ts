@@ -18,4 +18,9 @@ export type MapSpec = {
     // field entirely) default to "forward" (existing cone-raycast behavior)
     // — see Bot's constructor.
     sensorModes?: Partial<Record<MountSide, "forward" | "surface">>
+    // Optional per-map override that keeps the sonar cone (wave mesh) always
+    // visible for both light sensors while this map is active, instead of
+    // the default pulse-only ping feedback. Absent (or false) keeps the
+    // default pulse-only behavior — see LightSensor/buildSonarVisuals.
+    showLightCone?: boolean
 }

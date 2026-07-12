@@ -69,6 +69,10 @@ export type ColorBrushSpec = {
     borderColor: string
     borderWidth: number
     fillColor: string
+    // Circle-only: renders as a radial gradient fading from fillColor to
+    // transparent instead of a flat fill, with no border — used for glow/halo
+    // effects (e.g. the light-source map's light bulb).
+    glow?: boolean
 }
 
 export type TextureBrushSpec = {

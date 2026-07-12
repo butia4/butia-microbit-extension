@@ -13,11 +13,10 @@ import { buildSonarVisuals, SONAR_COLORS, updateSonarVisuals } from "./sonarVisu
 
 export const LIGHT_MAX_RANGE = 40 // cm
 
-// Default cone angle applied when a connector spec omits `angle` — a midpoint
-// between RangeSensor's narrow 30° (long-range obstacle beam) and Gray/Color's
-// wide 70° (near-field contact): wide enough that left/right mounts get
-// overlapping readings to steer on, narrow enough to stay directional.
-export const DEFAULT_LIGHT_ANGLE = 45 // degrees
+// Default cone angle applied when a connector spec omits `angle`. Wider than
+// RangeSensor's narrow 30° (long-range obstacle beam) to make the Luz map's
+// seek behavior more forgiving — tuned up from 45° to 75° per user testing.
+export const DEFAULT_LIGHT_ANGLE = 75 // degrees
 
 // Sibling class to RangeSensor — same cone/raycast fixture and world-space
 // edge-intersection geometry (design decision: separate classes, not a
@@ -44,7 +43,7 @@ export class LightSensor {
 
     public get value(): number { return this._value }
 
-    constructor(private bot: BotRef, private spec: RangeSensorSpec) {
+    constructor(private bot: BotRef, private spec: RangeSensorSpec, private showCone: boolean = false) {
         const id = nextId()
         this._fixtureLabel = "light.cone." + id
         this._waveLabel = "light.wave." + id
@@ -97,6 +96,7 @@ export class LightSensor {
             this._waveLabel,
             this._targetLabel,
             SONAR_COLORS.light,
+            this.showCone,
         )
     }
 

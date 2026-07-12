@@ -50,7 +50,8 @@ export class Bot {
         },
         spawn: SpawnSpec,
         public spec: BotSpec,
-        sensorModes: Partial<Record<MountSide, "forward" | "surface">> = {}
+        sensorModes: Partial<Record<MountSide, "forward" | "surface">> = {},
+        showLightCone: boolean = false
     ) {
         const chassisShape = Chassis.makeShapeSpec(spec)
         const wheelShapes = spec.wheels.map(ws => Wheel.makeShapeSpec(spec, ws))
@@ -79,7 +80,8 @@ export class Bot {
             ))
             this.lightSensors.set(side, new LightSensor(
                 this as unknown as any,
-                { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE }
+                { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE },
+                showLightCone
             ))
             const mode = sensorModes[side] ?? "forward"
             this.rangeSensors.set(side, mode === "surface"

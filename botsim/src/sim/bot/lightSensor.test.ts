@@ -156,6 +156,29 @@ describe("LightSensor", () => {
         expect(targetLabel).toBeDefined()
     })
 
+    it("builds a wave (cone) mesh in addition to the ping mesh when showCone is true", async () => {
+        vi.resetModules()
+        const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
+        const { renderObj, shapes } = makeMockRenderObj()
+        const mockBot = makeMockBot(undefined, renderObj)
+        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE }, true)
+        expect(shapes.size).toBe(2)
+        const waveLabel = [...shapes.keys()].find(k => k.startsWith("light.wave."))
+        const targetLabel = [...shapes.keys()].find(k => k.startsWith("light.target."))
+        expect(waveLabel).toBeDefined()
+        expect(targetLabel).toBeDefined()
+    })
+
+    it("does not build a wave (cone) mesh when showCone is false or omitted", async () => {
+        vi.resetModules()
+        const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
+        const { renderObj, shapes } = makeMockRenderObj()
+        const mockBot = makeMockBot(undefined, renderObj)
+        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE }, false)
+        expect(shapes.size).toBe(1)
+        expect([...shapes.keys()].find(k => k.startsWith("light.wave."))).toBeUndefined()
+    })
+
     it("destroy() removes the cone fixture", async () => {
         vi.resetModules()
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
