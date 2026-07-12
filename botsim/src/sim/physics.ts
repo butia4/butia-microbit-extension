@@ -1,4 +1,4 @@
-import Planck from "planck-js"
+import * as Planck from "planck"
 import { Vec2, Vec2Like } from "../types/vec2"
 import { toRadians } from "../util"
 import { samplePath } from "./util"
@@ -10,7 +10,7 @@ import {
 
 Planck.Settings.maxPolygonVertices = 64
 
-// planck-js@0.3 types don't export FrictionJoint on the default namespace, so
+// planck types don't export FrictionJoint on the default namespace, so
 // callers get back this narrow handle instead of the full Planck.Joint type.
 export interface FrictionJointHandle {
     setMaxForce(force: number): void
@@ -131,7 +131,7 @@ export class PhysicsObject {
             maxTorque: 2,
             collideConnected: false,
         }
-        // planck-js@0.3 types don't export FrictionJoint on the default namespace
+        // planck types don't export FrictionJoint on the default namespace
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const joint = this.world.createJoint(new (Planck as any).FrictionJoint(def))
         if (!joint) return undefined
@@ -174,7 +174,7 @@ export class PhysicsObject {
 export default class Physics {
     private _world!: Planck.World
     private _mouseGround!: Planck.Body
-    // planck-js@0.3 types don't export MouseJoint on the default namespace
+    // planck types don't export MouseJoint on the default namespace
     // (same issue as FrictionJoint above)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private _mouseJoint: any

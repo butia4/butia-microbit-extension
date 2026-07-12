@@ -1,7 +1,7 @@
 import { Vec2, Vec2Like } from "../types/vec2"
 import { AABB } from "../types/aabb"
 import { toRadians } from "../util"
-import Planck from "planck-js"
+import * as Planck from "planck"
 import { RENDER_SCALE } from "../constants"
 import { BoxShapeSpec } from "./specs"
 

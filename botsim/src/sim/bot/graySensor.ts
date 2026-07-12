@@ -1,4 +1,4 @@
-import Planck from "planck-js"
+import * as Planck from "planck"
 import { MountSensorSpec } from "../../bots/specs"
 import { Vec2 } from "../../types/vec2"
 import { nextId } from "../../util"

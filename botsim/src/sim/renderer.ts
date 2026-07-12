@@ -15,20 +15,20 @@ import { samplePath, toRenderScale, boxToVertices, calcUvs, flattenVerts, expand
  ********************************************************************/
 
 // Shader programs are built lazily (on first actual use, via
-// getShaderProgram), not at registration time. Pixi.Program.from() probes the
-// browser's WebGL context (max fragment precision), which doesn't exist under
-// jsdom/vitest — building eagerly at module-import time would break any test
-// that merely imports this module (e.g. RangeSensor, which registers the
-// sonar shaders) even if it never actually renders anything.
+// getShaderProgram), not at registration time. Pixi.GlProgram.from() probes
+// the browser's WebGL context (max fragment precision), which doesn't exist
+// under jsdom/vitest — building eagerly at module-import time would break any
+// test that merely imports this module (e.g. RangeSensor, which registers
+// the sonar shaders) even if it never actually renders anything.
 type ShaderSource = { vert: string; frag: string }
 const shaderSources = new Map<string, ShaderSource>()
-const shaderPrograms = new Map<string, Pixi.Program>()
+const shaderPrograms = new Map<string, Pixi.GlProgram>()
 
 export function addShaderProgram(name: string, vert: string, frag: string): void {
     shaderSources.set(name, { vert, frag })
 }
 
-export function getShaderProgram(name: string): Pixi.Program {
+export function getShaderProgram(name: string): Pixi.GlProgram {
     const cached = shaderPrograms.get(name)
     if (cached) return cached
     const src = shaderSources.get(name)
@@ -36,18 +36,68 @@ export function getShaderProgram(name: string): Pixi.Program {
         console.error(`shader program not found: "${name}"`)
         return getShaderProgram("$$missing_shader$$")
     }
-    const pgm = Pixi.Program.from(src.vert, src.frag)
+    const pgm = Pixi.GlProgram.from({ vertex: src.vert, fragment: src.frag })
     shaderPrograms.set(name, pgm)
     return pgm
 }
 
+// Meshes built with a shader brush that animates via `uTime` (e.g. the sonar
+// ping) — Pixi v8 removed the old renderer-wide globalUniforms.uniforms
+// escape hatch, so each shaded mesh gets its own `uTime` uniform that this
+// registry advances every frame (see Renderer.update below).
+const timedUniformGroups = new Map<Pixi.Container, Pixi.UniformGroup>()
+
+function registerTimedShader(mesh: Pixi.Container, uniforms: Pixi.UniformGroup): void {
+    timedUniformGroups.set(mesh, uniforms)
+    mesh.once("destroyed", () => timedUniformGroups.delete(mesh))
+}
+
+function advanceShaderTime(dtSecs: number): void {
+    for (const uniforms of timedUniformGroups.values()) {
+        (uniforms.uniforms as { uTime: number }).uTime += dtSecs
+    }
+}
+
+// Every uniform in a Shader's `resources` record gets independently wrapped
+// in its own single-member UniformGroup by Pixi unless it's already one —
+// so plain scalars/vectors must be combined into one explicit UniformGroup
+// (with an inferred glsl type per value) rather than passed as bare values.
+type UniformValue = number | number[]
+
+function inferUniformType(value: UniformValue): Pixi.UNIFORM_TYPES {
+    if (typeof value === "number") return "f32"
+    switch (value.length) {
+        case 2: return "vec2<f32>"
+        case 3: return "vec3<f32>"
+        case 4: return "vec4<f32>"
+        default: throw new Error(`unsupported uniform vector length: ${value.length}`)
+    }
+}
+
+function buildUniformGroup(uniforms: Record<string, UniformValue>): Pixi.UniformGroup<Record<string, { value: UniformValue; type: Pixi.UNIFORM_TYPES }>> {
+    const structures: Record<string, { value: UniformValue; type: Pixi.UNIFORM_TYPES }> = {}
+    for (const [name, value] of Object.entries(uniforms)) {
+        structures[name] = { value, type: inferUniformType(value) }
+    }
+    return new Pixi.UniformGroup(structures)
+}
+
+// uProjectionMatrix/uWorldTransformMatrix (camera/stage) and uTransformMatrix
+// (this mesh's own local transform) are Pixi v8's built-in per-draw uniforms
+// — GlMeshAdaptor.execute() binds them (as well as the reserved uColor/
+// uRound/uResolution/uWorldColorAlpha names below) to every Mesh regardless
+// of whether it uses a custom shader, so our own uniform names must avoid
+// colliding with them or WebGL throws "Uniform size does not match uniform
+// method" (a same-named uniform declared with a different type/size here
+// than in Pixi's reserved bind groups).
 export const CommonVertexShaderGlobals = `
     precision mediump float;
     attribute vec2 aVerts;
     attribute vec2 aUvs;
     uniform float uAspectRatio;
-    uniform mat3 translationMatrix;
-    uniform mat3 projectionMatrix;
+    uniform mat3 uProjectionMatrix;
+    uniform mat3 uWorldTransformMatrix;
+    uniform mat3 uTransformMatrix;
     uniform float uTime;
     varying vec2 vUvs;
 `
@@ -56,7 +106,8 @@ export const BasicVertexShader =
     `
     void main() {
         vUvs = aUvs;
-        gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVerts, 1.0)).xy, 0.0, 1.0);
+        mat3 mvp = uProjectionMatrix * uWorldTransformMatrix * uTransformMatrix;
+        gl_Position = vec4((mvp * vec3(aVerts, 1.0)).xy, 0.0, 1.0);
     }`
 
 export const CommonFragmentShaderGlobals = `
@@ -88,12 +139,12 @@ addShaderProgram(
     CommonFragmentShaderGlobals +
         `
         uniform sampler2D uSampler2;
-        uniform vec3 uColor;
+        uniform vec3 uBrushColor;
         uniform float uAlpha;
         void main() {
             vec2 uv = vUvs;
             uv = vec2(uv.x * uAspectRatio, uv.y);
-            gl_FragColor = texture2D(uSampler2, uv) * vec4(uColor.rgb, uAlpha);
+            gl_FragColor = texture2D(uSampler2, uv) * vec4(uBrushColor.rgb, uAlpha);
         }`
 )
 
@@ -106,7 +157,7 @@ function hexToRgbFloats(hex: string): number[] {
     return rgbToFloatArray(numberToRgb(n))
 }
 
-function createTexturedBoxGraphics(shape: EntityBoxShapeSpec, brush: TextureBrushSpec): Pixi.DisplayObject {
+function createTexturedBoxGraphics(shape: EntityBoxShapeSpec, brush: TextureBrushSpec): Pixi.Container {
     const verts = boxToVertices(shape).map(v => Vec2.scale(v, RENDER_SCALE))
     const indices = earcut(flattenVerts(verts))
     const mesh = expandMesh(verts, indices)
@@ -115,25 +166,30 @@ function createTexturedBoxGraphics(shape: EntityBoxShapeSpec, brush: TextureBrus
     const uAspectRatio = AABB.width(aabb) / AABB.height(aabb)
 
     const geom = new Pixi.Geometry()
-    geom.addAttribute("aVerts", flattenVerts(mesh), 2)
-    geom.addAttribute("aUvs", flattenVerts(uvs), 2)
+    geom.addAttribute("aVerts", { buffer: flattenVerts(mesh), size: 2 })
+    geom.addAttribute("aUvs", { buffer: flattenVerts(uvs), size: 2 })
 
-    const pgm = getShaderProgram("textured_colored")
-    const shader = new Pixi.Shader(pgm, {
-        uSampler2: Pixi.Texture.from(brush.texture),
-        uColor: hexToRgbFloats(brush.color),
-        uAlpha: brush.alpha,
-        uAspectRatio,
+    const glProgram = getShaderProgram("textured_colored")
+    const shader = new Pixi.Shader({
+        glProgram,
+        resources: {
+            uSampler2: Pixi.Texture.from(brush.texture).source,
+            uniforms: buildUniformGroup({
+                uBrushColor: hexToRgbFloats(brush.color),
+                uAlpha: brush.alpha,
+                uAspectRatio,
+            }),
+        },
     })
-    const g = new Pixi.Mesh(geom, shader)
+    const g = new Pixi.Mesh({ geometry: geom, shader })
     g.zIndex = brush.zIndex ?? 0
     g.position.set(toRenderScale(shape.offset.x), toRenderScale(shape.offset.y))
     g.angle = shape.angle
     g.visible = brush.visible
-    return g as unknown as Pixi.DisplayObject
+    return g
 }
 
-function createShadedBoxGraphics(shape: EntityBoxShapeSpec, brush: ShaderBrushSpec): Pixi.DisplayObject {
+function createShadedBoxGraphics(shape: EntityBoxShapeSpec, brush: ShaderBrushSpec): Pixi.Container {
     const verts = boxToVertices(shape).map(v => Vec2.scale(v, RENDER_SCALE))
     const indices = earcut(flattenVerts(verts))
     const mesh = expandMesh(verts, indices)
@@ -142,20 +198,22 @@ function createShadedBoxGraphics(shape: EntityBoxShapeSpec, brush: ShaderBrushSp
     const uAspectRatio = AABB.width(aabb) / AABB.height(aabb)
 
     const geom = new Pixi.Geometry()
-    geom.addAttribute("aVerts", flattenVerts(mesh), 2)
-    geom.addAttribute("aUvs", flattenVerts(uvs), 2)
+    geom.addAttribute("aVerts", { buffer: flattenVerts(mesh), size: 2 })
+    geom.addAttribute("aUvs", { buffer: flattenVerts(uvs), size: 2 })
 
-    const pgm = getShaderProgram(brush.shader)
-    const shader = new Pixi.Shader(pgm, { ...brush.uniforms, uAspectRatio })
-    const g = new Pixi.Mesh(geom, shader)
+    const glProgram = getShaderProgram(brush.shader)
+    const uniforms = buildUniformGroup({ ...brush.uniforms, uAspectRatio, uTime: 0 })
+    const shader = new Pixi.Shader({ glProgram, resources: { uniforms } })
+    const g = new Pixi.Mesh({ geometry: geom, shader })
     g.zIndex = brush.zIndex ?? 0
     g.position.set(toRenderScale(shape.offset.x), toRenderScale(shape.offset.y))
     g.angle = shape.angle
     g.visible = brush.visible
-    return g as unknown as Pixi.DisplayObject
+    registerTimedShader(g, uniforms)
+    return g
 }
 
-function createTexturedPolygonGraphics(shape: EntityPolygonShapeSpec, brush: TextureBrushSpec): Pixi.DisplayObject {
+function createTexturedPolygonGraphics(shape: EntityPolygonShapeSpec, brush: TextureBrushSpec): Pixi.Container {
     const verts = shape.verts.map(v => Vec2.scale(v, RENDER_SCALE))
     const indices = earcut(flattenVerts(verts))
     const mesh = expandMesh(verts, indices)
@@ -164,25 +222,30 @@ function createTexturedPolygonGraphics(shape: EntityPolygonShapeSpec, brush: Tex
     const uAspectRatio = AABB.width(aabb) / AABB.height(aabb)
 
     const geom = new Pixi.Geometry()
-    geom.addAttribute("aVerts", flattenVerts(mesh), 2)
-    geom.addAttribute("aUvs", flattenVerts(uvs), 2)
+    geom.addAttribute("aVerts", { buffer: flattenVerts(mesh), size: 2 })
+    geom.addAttribute("aUvs", { buffer: flattenVerts(uvs), size: 2 })
 
-    const pgm = getShaderProgram("textured_colored")
-    const shader = new Pixi.Shader(pgm, {
-        uSampler2: Pixi.Texture.from(brush.texture),
-        uColor: hexToRgbFloats(brush.color),
-        uAlpha: brush.alpha,
-        uAspectRatio,
+    const glProgram = getShaderProgram("textured_colored")
+    const shader = new Pixi.Shader({
+        glProgram,
+        resources: {
+            uSampler2: Pixi.Texture.from(brush.texture).source,
+            uniforms: buildUniformGroup({
+                uBrushColor: hexToRgbFloats(brush.color),
+                uAlpha: brush.alpha,
+                uAspectRatio,
+            }),
+        },
     })
-    const g = new Pixi.Mesh(geom, shader)
+    const g = new Pixi.Mesh({ geometry: geom, shader })
     g.zIndex = brush.zIndex ?? 0
     g.position.set(toRenderScale(shape.offset.x), toRenderScale(shape.offset.y))
     g.angle = shape.angle
     g.visible = brush.visible
-    return g as unknown as Pixi.DisplayObject
+    return g
 }
 
-function createShadedPolygonGraphics(shape: EntityPolygonShapeSpec, brush: ShaderBrushSpec): Pixi.DisplayObject {
+function createShadedPolygonGraphics(shape: EntityPolygonShapeSpec, brush: ShaderBrushSpec): Pixi.Container {
     if (shape.verts.length < 3) return new Pixi.Container()
     const verts = shape.verts.map(v => Vec2.scale(v, RENDER_SCALE))
     const indices = earcut(flattenVerts(verts))
@@ -192,20 +255,22 @@ function createShadedPolygonGraphics(shape: EntityPolygonShapeSpec, brush: Shade
     const uAspectRatio = AABB.width(aabb) / AABB.height(aabb)
 
     const geom = new Pixi.Geometry()
-    geom.addAttribute("aVerts", flattenVerts(mesh), 2)
-    geom.addAttribute("aUvs", flattenVerts(uvs), 2)
+    geom.addAttribute("aVerts", { buffer: flattenVerts(mesh), size: 2 })
+    geom.addAttribute("aUvs", { buffer: flattenVerts(uvs), size: 2 })
 
-    const pgm = getShaderProgram(brush.shader)
-    const shader = new Pixi.Shader(pgm, { ...brush.uniforms, uAspectRatio })
-    const g = new Pixi.Mesh(geom, shader)
+    const glProgram = getShaderProgram(brush.shader)
+    const uniforms = buildUniformGroup({ ...brush.uniforms, uAspectRatio, uTime: 0 })
+    const shader = new Pixi.Shader({ glProgram, resources: { uniforms } })
+    const g = new Pixi.Mesh({ geometry: geom, shader })
     g.zIndex = brush.zIndex ?? 0
     g.position.set(toRenderScale(shape.offset.x), toRenderScale(shape.offset.y))
     g.angle = shape.angle
     g.visible = brush.visible
-    return g as unknown as Pixi.DisplayObject
+    registerTimedShader(g, uniforms)
+    return g
 }
 
-type ShapeBrushFactory = (shape: EntityShapeSpec, brush: BrushSpec) => Pixi.DisplayObject
+type ShapeBrushFactory = (shape: EntityShapeSpec, brush: BrushSpec) => Pixi.Container
 
 /**
  * Factory matrix for non-color brushes. Only box/polygon shapes support
@@ -231,7 +296,7 @@ export const createGraphics: {
 // -------------------------------------------------------------------
 export class RenderObject {
     public container: Pixi.Container
-    public shapes = new Map<string, Pixi.DisplayObject>()
+    public shapes = new Map<string, Pixi.Container>()
     private physicsPos: () => Vec2Like
     private physicsAngle: () => number
 
@@ -265,12 +330,12 @@ export class RenderObject {
      * after construction. Used by sensors (e.g. RangeSensor's sonar wave/ping
      * visuals) that are built lazily once the entity/body already exists.
      */
-    public addShape(label: string, gfx: Pixi.DisplayObject): void {
+    public addShape(label: string, gfx: Pixi.Container): void {
         this.container.addChild(gfx)
         this.shapes.set(label, gfx)
     }
 
-    private drawShape(s: EntityShapeSpec): Pixi.DisplayObject | null {
+    private drawShape(s: EntityShapeSpec): Pixi.Container | null {
         if (s.brush.type === "texture" || s.brush.type === "shader") {
             if (s.type === "box") return createGraphics.box[s.brush.type](s, s.brush)
             if (s.type === "polygon" && s.verts.length >= 3) return createGraphics.polygon[s.brush.type](s, s.brush)
@@ -293,33 +358,29 @@ export class RenderObject {
             case "box": {
                 const hw = toRenderScale(s.size.x / 2)
                 const hh = toRenderScale(s.size.y / 2)
-                gfx.lineStyle(borderW, border)
-                gfx.beginFill(fill)
-                gfx.drawRect(ox - hw, oy - hh, hw * 2, hh * 2)
-                gfx.endFill()
+                gfx.rect(ox - hw, oy - hh, hw * 2, hh * 2)
+                    .fill(fill)
+                    .stroke({ width: borderW, color: border })
                 break
             }
             case "circle": {
-                gfx.lineStyle(borderW, border)
-                gfx.beginFill(fill)
-                gfx.drawCircle(ox, oy, toRenderScale(s.radius))
-                gfx.endFill()
+                gfx.circle(ox, oy, toRenderScale(s.radius))
+                    .fill(fill)
+                    .stroke({ width: borderW, color: border })
                 break
             }
             case "polygon": {
                 if (s.verts.length < 3) return null
                 const pts = s.verts.flatMap(v => [ox + toRenderScale(v.x), oy + toRenderScale(v.y)])
-                gfx.lineStyle(borderW, border)
-                gfx.beginFill(fill, 0.5)
-                gfx.drawPolygon(pts)
-                gfx.endFill()
+                gfx.poly(pts)
+                    .fill({ color: fill, alpha: 0.5 })
+                    .stroke({ width: borderW, color: border })
                 break
             }
             case "path": {
                 const ps = s as EntityPathShapeSpec
                 const sampled = samplePath(ps.verts, ps.closed, ps.stepSize)
                 const hw = toRenderScale(ps.width / 2)
-                gfx.lineStyle(hw * 2, fill)
                 if (sampled.length > 0) {
                     gfx.moveTo(ox + toRenderScale(sampled[0].x), oy + toRenderScale(sampled[0].y))
                     for (let i = 1; i < sampled.length; i++) {
@@ -328,6 +389,7 @@ export class RenderObject {
                     if (ps.closed) {
                         gfx.lineTo(ox + toRenderScale(sampled[0].x), oy + toRenderScale(sampled[0].y))
                     }
+                    gfx.stroke({ width: hw * 2, color: fill })
                 }
                 break
             }
@@ -358,47 +420,49 @@ export class RenderObject {
 // Renderer — Pixi app wrapper
 // -------------------------------------------------------------------
 export default class Renderer {
-    private pixi: Pixi.Application
-    private pixiRenderer: Pixi.Renderer
-    private _size: Vec2Like
+    // Populated by init() — Pixi v8 requires the Application to be
+    // initialized asynchronously (await app.init(...)) before its stage,
+    // renderer, and canvas exist. Callers must await init() before using any
+    // other method on this class.
+    private pixi!: Pixi.Application
+    private pixiRenderer!: Pixi.Renderer
+    private _size: Vec2Like = { x: 90 * MAP_ASPECT_RATIO, y: 90 }
 
-    public get handle(): Pixi.ICanvas { return this.pixi.view as Pixi.ICanvas }
+    public get handle(): HTMLCanvasElement { return this.pixi.canvas as HTMLCanvasElement }
     public get logicalSize(): Vec2Like { return this._size }
     public get stage(): Pixi.Container { return this.pixi.stage }
     // Screen size of the canvas control (for mouse-coordinate conversion)
     public get canvasSize(): Vec2Like {
-        const view = this.pixi.view as HTMLCanvasElement
+        const view = this.pixi.canvas as HTMLCanvasElement
         const rect = view.getBoundingClientRect?.()
         if (!rect || (rect.width === 0 && rect.height === 0)) return { x: view.width, y: view.height }
         return { x: rect.width, y: rect.height }
     }
 
     public setCanvasCursor(cursor: string): void {
-        const view = this.pixi.view as HTMLCanvasElement
+        const view = this.pixi.canvas as HTMLCanvasElement
         if (view?.style) {
             view.style.cursor = cursor
         }
     }
 
-    constructor() {
+    public async init(): Promise<void> {
         const w = toRenderScale(90 * MAP_ASPECT_RATIO)
         const h = toRenderScale(90)
         this._size = { x: 90 * MAP_ASPECT_RATIO, y: 90 }
-        this.pixi = new Pixi.Application({
+        this.pixi = new Pixi.Application()
+        await this.pixi.init({
             width: w, height: h,
             antialias: true,
             clearBeforeRender: true,
         })
-        const view = this.pixi.view as HTMLCanvasElement
+        const view = this.pixi.canvas as HTMLCanvasElement
         if (view.style) {
             view.style.width = "100%"
             view.style.height = "100%"
         }
         this.pixi.stage.sortableChildren = true
         this.pixiRenderer = this.pixi.renderer as Pixi.Renderer
-        // Global uniforms must be created before the first render — drives
-        // time-based shader animation (e.g. the sonar wave/ping effect).
-        this.pixiRenderer.globalUniforms.uniforms.uTime = 0
     }
 
     public resize(widthCm: number, heightCm: number): void {
@@ -416,7 +480,7 @@ export default class Renderer {
     }
 
     public update(dtSecs: number): void {
-        this.pixiRenderer.globalUniforms.uniforms.uTime += dtSecs
+        advanceShaderTime(dtSecs)
     }
 
     public createRenderObj(
@@ -428,6 +492,6 @@ export default class Renderer {
     }
 
     public mountTo(container: HTMLElement): void {
-        container.appendChild(this.pixi.view as HTMLCanvasElement)
+        container.appendChild(this.pixi.canvas as HTMLCanvasElement)
     }
 }

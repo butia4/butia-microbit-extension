@@ -27,11 +27,15 @@ vi.mock("./graySensor", () => ({
     },
 }))
 
-vi.mock("./colorSensor", () => ({
-    ColorSensor: class {
-        read() { return 222 }
-    },
-}))
+vi.mock("./lightSensor", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("./lightSensor")>()
+    return {
+        ...actual,
+        LightSensor: class {
+            read() { return 222 }
+        },
+    }
+})
 
 vi.mock("./rangeSensor", async (importOriginal) => {
     const actual = await importOriginal<typeof import("./rangeSensor")>()
@@ -110,7 +114,7 @@ describe("Bot sensor construction", () => {
         expect(rangeSensors.get("right")).toBeInstanceOf(RangeSensor)
     })
 
-    it("routes \"light\" sensorType reads to colorSensors, not graySensors, resolving connName -> mount via portAssignment", async () => {
+    it("routes \"light\" sensorType reads to lightSensors, not graySensors, resolving connName -> mount via portAssignment", async () => {
         const { Bot } = await import("./index")
 
         const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
@@ -119,7 +123,7 @@ describe("Bot sensor construction", () => {
 
         const result = bot.readSensors()
 
-        // GraySensor mock returns 111, ColorSensor mock returns 222 — distinct
+        // GraySensor mock returns 111, LightSensor mock returns 222 — distinct
         // values prove there's no cross-routing between the two maps.
         expect(result.J1).toBe(222)
         expect(result.J2).toBe(111)

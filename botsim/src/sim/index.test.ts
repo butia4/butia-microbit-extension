@@ -4,34 +4,42 @@ import { describe, it, expect, vi, beforeEach, type Mock } from "vitest"
 // which pull in Planck (physics) and Pixi (rendering). For testing the
 // loop-gating and cursor logic we don't need real physics/rendering, so
 // mock both modules with lightweight spies.
+// Vitest 4 requires a mock used with `new` to be backed by a real function/
+// class, not an arrow function — mockImplementation(() => ({...})) triggers
+// "is not a constructor" when Simulation does `new Physics()`/`new Renderer()`.
 vi.mock("./physics", () => ({
-    default: vi.fn().mockImplementation(() => ({
-        mouseJoint: undefined,
-        isMouseTarget: vi.fn(() => false),
-        update: vi.fn(),
-        createObject: vi.fn(),
-        mouseDown: vi.fn(),
-        mouseMove: vi.fn(),
-        mouseUp: vi.fn(),
-        reinit: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            mouseJoint: undefined,
+            isMouseTarget: vi.fn(() => false),
+            update: vi.fn(),
+            createObject: vi.fn(),
+            mouseDown: vi.fn(),
+            mouseMove: vi.fn(),
+            mouseUp: vi.fn(),
+            reinit: vi.fn(),
+        }
+    }),
 }))
 
 vi.mock("./renderer", async (importOriginal) => {
     const actual = await importOriginal<typeof import("./renderer")>()
     return {
         ...actual,
-        default: vi.fn().mockImplementation(() => ({
-            setCanvasCursor: vi.fn(),
-            update: vi.fn(),
-            canvasSize: { x: 100, y: 100 },
-            logicalSize: { x: 90, y: 90 },
-            createRenderObj: vi.fn(),
-            resize: vi.fn(),
-            color: vi.fn(),
-            reinit: vi.fn(),
-            mountTo: vi.fn(),
-        })),
+        default: vi.fn().mockImplementation(function () {
+            return {
+                init: vi.fn(() => Promise.resolve()),
+                setCanvasCursor: vi.fn(),
+                update: vi.fn(),
+                canvasSize: { x: 100, y: 100 },
+                logicalSize: { x: 90, y: 90 },
+                createRenderObj: vi.fn(),
+                resize: vi.fn(),
+                color: vi.fn(),
+                reinit: vi.fn(),
+                mountTo: vi.fn(),
+            }
+        }),
     }
 })
 

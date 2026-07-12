@@ -8,7 +8,7 @@ import Renderer from "./renderer"
 function makeRendererWithView(): { renderer: Renderer; view: HTMLCanvasElement } {
     const view = document.createElement("canvas")
     const renderer = Object.create(Renderer.prototype) as Renderer
-    ;(renderer as unknown as { pixi: { view: HTMLCanvasElement } }).pixi = { view }
+    ;(renderer as unknown as { pixi: { canvas: HTMLCanvasElement } }).pixi = { canvas: view }
     return { renderer, view }
 }
 

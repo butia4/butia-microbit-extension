@@ -28,10 +28,16 @@ export class Simulation {
     public get physics() { return this._physics }
     public get renderer() { return this._renderer }
     public get bot(): Bot | null { return this._bot }
+    // Resolves once the Pixi renderer has finished its async init (Pixi v8
+    // requires `await app.init(...)` before the stage/canvas exist). Callers
+    // that touch the renderer (loadMap, spawnBot, mountTo, ...) must await
+    // this before doing so.
+    public readonly ready: Promise<void>
 
     private constructor() {
         this._physics = new Physics()
         this._renderer = new Renderer()
+        this.ready = this._renderer.init()
     }
 
     private static _instance: Simulation
@@ -104,7 +110,7 @@ export class Simulation {
             this._bot.setPortAssignment(this._lastPorts.left, this._lastPorts.right)
         }
         // Planck only populates Fixture contacts (used by GraySensor/
-        // ColorSensor/SurfaceSensor's overlap detection) after at least one
+        // LightSensor/SurfaceSensor's overlap detection) after at least one
         // world.step() — without this, the very first readSensors() call
         // right after a (re)spawn sees every contact-based sensor as
         // "disconnected" (MAX_RANGE/0), even when the robot is already

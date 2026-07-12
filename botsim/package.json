@@ -10,20 +10,20 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "earcut": "^2.2.4",
-    "pixi.js": "^7.3.2",
-    "planck-js": "^0.3.31",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "earcut": "^3.2.3",
+    "pixi.js": "^8.19.0",
+    "planck": "^1.5.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@types/earcut": "^2.1.4",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@vitejs/plugin-react": "^4.2.0",
-    "jsdom": "^23.0.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0",
-    "vitest": "^1.0.0"
+    "@types/earcut": "^3.0.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "jsdom": "^29.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.4",
+    "vitest": "^4.1.10"
   }
 }

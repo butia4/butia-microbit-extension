@@ -1,11 +1,9 @@
 import { describe, it, expect, vi } from "vitest"
 
-// Mock planck-js before importing SurfaceSensor
-vi.mock("planck-js", () => ({
-    default: {
-        Circle: vi.fn(() => ({})),
-        Vec2: vi.fn((x = 0, y = 0) => ({ x, y })),
-    },
+// Mock planck before importing SurfaceSensor
+vi.mock("planck", () => ({
+    Circle: vi.fn(() => ({})),
+    Vec2: vi.fn((x = 0, y = 0) => ({ x, y })),
 }))
 
 function makeMockBot(angle: number, contactList: unknown, renderObj?: unknown) {

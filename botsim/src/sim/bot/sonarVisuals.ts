@@ -32,12 +32,16 @@ const PING_RADIUS = 3 // cm
 // cyan-blue). `gray`'s old muted gray (0xb0b0b0) is what made the line-map
 // pulse hard to see — it sat in the same gray family as the floor itself;
 // all four are now distinct, highly saturated hues spaced around the color
-// wheel so none of them blend into a map or an obstacle.
-export const SONAR_COLORS: Record<"range" | "gray" | "color" | "surface", { wave: Rgb; ping: Rgb }> = {
+// wheel so none of them blend into a map or an obstacle. `surface`'s old
+// amber (0xffb300) sat too close in hue to the brown tabletop (#C68642,
+// hue ~30° vs. amber's ~43°) to read as a distinct pulse over that map;
+// swapped for a vivid green, which is far enough around the wheel from
+// brown/orange (and from the other three hues) to stay legible there.
+export const SONAR_COLORS: Record<"range" | "gray" | "light" | "surface", { wave: Rgb; ping: Rgb }> = {
     range:   { wave: { r: 0x8c, g: 0x6b, b: 0xff }, ping: { r: 0x8c, g: 0x6b, b: 0xff } }, // violet-blue
     gray:    { wave: { r: 0xff, g: 0x3d, b: 0xb5 }, ping: { r: 0xff, g: 0x3d, b: 0xb5 } }, // vivid magenta
-    color:   { wave: { r: 0x2f, g: 0xe6, b: 0xc7 }, ping: { r: 0x2f, g: 0xe6, b: 0xc7 } }, // vivid teal
-    surface: { wave: { r: 0xff, g: 0xb3, b: 0x00 }, ping: { r: 0xff, g: 0xb3, b: 0x00 } }, // vivid amber
+    light:   { wave: { r: 0x2f, g: 0xe6, b: 0xc7 }, ping: { r: 0x2f, g: 0xe6, b: 0xc7 } }, // vivid teal
+    surface: { wave: { r: 0x39, g: 0xff, b: 0x14 }, ping: { r: 0x39, g: 0xff, b: 0x14 } }, // vivid green
 }
 
 // Sonar wave shader (cone/beam animation) — disabled per product decision to
@@ -53,7 +57,7 @@ export const SONAR_COLORS: Record<"range" | "gray" | "color" | "surface", { wave
 //     BasicVertexShader,
 //     CommonFragmentShaderGlobals +
 //         `
-//     uniform vec3 uColor;
+//     uniform vec3 uBrushColor;
 //     uniform float uMaxRange;
 //     uniform float uBeamAngle;
 //
@@ -80,7 +84,7 @@ export const SONAR_COLORS: Record<"range" | "gray" | "color" | "surface", { wave
 //         float linFade = 1. - smoothstep(0., 1., d - 0.33);
 //         float angFade = 1. - smoothstep(0., 1., -0.5 + abs(angle(ofs, uv)) / maxAngle);
 //         alpha *= linFade * angFade;
-//         gl_FragColor = vec4(uColor * alpha, alpha);
+//         gl_FragColor = vec4(uBrushColor * alpha, alpha);
 //     }`
 // )
 
@@ -89,7 +93,7 @@ addShaderProgram(
     BasicVertexShader,
     CommonFragmentShaderGlobals +
         `
-    uniform vec3 uColor;
+    uniform vec3 uBrushColor;
 
     float dist(vec2 p0, vec2 p1) {
         return sqrt(pow(p1.x - p0.x, 2.) + pow(p1.y - p0.y, 2.));
@@ -105,7 +109,7 @@ addShaderProgram(
         float time = mod(uTime, pingDuration) * pingSpeed;
         float alpha = smoothstep(time - innerMargin, time, r) * smoothstep(time + outerMargin, time, r);
         float fade = smoothstep(0.5, 0., r);
-        vec4 color = vec4(uColor * alpha * fade, alpha * fade);
+        vec4 color = vec4(uBrushColor * alpha * fade, alpha * fade);
         gl_FragColor = color;
     }`
 )
@@ -154,7 +158,7 @@ export function buildSonarVisuals(
     //         ...defaultShaderBrush(),
     //         shader: "sonar_wave",
     //         uniforms: {
-    //             uColor: rgbToFloatArray(colors.wave),
+    //             uBrushColor: rgbToFloatArray(colors.wave),
     //             uMaxRange: toRenderScale(maxRange),
     //             uBeamAngle: toRadians(angle),
     //         },
@@ -178,7 +182,7 @@ export function buildSonarVisuals(
         brush: {
             ...defaultShaderBrush(),
             shader: "sonar_ping",
-            uniforms: { uColor: rgbToFloatArray(colors.ping) },
+            uniforms: { uBrushColor: rgbToFloatArray(colors.ping) },
             visible: false,
             zIndex: 6,
         },

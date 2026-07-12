@@ -1,4 +1,4 @@
-import Planck from "planck-js"
+import * as Planck from "planck"
 import { BotSpec, ConnectorSlot, MountSide } from "../../bots/specs"
 import { SensorType } from "../../protocol"
 import { Entity } from "../entity"
@@ -7,7 +7,7 @@ import { Vec2Like } from "../../types/vec2"
 import { Chassis } from "./chassis"
 import { Wheel } from "./wheel"
 import { GraySensor } from "./graySensor"
-import { ColorSensor } from "./colorSensor"
+import { LightSensor, LIGHT_MAX_RANGE, DEFAULT_LIGHT_ANGLE } from "./lightSensor"
 import { RangeSensor, MAX_RANGE, DEFAULT_RANGE_ANGLE, DistanceSensor } from "./rangeSensor"
 import { SurfaceSensor } from "./surfaceSensor"
 
@@ -29,7 +29,7 @@ export class Bot {
     private chassis: Chassis
     private wheels = new Map<"left" | "right", Wheel>()
     private graySensors = new Map<MountSide, GraySensor>()
-    private colorSensors = new Map<MountSide, ColorSensor>()
+    private lightSensors = new Map<MountSide, LightSensor>()
     private rangeSensors = new Map<MountSide, DistanceSensor>()
     private activeSensorMap: Record<string, SensorType> = {}
 
@@ -77,9 +77,9 @@ export class Bot {
                 this as unknown as any,
                 { pos: mount.pos, name: side }
             ))
-            this.colorSensors.set(side, new ColorSensor(
+            this.lightSensors.set(side, new LightSensor(
                 this as unknown as any,
-                { pos: mount.pos, name: side }
+                { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE }
             ))
             const mode = sensorModes[side] ?? "forward"
             this.rangeSensors.set(side, mode === "surface"
@@ -117,7 +117,7 @@ export class Bot {
             if (sensorType === "distance") {
                 result[connName] = this.rangeSensors.get(side as MountSide)?.read() ?? MAX_RANGE
             } else if (sensorType === "light") {
-                result[connName] = this.colorSensors.get(side as MountSide)?.read() ?? 0
+                result[connName] = this.lightSensors.get(side as MountSide)?.read() ?? 0
             } else {
                 // gray (default)
                 result[connName] = this.graySensors.get(side as MountSide)?.read() ?? 0

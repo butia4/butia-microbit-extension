@@ -1,14 +1,12 @@
 import { describe, it, expect, vi } from "vitest"
 
-vi.mock("planck-js", () => ({
-    default: {
-        Polygon: vi.fn(() => ({})),
-        Vec2: vi.fn((x = 0, y = 0) => ({ x, y })),
-        Settings: { maxPolygonVertices: 64 },
-        internal: {
-            Distance: {
-                testOverlap: vi.fn(() => true),
-            },
+vi.mock("planck", () => ({
+    Polygon: vi.fn(() => ({})),
+    Vec2: vi.fn((x = 0, y = 0) => ({ x, y })),
+    Settings: { maxPolygonVertices: 64 },
+    internal: {
+        Distance: {
+            testOverlap: vi.fn(() => true),
         },
     },
 }))

@@ -57,10 +57,15 @@ export function App() {
             sim.clear()
         }
 
-        const handleMapSelect = (msg: ButiaMapSelectMsg): void => {
+        const handleMapSelect = async (msg: ButiaMapSelectMsg): Promise<void> => {
             if (armedRef.current) return
             const mapSpec = resolveMap(msg.id)
             if (!mapSpec) return
+
+            // The renderer initializes asynchronously (Pixi v8) — wait for
+            // it before touching anything that depends on the stage/canvas.
+            await sim.ready
+            if (armedRef.current) return
 
             // No extra clear() needed here: handleMapSelect only runs while
             // !armedRef.current, and the only ways to reach that state are

@@ -37,4 +37,6 @@ declare const enum SimMap {
     SeguidorDeLinea = 1,
     //% block="Mesa"
     Mesa = 2,
+    //% block="Luz"
+    Luz = 3,
 }
