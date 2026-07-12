@@ -99,123 +99,78 @@ namespace Butia {
     export function readButton(connector: Butia.Connector): boolean {
         return Butia.RobotDriver.getCurrentRobot().readButton(connector);
     }
-    /*//% blockId="butia_evt_distance"
-    //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm"
+
+    //% blockId="butia_imp_read_generic"
+    //% block="Sensor genérico en %connector"
+    //% weight=67
+    //% group="Sensores"
+    export function readGenericSensor(connector: Butia.Connector): number {
+        return Butia.RobotDriver.getCurrentRobot().readGenericSensor(connector);
+    }
+
+    //% blockId="butia_evt_distance"
+    //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% priority.defl=1 threshold.min=1 priority.max=5
     //% weight=65
     //% advanced=true
     export function onDistance(
         connector: Butia.Connector,
         op: Comparison,
         threshold: number,
-        handler: () => void
+        priority:number,
+        handler: () => void,
+        
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onDistance(connector, op, threshold, handler);
+        Butia.RobotDriver.getCurrentRobot().onDistance(connector, op, threshold, priority?priority:1,handler);
     }
 
     //% blockId="butia_evt_light"
-    //% block="Cuando el sensor de luz en %connector sea %op %threshold"
+    //% block="Cuando el sensor de luz en %connector sea %op %threshold con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% priority.defl=1 threshold.min=1 priority.max=5
     //% weight=60
     //% advanced=true
     export function onLight(
         connector: Butia.Connector,
         op: Comparison,
         threshold: number,
+        priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, threshold, handler);
+        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, threshold, priority?priority:1, handler);
     }
 
     //% blockId="butia_evt_gray"
-    //% block="Cuando el sensor de grises en %connector sea %op %threshold"
+    //% block="Cuando el sensor de grises en %connector sea %op %threshold con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
+    //% priority.defl=1 threshold.min=1 priority.max=5
     //% weight=55
     //% advanced=true
     export function onGray(
         connector: Butia.Connector,
         op: Comparison,
         threshold: number,
+        priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, handler);
+        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, priority?priority:1, handler);
     }
 
     //% blockId="butia_evt_button"
-    //% block="Cuando se %state el botón en %connector"
+    //% block="Cuando se %state el botón en %connector con prioridad %priority"
+    //% priority.defl=1 threshold.min=1 priority.max=5
     //% weight=70
     //% advanced=true
     export function onButton(
         state: ButtonState,
         connector: Butia.Connector,
+        priority:number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, handler);
-    }*/
-    //% blockId="butia_react_sensor_motor"
-    //% block="Mientras sensor de $sensor en %connector sea %op %threshold $action $target a velocidad %speed"
-    //% speed.defl=50 speed.min=0 speed.max=100
-    //% weight=100
-    //% advanced=true
-    export function whileSensorMotor(
-        sensor: ReactiveSensorType,
-        connector: Butia.Connector,
-        op: Comparison,
-        threshold: number,
-        action: ReactiveAction,
-        target: MotorTarget,
-        speed: number,
-        handler: () => void
-    ): void {
-        Butia.RobotDriver.getCurrentRobot().resolveWhile(sensor, connector, op, threshold, action, target, speed);
+        Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, priority?priority:1,handler);
     }
 
 
-    /*//% blockId="butia_react_arc_around"
-    //% block="Mientras sensor de distancia en %connector sea %op %threshold rodear hacia %side a velocidad %speed"
-    //% threshold.defl=20 threshold.min=1 threshold.max=100
-    //% speed.defl=50 speed.min=0 speed.max=100
-    //% weight=90
-    //% advanced=true
-    export function whileArcAround(
-        connector: Butia.Connector,
-        op: Comparison,
-        threshold: number,
-        side: ArcSide,
-        speed: number,
-        handler?: () => void
-    ): void {
-        Butia.RobotDriver.getCurrentRobot().whileArcAround(connector, op, threshold, side, speed);
-    }*/
 
-    /*//% blockId="butia_react_line_loss_clear"
-    //% block="Mientras pierde línea en %grayConnector ≥ %grayThreshold y camino libre adelante en %distanceConnector ≥ %clearDistance detener %target"
-    //% grayThreshold.defl=30 grayThreshold.min=1 grayThreshold.max=100
-    //% clearDistance.defl=25 clearDistance.min=1 clearDistance.max=100
-    //% weight=85
-    //% advanced=true
-    export function whileLineLossWithClearPath(
-        grayConnector: Butia.Connector,
-        grayThreshold: number,
-        distanceConnector: Butia.Connector,
-        clearDistance: number,
-        target: MotorTarget,
-        handler: () => void
-    ): void {
-        Butia.RobotDriver.getCurrentRobot().whileGrayLineLossWithClearPath(
-            grayConnector,
-            grayThreshold,
-            distanceConnector,
-            clearDistance,
-            target
-        );
-    }
-
-    //% blockId="butia_react_stop"
-    //% block="al detener modo reactivo"
-    //% weight=80
-    //% advanced=true
-    export function stopReactiveMode(): void {
-        Butia.RobotDriver.getCurrentRobot().stopReactiveMode();
-    }*/
 }
