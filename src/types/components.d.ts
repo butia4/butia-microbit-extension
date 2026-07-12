@@ -32,6 +32,10 @@ declare namespace Buffer {
     function fromUTF8(str: string): Buffer
 }
 
+interface Buffer {
+    toString(): string;
+}
+
 interface IMotorDriver extends IActuator {
     setSpeed(left: number, right: number): void
     stop(): void

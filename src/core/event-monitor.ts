@@ -45,7 +45,6 @@ namespace Butia {
         evaluate: () => boolean;
         priority: number;
         handler: () => void;
-        //lastTriggered: boolean;
     }
 
     // Pure: used by both control.onEvent (handler side) and control.raiseEvent
@@ -56,19 +55,12 @@ namespace Butia {
 
     export class EventMonitor {
         private _monitors: IMonitor[];
-        private _started: boolean;  
+        private _started: boolean;
         private _eventRaising: boolean;
-        //private _lastPriorityEvent: number;
-        //private _lastTriggeredEvent: number;
         constructor() {
             this._monitors = [];
             this._started = false;
             this._eventRaising = false;
-            //this._lastPriorityEvent = 0;
-            //this._lastTriggeredEvent = 0;
-        }
-        setEventRaising(value: boolean): void {
-            this._eventRaising = value;
         }
 
         register(monitor: IMonitor): void {
@@ -96,7 +88,16 @@ namespace Butia {
             }
             if (!anyTriggered) return 0;
             this._eventRaising = true;
-            bestMonitor.handler();
+            try {
+                // Runs synchronously on this fiber (not via control.raiseEvent)
+                // so priority arbitration can guarantee only one handler runs
+                // at a time. A handler that blocks (e.g. a motor move with a
+                // duration) delays evaluation of every other monitor until it
+                // returns — keep event handlers short.
+                bestMonitor.handler();
+            } finally {
+                this._eventRaising = false;
+            }
             return bestMonitor.subId;
         }
 

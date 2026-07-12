@@ -1,7 +1,7 @@
 declare const enum TurnDirection {
-    //% block="derecha"
-    Left = 0,
     //% block="izquierda"
+    Left = 0,
+    //% block="derecha"
     Right = 1,
 }
 
@@ -28,4 +28,15 @@ declare const enum MotorSide {
     Left = 0,
     //% block="Derecho"
     Right = 1,
+}
+
+// Named `SimMap` (not `Map`) to avoid shadowing the ES2015 `Map<K,V>` built-in.
+// Value 0 is reserved as an "unset" sentinel for the botsim wire protocol.
+declare const enum SimMap {
+    //% block="Seguidor de línea"
+    SeguidorDeLinea = 1,
+    //% block="Mesa"
+    Mesa = 2,
+    //% block="Luz"
+    Luz = 3,
 }

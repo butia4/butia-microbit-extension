@@ -7,8 +7,8 @@ namespace Butia {
         private _lights: {pin:AnalogPin | DigitalPin, sensor: ILightSensor}[];
         private _grays: {pin:AnalogPin | DigitalPin, sensor: IGraySensor}[];
         private _distances: {pin:AnalogPin | DigitalPin, sensor: IDistanceSensor}[];
-        private _buttons: { pin: AnalogPin | DigitalPin, sensor: IButtonSensor }[];
-        private _generics: { pin: AnalogPin | DigitalPin, sensor: IGenericSensor }[];
+        private _buttons: {pin:AnalogPin | DigitalPin, sensor: IButtonSensor}[];
+        private _generics: {pin:AnalogPin | DigitalPin, sensor: IGenericSensor}[];
         private _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
@@ -113,6 +113,7 @@ namespace Butia {
             this._buttons.push({ pin, sensor });
             return sensor;
         }
+
         private _getGenericSensor(pin: AnalogPin | DigitalPin): IGenericSensor {
             for (const entry of this._generics) {
                 if (entry.pin === pin) return entry.sensor;
@@ -187,14 +188,14 @@ namespace Butia {
             return s.read() === 1;
         }
 
-       readGenericSensor(connector: IConnector): number {
+        readGenericSensor(connector: IConnector): number {
             const s = this._getGenericSensor(this._resolvePin(connector));
             return s.read();
         }
 
         // --- Events ---
         
-        onDistance(connector: IConnector, op: Comparison, threshold: number,priority:number, handler: () => void): void {
+        onDistance(connector: IConnector, op: Comparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getDistanceSensor(pin);
             const subId = computeSubId(SENSOR_TYPE_DISTANCE, pin as number, comparisonToDir(op));
@@ -206,15 +207,12 @@ namespace Butia {
                     return evalComparison(op, d, threshold);
                 },
                 priority,
-                handler:() => { 
-                    handler();
-                    this._eventMonitor.setEventRaising(false);
-                },
+                handler,
             };
             this._eventMonitor.register(monitor);
         }
 
-        onLight(connector: IConnector, op: Comparison, threshold: number,priority:number, handler: () => void): void {
+        onLight(connector: IConnector, op: Comparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getLightSensor(pin);
             const subId = computeSubId(SENSOR_TYPE_LIGHT, pin as number, comparisonToDir(op));
@@ -222,15 +220,12 @@ namespace Butia {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
                 priority,
-                handler:() => { 
-                    handler();
-                    this._eventMonitor.setEventRaising(false);
-                }
+                handler,
             };
             this._eventMonitor.register(monitor);
         }
 
-        onGray(connector: IConnector, op: Comparison, threshold: number,priority:number, handler: () => void): void {
+        onGray(connector: IConnector, op: Comparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getGraySensor(pin);
             const subId = computeSubId(SENSOR_TYPE_GRAY, pin as number, comparisonToDir(op));
@@ -238,15 +233,12 @@ namespace Butia {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
                 priority,
-                handler:() => { 
-                    handler();
-                    this._eventMonitor.setEventRaising(false);
-                }
+                handler,
             };
             this._eventMonitor.register(monitor);
         }
 
-        onConnectorButton(connector: IConnector, state: ButtonState, priority:number,handler: () => void): void {
+        onConnectorButton(connector: IConnector, state: ButtonState, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getButtonSensor(pin);
             const dir = state === ButtonState.Pressed ? DIR_GREATER_OR_PRESSED : DIR_LESS_OR_RELEASED;
@@ -256,10 +248,7 @@ namespace Butia {
                 subId: subId,
                 evaluate: () => sensor.read() === target,
                 priority,
-                handler:() => { 
-                    handler();
-                    this._eventMonitor.setEventRaising(false);
-                }
+                handler,
             };
             this._eventMonitor.register(monitor);
         }
@@ -273,6 +262,7 @@ namespace Butia {
         // --- Getters ---
         motorLeft(): number { return this._motorLeft; }
         motorRight(): number { return this._motorRight; }
+        protected _getConnectorConfig(): IConnectorPin[] { return this._connectorConfig; }
 
         // --- Overridable stub ---
         start(): void {}
