@@ -62,7 +62,7 @@ export class Chassis {
         const chassisMass = Math.max(MIN_CHASSIS_MASS, spec.mass - Chassis.totalWheelMass(spec))
         const colorBrush: BrushSpec = {
             ...defaultColorBrush(),
-            fillColor: "#11B5E4", borderColor: "#555555", borderWidth: 0.3, zIndex: 2,
+            fillColor: "#A3D977", borderColor: "#555555", borderWidth: 0.3, zIndex: 2,
         }
         const textureBrush: BrushSpec = {
             ...defaultTextureBrush(),
@@ -112,6 +112,18 @@ export class Chassis {
             physics: { ...defaultShapePhysics(), density: chassisMass / (spec.chassis.size.x * spec.chassis.size.y), friction: 0.2, restitution: 0.2 },
             brush,
         }
+    }
+
+    public static footprintWidth(spec: BotSpec): number {
+        if (spec.chassis.shape === "circle") {
+            return spec.chassis.radius * 2
+        }
+
+        if (spec.chassis.shape === "square") {
+            return (spec.chassis as SquareChassisSpec).side
+        }
+
+        return spec.chassis.size.x
     }
 
     // LED color tint (Chassis.setColor) is out of scope for this iteration —

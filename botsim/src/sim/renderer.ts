@@ -194,6 +194,7 @@ export default class Renderer {
             width: w, height: h,
             antialias: true,
             clearBeforeRender: true,
+            backgroundAlpha: 1,
         })
         const view = this.pixi.canvas as HTMLCanvasElement
         if (view.style) {
@@ -202,6 +203,8 @@ export default class Renderer {
         }
         this.pixi.stage.sortableChildren = true
         this.pixiRenderer = this.pixi.renderer as Pixi.Renderer
+        this.color("#86BE27", 0.2)
+        await Pixi.Assets.load("assets/logo.png")
     }
 
     public resize(widthCm: number, heightCm: number): void {
@@ -209,8 +212,9 @@ export default class Renderer {
         this.pixi.renderer.resize(toRenderScale(widthCm), toRenderScale(heightCm))
     }
 
-    public color(hex: string): void {
+    public color(hex: string, alpha: number = 1): void {
         this.pixiRenderer.background.color = parseInt(hex.replace("#", "0x"), 16)
+        this.pixiRenderer.background.alpha = alpha
     }
 
     public reinit(): void {

@@ -1,9 +1,11 @@
 import * as Planck from "planck"
+import * as Pixi from "pixi.js"
 import { BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
 import { SensorType } from "../../protocol"
 import { Entity } from "../entity"
 import { EntitySpec, defaultDynamicPhysics, defaultEntity } from "../entitySpec"
 import { Vec2Like } from "../../types/vec2"
+import { toRenderScale } from "../util"
 import { Chassis } from "./chassis"
 import { Wheel } from "./wheel"
 import { GraySensor } from "./graySensor"
@@ -64,6 +66,15 @@ export class Bot {
             shapes: [chassisShape, ...wheelShapes],
         }
         this.entity = sim.createEntity(entitySpec)
+
+        const logoSprite = Pixi.Sprite.from("assets/logo.png")
+        logoSprite.anchor.set(0.5)
+        const targetWidthCm = Chassis.footprintWidth(spec) * 0.65
+        const targetWidthPx = toRenderScale(targetWidthCm)
+        const scale = targetWidthPx / logoSprite.texture.width
+        logoSprite.scale.set(scale)
+        logoSprite.zIndex = 3 // above chassis (zIndex 2), below sonar visuals (5-6)
+        this.entity.renderObj.addShape("logo", logoSprite)
 
         this.chassis = new Chassis(this, spec.chassis)
         for (const ws of spec.wheels) {
