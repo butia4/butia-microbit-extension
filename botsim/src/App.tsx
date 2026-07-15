@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react"
 import "./App.css"
 import { SimContainer } from "./ui/SimContainer"
 import { Placeholder } from "./ui/Placeholder"
+import { PinSettings } from "./ui/PinSettings"
 import { Simulation } from "./sim"
 import { BUTIA_BOT_SPEC } from "./botSpecs/butiaBotSpec"
 import { init as initMakeCode, sendSensors } from "./services/makecodeService"
 import { ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
 import { resolveMap } from "./maps/registry"
-import { ConnectorSlot } from "./botSpecs/botSpec"
+import { MapSpec } from "./maps/mapSpec"
+import { getPinAssignment, DEFAULT_PIN_ASSIGNMENT } from "./settings/pinAssignmentStore"
 
 let currRunId: string | undefined
 
@@ -35,6 +37,17 @@ export function App() {
     // a fresh "mapselect" message arrives for THAT run. Undefined means no
     // run has been observed yet.
     const currentRunIdRef = useRef<string | undefined>(undefined)
+    // Remembers the map spec the sim is currently armed with, so closing the
+    // settings screen can re-spawn the bot in place (with the freshest
+    // persisted pin assignment) without waiting for a fresh "mapselect"
+    // message — see rearmOnSettingsClose below. Undefined/null means no run
+    // has ever been armed yet.
+    const lastArmedMapSpecRef = useRef<MapSpec | null>(null)
+    // Set inside the effect below (it needs `sim` + the closures above) but
+    // invoked from the settings-close JSX handler, which lives outside that
+    // effect's scope.
+    const rearmOnSettingsCloseRef = useRef<() => void>(() => {})
+    const [settingsOpen, setSettingsOpen] = useState(false)
 
     useEffect(() => {
         const sim = Simulation.instance
@@ -62,6 +75,14 @@ export function App() {
             const mapSpec = resolveMap(msg.id)
             if (!mapSpec) return
 
+            // localStorage is the sole source of the port assignment now —
+            // the "mapselect" message no longer carries leftPort/rightPort
+            // (that config lives only in the settings screen). A persisted
+            // override takes effect at the next arm/spawn only — never
+            // mid-run — per the design decision that live reassignment is
+            // out of scope for v1.
+            const ports = getPinAssignment() ?? DEFAULT_PIN_ASSIGNMENT
+
             // The renderer initializes asynchronously (Pixi v8) — wait for
             // it before touching anything that depends on the stage/canvas.
             await sim.ready
@@ -73,11 +94,43 @@ export function App() {
             // (which just cleared them) — so re-arming always starts from a
             // clean Simulation slate.
             armedRef.current = true
+            lastArmedMapSpecRef.current = mapSpec
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC, undefined, msg.leftPort as ConnectorSlot, msg.rightPort as ConnectorSlot)
+            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports.left, ports.right)
             sim.start()
             setArmed(true)
         }
+
+        // Auto-rearm when the settings screen closes while a run is already
+        // armed: re-spawn the bot in place with the freshest persisted pin
+        // assignment, instead of requiring the user to manually stop/restart
+        // the MakeCode simulator. Only fires if a run was actually armed —
+        // closing settings with nothing running is a no-op (the next real
+        // "mapselect" already picks up the persisted pins).
+        //
+        // spawnBot() alone is NOT safe to call again mid-run: the bot's own
+        // entity is created via Simulation.createEntity (see sim/index.ts),
+        // which pushes it into Simulation's internal `_entities` array.
+        // spawnBot() destroys the previous bot's render/physics objects but
+        // (like the disarm() case above) never removes the now-dead entity
+        // from `_entities` — only clear() does that. Without a clear(), the
+        // next render tick would call `.sync()` on the destroyed entity and
+        // crash. So a full stop -> clear -> loadMap -> spawnBot -> start
+        // cycle (the same sequence handleMapSelect itself uses) is required
+        // to rebuild the map's walls/entities cleanly alongside the new bot.
+        const rearmOnSettingsClose = (): void => {
+            if (!armedRef.current) return
+            const mapSpec = lastArmedMapSpecRef.current
+            if (!mapSpec) return
+
+            const ports = getPinAssignment() ?? DEFAULT_PIN_ASSIGNMENT
+            sim.stop()
+            sim.clear()
+            sim.loadMap(mapSpec)
+            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports.left, ports.right)
+            sim.start()
+        }
+        rearmOnSettingsCloseRef.current = rearmOnSettingsClose
 
         const stopMakeCode = initMakeCode({
             onState: (msg) => {
@@ -106,7 +159,31 @@ export function App() {
 
     return (
         <div className="app" style={{ width: "100vw", height: "100vh" }}>
-            {armed ? <SimContainer /> : <Placeholder />}
+            {!settingsOpen && (
+                <button
+                    type="button"
+                    className="settings-gear"
+                    onClick={() => setSettingsOpen(true)}
+                    aria-label="Abrir configuración"
+                    title="Configuración de sensores"
+                >
+                    ⚙
+                </button>
+            )}
+            <div className="app-content">
+                {settingsOpen ? (
+                    <PinSettings
+                        onClose={() => {
+                            setSettingsOpen(false)
+                            rearmOnSettingsCloseRef.current()
+                        }}
+                    />
+                ) : armed ? (
+                    <SimContainer />
+                ) : (
+                    <Placeholder />
+                )}
+            </div>
         </div>
     )
 }

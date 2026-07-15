@@ -171,11 +171,11 @@ namespace Butia {
     }
 
     //% blockId="butia_sim_set_map"
-    //% block="usar mapa %map con sensor izquierdo en %sensorIzquierdo y sensor derecho en %sensorDerecho"
+    //% block="usar mapa %map"
     //% weight=50
     //% group="Simulador"
-    export function setMap(map: SimMap, sensorIzquierdo: Butia.Connector, sensorDerecho: Butia.Connector): void {
-        _butiaSimSelectMap(map, sensorIzquierdo.name, sensorDerecho.name);
+    export function setMap(map: SimMap): void {
+        _butiaSimSelectMap(map);
     }
 
 }

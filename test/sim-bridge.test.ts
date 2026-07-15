@@ -93,48 +93,35 @@ const typeMap = simRobot._buildSensorTypeMap();
 assertTest(typeMap["J2"] === "distance", "sim-robot-map-j2");
 assertTest(typeMap["J5"] === "gray", "sim-robot-map-j5");
 
-// TASK-T15: buildButiaMapSelectMessage encodes type, id and mandatory left/right ports correctly
-const msg15 = JSON.parse(buildButiaMapSelectMessage(1, "J1", "J2"));
+// TASK-T15: buildButiaMapSelectMessage encodes type and id correctly (no port fields)
+const msg15 = JSON.parse(buildButiaMapSelectMessage(1));
 assertTest(msg15.type === "mapselect", "sim-mapselect-msg-type");
 assertTest(msg15.id === 1, "sim-mapselect-msg-id");
-assertTest(msg15.leftPort === "J1", "sim-mapselect-msg-left-port");
-assertTest(msg15.rightPort === "J2", "sim-mapselect-msg-right-port");
+assertTest(msg15.leftPort === undefined, "sim-mapselect-msg-no-left-port");
+assertTest(msg15.rightPort === undefined, "sim-mapselect-msg-no-right-port");
 
-// TASK-T16: _butiaSimSelectMap is idempotent — only the first call records id/ports
+// TASK-T16: _butiaSimSelectMap is idempotent — only the first call records id
 SimState.reset();
 assertTest(!SimState.mapSelected, "sim-mapselect-initial-unset");
 assertTest(SimState.selectedMapId === 0, "sim-mapselect-initial-id-unset");
-assertTest(SimState.selectedLeftPort === "", "sim-mapselect-initial-left-port-unset");
-assertTest(SimState.selectedRightPort === "", "sim-mapselect-initial-right-port-unset");
-_butiaSimSelectMap(1, "J1", "J2");
+_butiaSimSelectMap(1);
 assertTest(SimState.mapSelected, "sim-mapselect-sets-flag");
 assertTest(SimState.selectedMapId === 1, "sim-mapselect-records-id");
-assertTest(SimState.selectedLeftPort === "J1", "sim-mapselect-records-left-port");
-assertTest(SimState.selectedRightPort === "J2", "sim-mapselect-records-right-port");
-_butiaSimSelectMap(2, "J3", "J4");
+_butiaSimSelectMap(2);
 assertTest(SimState.selectedMapId === 1, "sim-mapselect-repeat-noop");
-assertTest(SimState.selectedLeftPort === "J1", "sim-mapselect-repeat-noop-left-port");
-assertTest(SimState.selectedRightPort === "J2", "sim-mapselect-repeat-noop-right-port");
 
-// TASK-T17: SimState.reset() clears mapSelected, selectedMapId and selected ports
+// TASK-T17: SimState.reset() clears mapSelected and selectedMapId
 SimState.mapSelected = true;
 SimState.selectedMapId = 1;
-SimState.selectedLeftPort = "J1";
-SimState.selectedRightPort = "J2";
 SimState.reset();
 assertTest(!SimState.mapSelected, "sim-state-reset-mapselected");
 assertTest(SimState.selectedMapId === 0, "sim-state-reset-selected-map-id");
-assertTest(SimState.selectedLeftPort === "", "sim-state-reset-selected-left-port");
-assertTest(SimState.selectedRightPort === "", "sim-state-reset-selected-right-port");
 
-// TASK-T18: mid-run resend loop always carries non-empty leftPort/rightPort
-// once a map is selected — buildButiaMapSelectMessage never falls back to a
-// default when both are set (mandatory-params compile check: the function
-// signature itself has no optional/defaulted parameters).
+// TASK-T18: mid-run resend loop always carries the selected map id once set —
+// buildButiaMapSelectMessage no longer carries port fields at all.
 SimState.reset();
-_butiaSimSelectMap(2, "J3", "J4");
-const msg18 = JSON.parse(buildButiaMapSelectMessage(SimState.selectedMapId, SimState.selectedLeftPort, SimState.selectedRightPort));
-assertTest(msg18.leftPort === "J3" && msg18.leftPort !== "", "sim-mapselect-resend-left-port-nonempty");
-assertTest(msg18.rightPort === "J4" && msg18.rightPort !== "", "sim-mapselect-resend-right-port-nonempty");
+_butiaSimSelectMap(2);
+const msg18 = JSON.parse(buildButiaMapSelectMessage(SimState.selectedMapId));
+assertTest(msg18.id === 2, "sim-mapselect-resend-id");
 
 basic.showString("ALL PASS sim-bridge");
