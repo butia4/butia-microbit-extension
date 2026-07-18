@@ -1,10 +1,13 @@
 class GenericSensor implements IGenericSensor {
      private _pinTrigger: DigitalPin|AnalogPin;
+     private _name: number;
 
-     constructor(pinTrigger: DigitalPin|AnalogPin) {
+     constructor(pinTrigger: DigitalPin|AnalogPin,name: number) {
         this._pinTrigger = pinTrigger;
+        this._name = name;
     }
 
+    getName(): number { return this._name; }    
     getPin(): number { return this._pinTrigger; }
     init(): void {}
     read(): number {

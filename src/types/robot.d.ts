@@ -17,7 +17,7 @@ interface IRobot {
     readDistanceSensor(connector: IConnector): number
     readGraySensor(connector: IConnector): number
     readLightSensor(connector: IConnector): number
-    readGenericSensor(connector: IConnector): number
+    readGenericSensor(connector: IConnector, name: number): number
     readButton(connector: IConnector): boolean
     onDistance(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
     onLight(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
