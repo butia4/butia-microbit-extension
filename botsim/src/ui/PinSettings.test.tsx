@@ -59,7 +59,7 @@ describe("PinSettings save flow", () => {
             saveButton.click()
         })
 
-        const errorEl = container.querySelector(".pin-settings-error")
+        const errorEl = container.querySelector('[role="alert"]')
         expect(errorEl).not.toBeNull()
         expect(errorEl?.textContent).toMatch(/mismo conector/i)
         expect(getPinAssignment()).toBeNull()

@@ -1,16 +1,47 @@
-body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
+@import "tailwindcss";
 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+@font-face {
+    font-family: "Fredoka";
+    font-style: normal;
+    font-weight: 600 700;
+    font-display: swap;
+    src: url("./assets/fonts/Fredoka-Variable.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Work Sans";
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url("./assets/fonts/WorkSans-Variable.woff2") format("woff2");
+}
+
+:root {
+    --butia-green-50: #e8f5e9;
+    --butia-green-100: #c8e6c9;
+    --butia-green-300: #a5d6a7;
+    --butia-green-600: #558b2f;
+    --butia-green-800: #33691e;
+    --butia-error: #b3261e;
+    --butia-ink-900: #2e2e2e;
+    --butia-ink-700: #444444;
+    --butia-ink-500: #555555;
+
+    --font-display: "Fredoka", ui-rounded, sans-serif;
+    --font-body: "Work Sans", system-ui, sans-serif;
+    /* Tailwind v4 reads this as the `font-sans` utility token, so existing
+       font-sans usages in components pick up Work Sans without per-component edits. */
+    --font-sans: var(--font-body);
+}
+
+/* Global rules that can't be expressed as Tailwind utilities in JSX because
+   they apply outside React's render tree (body) or must survive Tailwind's
+   preflight reset unconditionally (#root sizing). Font stack/height/margin
+   concerns move to Tailwind utilities on #root and body className instead. */
+body {
+    overflow: hidden;
     background-color: transparent;
+    font-family: var(--font-body);
 }
 
 #root {
@@ -21,7 +52,38 @@ body {
     width: 100%;
 }
 
-code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-        monospace;
+@keyframes butia-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes butia-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.55;
+    }
+}
+
+.butia-screen-transition {
+    animation: butia-fade-in 0.25s ease-out;
+}
+
+.butia-pulse {
+    animation: butia-pulse 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .butia-screen-transition,
+    .butia-pulse {
+        animation: none;
+    }
 }

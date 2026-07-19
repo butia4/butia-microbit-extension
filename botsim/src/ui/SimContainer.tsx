@@ -41,7 +41,7 @@ export function SimContainer() {
     return (
         <div
             ref={containerRef}
-            className="sim-container"
+            className="butia-screen-transition overflow-hidden rounded-tl-[6%_7%] rounded-tr-[6%_7%] rounded-bl-[7%_6%] rounded-br-[7%_6%] shadow-[inset_0_0_0_3px_var(--butia-green-100),inset_0_2px_12px_rgba(0,0,0,0.15)]"
             style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
         />
     )
