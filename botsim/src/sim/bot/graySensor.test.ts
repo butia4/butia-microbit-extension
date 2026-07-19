@@ -31,7 +31,7 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         const value = sensor.read()
         expect(value).toBe(0)
     })
@@ -65,7 +65,7 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         // Manually set the fixture label so contact matching works
         ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.sensor"
         const value = sensor.read()
@@ -97,9 +97,9 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const noAngleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const noAngleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.sensor"
-        const angleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left", angle: 45 })
+        const angleSensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft", angle: 45 })
         ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.sensor"
 
         expect(noAngleSensor.read()).toBe(angleSensor.read())
@@ -125,7 +125,7 @@ describe("GraySensor", () => {
             angle: 0,
         } as unknown as any
 
-        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const sensor = new GraySensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         expect(shapes.size).toBe(1) // only the ping/target mesh is built — sonar wave/cone mesh is disabled
 
         sensor.read()

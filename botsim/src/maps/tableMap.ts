@@ -39,5 +39,9 @@ export const TABLE_MAP: MapSpec = {
             }],
         },
     ],
-    sensorModes: { left: "surface", right: "surface" },
+    sensorModes: {
+        frontLeft: "surface", frontRight: "surface",
+        sideLeft: "surface", sideRight: "surface",
+        rearLeft: "surface", rearRight: "surface",
+    },
 }

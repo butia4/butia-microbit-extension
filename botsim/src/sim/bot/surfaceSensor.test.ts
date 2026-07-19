@@ -37,7 +37,7 @@ describe("SurfaceSensor", () => {
         const { MAX_RANGE } = await import("./rangeSensor")
 
         const mockBot = makeMockBot(0, null)
-        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         expect(sensor.read()).toBe(MAX_RANGE)
     })
 
@@ -55,7 +55,7 @@ describe("SurfaceSensor", () => {
         }
 
         const mockBot = makeMockBot(0, { contact, next: null })
-        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
 
         expect(sensor.read()).toBe(SURFACE_ON_VALUE)
@@ -76,7 +76,7 @@ describe("SurfaceSensor", () => {
 
         for (const angle of [0, 45, 90, 180, 270]) {
             const mockBot = makeMockBot(angle, { contact, next: null })
-            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
             ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
             expect(sensor.read()).toBe(SURFACE_ON_VALUE)
         }
@@ -89,7 +89,7 @@ describe("SurfaceSensor", () => {
 
         for (const angle of [0, 45, 90, 180, 270]) {
             const mockBot = makeMockBot(angle, null)
-            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+            const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
             expect(sensor.read()).toBe(MAX_RANGE)
         }
     })
@@ -106,9 +106,9 @@ describe("SurfaceSensor", () => {
         }
 
         const mockBot = makeMockBot(0, { contact, next: null })
-        const noAngleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const noAngleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         ;(noAngleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
-        const angleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left", angle: 45 })
+        const angleSensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft", angle: 45 })
         ;(angleSensor as unknown as { _fixtureLabel: string })._fixtureLabel = "left.surface"
 
         expect(noAngleSensor.read()).toBe(angleSensor.read())
@@ -122,7 +122,7 @@ describe("SurfaceSensor", () => {
         const { renderObj, shapes } = makeMockRenderObj()
         const mockBot = makeMockBot(0, null, renderObj)
 
-        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "left" })
+        const sensor = new SurfaceSensor(mockBot, { pos: { x: 0, y: -5 }, name: "frontLeft" })
         expect(shapes.size).toBe(1) // only the ping/target mesh is built
 
         sensor.read()

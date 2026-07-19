@@ -78,7 +78,7 @@ describe("LightSensor", () => {
     it("creates a cone fixture on construction", async () => {
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const mockBot = makeMockBot()
-        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         expect(mockBot.entity.physicsObj.body.createFixture).toHaveBeenCalled()
         expect(sensor._fixtureLabel).toMatch(/^light\.cone\./)
     })
@@ -87,7 +87,7 @@ describe("LightSensor", () => {
         vi.resetModules()
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const mockBot = makeMockBot()
-        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         expect(sensor.read()).toBe(0)
     })
 
@@ -95,7 +95,7 @@ describe("LightSensor", () => {
         vi.resetModules()
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const mockBot = makeMockBot(0)
-        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = coneLabel
         // Box geometry means the nearest edge is a bit closer than the
         // requested center distance (see rangeSensor.test.ts's own tolerance
@@ -108,14 +108,14 @@ describe("LightSensor", () => {
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
 
         const nearBot = makeMockBot(LIGHT_MAX_RANGE / 4)
-        const nearSensor = new LightSensor(nearBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const nearSensor = new LightSensor(nearBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         ;(nearSensor as unknown as { _fixtureLabel: string })._fixtureLabel = coneLabel
         const nearValue = nearSensor.read()
 
         vi.resetModules()
         const { LightSensor: LightSensor2 } = await import("./lightSensor")
         const farBot = makeMockBot((LIGHT_MAX_RANGE * 3) / 4)
-        const farSensor = new LightSensor2(farBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const farSensor = new LightSensor2(farBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         ;(farSensor as unknown as { _fixtureLabel: string })._fixtureLabel = coneLabel
         const farValue = farSensor.read()
 
@@ -130,7 +130,7 @@ describe("LightSensor", () => {
         vi.resetModules()
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const mockBot = makeMockBot(LIGHT_MAX_RANGE + 20)
-        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         ;(sensor as unknown as { _fixtureLabel: string })._fixtureLabel = coneLabel
         expect(sensor.read()).toBe(0)
     })
@@ -141,7 +141,7 @@ describe("LightSensor", () => {
         // No contact simulates a light source outside the cone — Planck never
         // reports overlap between the cone fixture and the light source.
         const mockBot = makeMockBot()
-        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         expect(sensor.read()).toBe(0)
     })
 
@@ -150,7 +150,7 @@ describe("LightSensor", () => {
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const { renderObj, shapes } = makeMockRenderObj()
         const mockBot = makeMockBot(undefined, renderObj)
-        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         expect(shapes.size).toBe(1) // only the ping/target mesh is built — sonar wave/cone mesh is disabled
         const targetLabel = [...shapes.keys()].find(k => k.startsWith("light.target."))
         expect(targetLabel).toBeDefined()
@@ -161,7 +161,7 @@ describe("LightSensor", () => {
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const { renderObj, shapes } = makeMockRenderObj()
         const mockBot = makeMockBot(undefined, renderObj)
-        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE }, true)
+        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE }, true)
         expect(shapes.size).toBe(2)
         const waveLabel = [...shapes.keys()].find(k => k.startsWith("light.wave."))
         const targetLabel = [...shapes.keys()].find(k => k.startsWith("light.target."))
@@ -174,7 +174,7 @@ describe("LightSensor", () => {
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const { renderObj, shapes } = makeMockRenderObj()
         const mockBot = makeMockBot(undefined, renderObj)
-        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE }, false)
+        new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE }, false)
         expect(shapes.size).toBe(1)
         expect([...shapes.keys()].find(k => k.startsWith("light.wave."))).toBeUndefined()
     })
@@ -183,7 +183,7 @@ describe("LightSensor", () => {
         vi.resetModules()
         const { LightSensor, LIGHT_MAX_RANGE } = await import("./lightSensor")
         const mockBot = makeMockBot()
-        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 45, maxRange: LIGHT_MAX_RANGE })
+        const sensor = new LightSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 45, maxRange: LIGHT_MAX_RANGE })
         sensor.destroy()
         expect(mockBot.entity.physicsObj.body.destroyFixture).toHaveBeenCalled()
     })

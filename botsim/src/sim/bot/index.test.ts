@@ -8,6 +8,7 @@ import type { BotSpec } from "../../botSpecs/botSpec"
 vi.mock("./chassis", () => ({
     Chassis: class {
         static makeShapeSpec() { return { type: "circle", physics: {}, brush: {} } }
+        static footprintWidth() { return 10 }
         update() { /* no-op */ }
         destroy() { /* no-op */ }
     },
@@ -57,14 +58,20 @@ vi.mock("./surfaceSensor", () => ({
     },
 }))
 
+const MOUNT_SIDES = ["frontLeft", "frontRight", "sideLeft", "sideRight", "rearLeft", "rearRight"] as const
+
 const baseSpec: BotSpec = {
     name: "TestBot",
     mass: 500,
     chassis: { shape: "circle", radius: 5 },
     wheels: [],
     sensorMounts: {
-        left: { pos: { x: -3, y: -5 } },
-        right: { pos: { x: 3, y: -5 } },
+        frontLeft: { pos: { x: -3, y: -5 }, facingDeg: 0 },
+        frontRight: { pos: { x: 3, y: -5 }, facingDeg: 0 },
+        sideLeft: { pos: { x: -5, y: -2 }, facingDeg: -90 },
+        sideRight: { pos: { x: 5, y: -2 }, facingDeg: 90 },
+        rearLeft: { pos: { x: -3, y: 5 }, facingDeg: 180 },
+        rearRight: { pos: { x: 3, y: 5 }, facingDeg: 180 },
     },
 }
 
@@ -78,7 +85,7 @@ function makeMockSim() {
                 forward: { x: 0, y: -1 },
                 addFrictionJoint: vi.fn(() => undefined),
             },
-            renderObj: undefined,
+            renderObj: { addShape: vi.fn(), shapes: new Map() },
             destroy: vi.fn(),
         })),
         physics: { mouseJoint: undefined },
@@ -86,7 +93,7 @@ function makeMockSim() {
 }
 
 describe("Bot sensor construction", () => {
-    it("exposes exactly 2 mount positions (left, right), each pre-built with a RangeSensor when sensorModes is absent (DEFAULT_MAP regression)", async () => {
+    it("exposes exactly 6 mount positions, each pre-built with a RangeSensor when sensorModes is absent (DEFAULT_MAP regression)", async () => {
         const { Bot } = await import("./index")
         const { RangeSensor } = await import("./rangeSensor")
         const { SurfaceSensor } = await import("./surfaceSensor")
@@ -94,8 +101,8 @@ describe("Bot sensor construction", () => {
         const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
         const rangeSensors = (bot as unknown as { rangeSensors: Map<string, unknown> }).rangeSensors
 
-        expect([...rangeSensors.keys()].sort()).toEqual(["left", "right"])
-        for (const side of ["left", "right"]) {
+        expect([...rangeSensors.keys()].sort()).toEqual([...MOUNT_SIDES].sort())
+        for (const side of MOUNT_SIDES) {
             expect(rangeSensors.get(side)).toBeInstanceOf(RangeSensor)
             expect(rangeSensors.get(side)).not.toBeInstanceOf(SurfaceSensor)
         }
@@ -110,19 +117,19 @@ describe("Bot sensor construction", () => {
             makeMockSim(),
             { pos: { x: 45, y: 45 }, angle: 0 },
             baseSpec,
-            { left: "surface" }
+            { frontLeft: "surface" }
         )
         const rangeSensors = (bot as unknown as { rangeSensors: Map<string, unknown> }).rangeSensors
 
-        expect(rangeSensors.get("left")).toBeInstanceOf(SurfaceSensor)
-        expect(rangeSensors.get("right")).toBeInstanceOf(RangeSensor)
+        expect(rangeSensors.get("frontLeft")).toBeInstanceOf(SurfaceSensor)
+        expect(rangeSensors.get("frontRight")).toBeInstanceOf(RangeSensor)
     })
 
     it("routes \"light\" sensorType reads to lightSensors, not graySensors, resolving connName -> mount via portAssignment", async () => {
         const { Bot } = await import("./index")
 
         const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
-        bot.setPortAssignment("J1", "J2")
+        bot.setPortAssignment({ frontLeft: "J1", frontRight: "J2" })
         bot.setSensorMap({ J1: "light", J2: "gray" })
 
         const result = bot.readSensors()
@@ -133,6 +140,18 @@ describe("Bot sensor construction", () => {
         expect(result.J2).toBe(111)
     })
 
+    it("resolves a partial assignment (only some of the 6 mounts wired)", async () => {
+        const { Bot } = await import("./index")
+
+        const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
+        bot.setPortAssignment({ rearLeft: "J5" })
+        bot.setSensorMap({ J5: "gray" })
+
+        const result = bot.readSensors()
+
+        expect(result.J5).toBe(111)
+    })
+
     it("threads showLightCone only into lightSensors, leaving graySensors/rangeSensors untouched", async () => {
         const { Bot } = await import("./index")
 
@@ -141,13 +160,13 @@ describe("Bot sensor construction", () => {
         const graySensors = (bot as unknown as { graySensors: Map<string, unknown> }).graySensors
         const rangeSensors = (bot as unknown as { rangeSensors: Map<string, unknown> }).rangeSensors
 
-        for (const side of ["left", "right"]) {
+        for (const side of MOUNT_SIDES) {
             expect(lightSensors.get(side)?.showCone).toBe(true)
         }
         // GraySensor/RangeSensor mocks take no showCone-shaped param at all —
         // their construction is unaffected, only asserting they still exist.
-        expect(graySensors.size).toBe(2)
-        expect(rangeSensors.size).toBe(2)
+        expect(graySensors.size).toBe(6)
+        expect(rangeSensors.size).toBe(6)
     })
 
     it("defaults showLightCone to false when omitted", async () => {
@@ -156,7 +175,7 @@ describe("Bot sensor construction", () => {
         const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
         const lightSensors = (bot as unknown as { lightSensors: Map<string, { showCone: unknown }> }).lightSensors
 
-        for (const side of ["left", "right"]) {
+        for (const side of MOUNT_SIDES) {
             expect(lightSensors.get(side)?.showCone).toBe(false)
         }
     })
@@ -166,11 +185,26 @@ describe("Bot sensor construction", () => {
         const { MAX_RANGE } = await import("./rangeSensor")
 
         const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
-        bot.setPortAssignment("J1", "J2")
+        bot.setPortAssignment({ frontLeft: "J1", frontRight: "J2" })
         bot.setSensorMap({ J3: "distance" })
 
         const result = bot.readSensors()
 
         expect(result.J3).toBe(MAX_RANGE)
+    })
+
+    it("a connector mapped to an unconfigured mount (missing from the assignment) reads as disconnected", async () => {
+        const { Bot } = await import("./index")
+        const { MAX_RANGE } = await import("./rangeSensor")
+
+        const bot = new Bot(makeMockSim(), { pos: { x: 45, y: 45 }, angle: 0 }, baseSpec)
+        bot.setPortAssignment({}) // all 6 mounts left unconfigured
+        bot.setSensorMap({ J1: "distance", J2: "gray", J3: "light" })
+
+        const result = bot.readSensors()
+
+        expect(result.J1).toBe(MAX_RANGE)
+        expect(result.J2).toBe(0)
+        expect(result.J3).toBe(0)
     })
 })

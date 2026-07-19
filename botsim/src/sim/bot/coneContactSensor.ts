@@ -59,7 +59,8 @@ export class ConeContactSensor {
         const pLF = Vec2.rotateDeg(Vec2.add(pLN, Vec2.like(0, -this.spec.maxRange)), -this.spec.angle / 2)
         const pRF = Vec2.rotateDeg(Vec2.add(pRN, Vec2.like(0, -this.spec.maxRange)),  this.spec.angle / 2)
         const arc = appoximateArc({ x: 0, y: 0 }, this.spec.maxRange, -this.spec.angle / 2 - 90, this.spec.angle / 2 - 90, 4)
-        this.sensorVerts = [pLN, pRN, pRF, ...arc.reverse(), pLF, pLN]
+        const facingDeg = this.spec.facingDeg ?? 0
+        this.sensorVerts = [pLN, pRN, pRF, ...arc.reverse(), pLF, pLN].map(v => Vec2.rotateDeg(v, facingDeg))
         for (let i = 1; i < this.sensorVerts.length; i++) {
             this.sensorEdges.push(LineSegment.like(this.sensorVerts[i - 1], this.sensorVerts[i]))
         }
@@ -99,6 +100,7 @@ export class ConeContactSensor {
             this._targetLabel,
             this.config.sonarColor,
             this.showCone,
+            this.spec.facingDeg,
         )
     }
 

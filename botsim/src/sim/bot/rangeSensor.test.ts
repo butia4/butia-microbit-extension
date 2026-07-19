@@ -30,7 +30,7 @@ describe("RangeSensor", () => {
             forward: { x: 0, y: -1 },
         } as unknown as any
 
-        const sensor = new RangeSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 30, maxRange: MAX_RANGE })
+        const sensor = new RangeSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 30, maxRange: MAX_RANGE })
         expect(sensor.read()).toBe(MAX_RANGE)
     })
 
@@ -82,7 +82,7 @@ describe("RangeSensor", () => {
             forward: { x: 0, y: -1 },
         } as unknown as any
 
-        const sensor = new RangeSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "left", angle: 30, maxRange: MAX_RANGE })
+        const sensor = new RangeSensor(mockBot, { pos: { x: 0, y: -7.5 }, name: "frontLeft", angle: 30, maxRange: MAX_RANGE })
         ;(sensor as unknown as { _coneLabel: string })._coneLabel = coneLabel
         const dist = sensor.read()
         // Should detect something closer than MAX_RANGE

@@ -20,8 +20,14 @@ export const BUTIA_BOT_SPEC: BotSpec = {
         // 26 drives at 25. Hardware is unaffected; this only clamps physics.
         maxSpeed: 25,
     }),
+    // facingDeg follows Vec2.rotateDeg's clockwise-positive convention:
+    // 0 = front (local -y), 90 = right, -90 = left, 180 = rear.
     sensorMounts: {
-        left:  { pos: { x: -3, y: -5 } },
-        right: { pos: { x:  3, y: -5 } },
+        frontLeft:  { pos: { x: -3, y: -5 }, facingDeg: 0 },
+        frontRight: { pos: { x:  3, y: -5 }, facingDeg: 0 },
+        sideLeft:   { pos: { x: -5, y: -2 }, facingDeg: -90 }, // closer to front (y=-5) than rear (y=5)
+        sideRight:  { pos: { x:  5, y: -2 }, facingDeg: 90 },  // closer to front (y=-5) than rear (y=5)
+        rearLeft:   { pos: { x: -3, y:  5 }, facingDeg: 180 },
+        rearRight:  { pos: { x:  3, y:  5 }, facingDeg: 180 },
     },
 }

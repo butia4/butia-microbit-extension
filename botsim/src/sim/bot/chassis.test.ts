@@ -7,8 +7,12 @@ const baseSpec: Omit<BotSpec, "chassis"> = {
     mass: 500,
     wheels: [],
     sensorMounts: {
-        left: { pos: { x: -3, y: -5 } },
-        right: { pos: { x: 3, y: -5 } },
+        frontLeft: { pos: { x: -3, y: -5 } },
+        frontRight: { pos: { x: 3, y: -5 } },
+        sideLeft: { pos: { x: -5, y: -2 } },
+        sideRight: { pos: { x: 5, y: -2 } },
+        rearLeft: { pos: { x: -3, y: 5 } },
+        rearRight: { pos: { x: 3, y: 5 } },
     },
 }
 

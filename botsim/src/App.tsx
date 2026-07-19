@@ -95,7 +95,7 @@ export function App() {
             armedRef.current = true
             lastArmedMapSpecRef.current = mapSpec
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports.left, ports.right)
+            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports)
             sim.start()
             setArmed(true)
         }
@@ -126,7 +126,7 @@ export function App() {
             sim.stop()
             sim.clear()
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports.left, ports.right)
+            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports)
             sim.start()
         }
         rearmOnSettingsCloseRef.current = rearmOnSettingsClose

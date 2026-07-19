@@ -1,6 +1,6 @@
 import * as Planck from "planck"
 import * as Pixi from "pixi.js"
-import { BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
+import { ALL_MOUNT_SIDES, BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
 import { SensorType } from "../../protocol"
 import { Entity } from "../entity"
 import { EntitySpec, defaultDynamicPhysics, defaultEntity } from "../entitySpec"
@@ -15,7 +15,7 @@ import { SurfaceSensor } from "./surfaceSensor"
 
 export type SpawnSpec = { pos: Vec2Like; angle: number }
 
-const MOUNT_SIDES: MountSide[] = ["left", "right"]
+const MOUNT_SIDES: readonly MountSide[] = ALL_MOUNT_SIDES
 
 export class Bot {
     public entity: Entity
@@ -81,28 +81,27 @@ export class Bot {
             this.wheels.set(ws.name, new Wheel(this, ws))
         }
 
-        // Pre-create sensors for each physical mount (left, right) — exactly
-        // 2 sets, replacing the old 5-connector loop.
+        // Pre-create sensors for each of the 6 physical mounts.
         for (const side of MOUNT_SIDES) {
             const mount = spec.sensorMounts[side]
             this.graySensors.set(side, new GraySensor(
                 this,
-                { pos: mount.pos, name: side }
+                { pos: mount.pos, name: side, facingDeg: mount.facingDeg }
             ))
             this.lightSensors.set(side, new LightSensor(
                 this,
-                { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE },
+                { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE, facingDeg: mount.facingDeg },
                 showLightCone
             ))
             const mode = sensorModes[side] ?? "forward"
             this.rangeSensors.set(side, mode === "surface"
                 ? new SurfaceSensor(
                     this,
-                    { pos: mount.pos, name: side }
+                    { pos: mount.pos, name: side, facingDeg: mount.facingDeg }
                 )
                 : new RangeSensor(
                     this,
-                    { pos: mount.pos, name: side, angle: DEFAULT_RANGE_ANGLE, maxRange: MAX_RANGE }
+                    { pos: mount.pos, name: side, angle: DEFAULT_RANGE_ANGLE, maxRange: MAX_RANGE, facingDeg: mount.facingDeg }
                 ))
         }
     }
@@ -116,11 +115,18 @@ export class Bot {
         this.activeSensorMap = { ...map }
     }
 
-    // Resolves which J-port is wired to the `left`/`right` physical mount for
-    // the run. MUST be called exactly once (at arm time, from the run's
-    // single `Butia.setMap()` call) — no live/mid-run reassignment.
-    public setPortAssignment(left: ConnectorSlot, right: ConnectorSlot): void {
-        this.portAssignment = { [left]: "left", [right]: "right" }
+    // Resolves which J-port is wired to which physical mount for the run.
+    // MUST be called exactly once (at arm time, from the run's single
+    // `Butia.setMap()` call) — no live/mid-run reassignment. Inverts the
+    // mount->connector wiring map into the connector->mount lookup direction
+    // `readSensors()` needs at runtime.
+    public setPortAssignment(assignment: Partial<Record<MountSide, ConnectorSlot>>): void {
+        const inverted: Partial<Record<ConnectorSlot, MountSide>> = {}
+        for (const side of Object.keys(assignment) as MountSide[]) {
+            const slot = assignment[side]
+            if (slot) inverted[slot] = side
+        }
+        this.portAssignment = inverted
     }
 
     public readSensors(): Record<string, number> {

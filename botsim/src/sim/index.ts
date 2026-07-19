@@ -3,7 +3,7 @@ import Renderer from "./renderer"
 import { Entity } from "./entity"
 import { EntitySpec, defaultStaticPhysics, defaultShapePhysics, defaultColorBrush } from "./entitySpec"
 import { MapSpec } from "../maps/mapSpec"
-import { BotSpec, ConnectorSlot } from "../botSpecs/botSpec"
+import { BotSpec, ConnectorSlot, MountSide } from "../botSpecs/botSpec"
 import { Bot, SpawnSpec } from "./bot"
 import { InputController } from "./inputController"
 
@@ -16,12 +16,12 @@ export class Simulation {
     private _entities: Entity[] = []
     private _bot: Bot | null = null
     private _map: MapSpec | null = null
-    // Persists the last-known left/right port assignment across a mid-run
-    // reset() (new state.id): the run keeps the SAME assignment it armed
-    // with, it is not re-negotiated. This is about surviving a reset, not
-    // enabling live reassignment — reset() reuses these, it never accepts
-    // new ones.
-    private _lastPorts: { left: ConnectorSlot; right: ConnectorSlot } | null = null
+    // Persists the last-known mount->connector port assignment across a
+    // mid-run reset() (new state.id): the run keeps the SAME assignment it
+    // armed with, it is not re-negotiated. This is about surviving a reset,
+    // not enabling live reassignment — reset() reuses these, it never
+    // accepts new ones.
+    private _lastPorts: Partial<Record<MountSide, ConnectorSlot>> | null = null
     private lastTime = 0
     private lastPhysicsTime = 0
     private input: InputController
@@ -98,18 +98,18 @@ export class Simulation {
         }
     }
 
-    public spawnBot(spec: BotSpec, spawn?: SpawnSpec, leftPort?: ConnectorSlot, rightPort?: ConnectorSlot): Bot {
+    public spawnBot(spec: BotSpec, spawn?: SpawnSpec, portAssignment?: Partial<Record<MountSide, ConnectorSlot>>): Bot {
         if (this._bot) {
             this._bot.destroy()
             this._bot = null
         }
         const spawnPt = spawn ?? (this._map?.spawns[0] ?? { pos: { x: 45, y: 45 }, angle: 0 })
         this._bot = new Bot(this, spawnPt, spec, this._map?.sensorModes ?? {}, this._map?.showLightCone ?? false)
-        if (leftPort && rightPort) {
-            this._lastPorts = { left: leftPort, right: rightPort }
+        if (portAssignment) {
+            this._lastPorts = portAssignment
         }
         if (this._lastPorts) {
-            this._bot.setPortAssignment(this._lastPorts.left, this._lastPorts.right)
+            this._bot.setPortAssignment(this._lastPorts)
         }
         // Planck only populates Fixture contacts (used by GraySensor/
         // LightSensor/SurfaceSensor's overlap detection) after at least one

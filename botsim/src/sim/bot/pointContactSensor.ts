@@ -83,6 +83,8 @@ export class PointContactSensor implements DistanceSensor {
             this._waveLabel,
             this._targetLabel,
             this.config.sonarColor,
+            false,
+            this.spec.facingDeg,
         )
     }
 

@@ -80,18 +80,18 @@ describe("App handleMapSelect port resolution", () => {
     }
 
     it("uses the persisted override when present", async () => {
-        getPinAssignment.mockReturnValue({ left: "J4", right: "J5" })
+        getPinAssignment.mockReturnValue({ frontLeft: "J4", frontRight: "J5" })
         await mountApp()
         await dispatchMapSelect()
 
-        expect(spawnBot).toHaveBeenCalledWith(expect.anything(), undefined, "J4", "J5")
+        expect(spawnBot).toHaveBeenCalledWith(expect.anything(), undefined, { frontLeft: "J4", frontRight: "J5" })
     })
 
-    it("falls back to the default assignment when no override is persisted", async () => {
+    it("falls back to the default (all-unconfigured) assignment when no override is persisted", async () => {
         getPinAssignment.mockReturnValue(null)
         await mountApp()
         await dispatchMapSelect()
 
-        expect(spawnBot).toHaveBeenCalledWith(expect.anything(), undefined, "J1", "J2")
+        expect(spawnBot).toHaveBeenCalledWith(expect.anything(), undefined, {})
     })
 })

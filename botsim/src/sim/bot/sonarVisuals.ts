@@ -137,6 +137,7 @@ export function buildSonarVisuals(
     targetLabel: string,
     colors: { wave: Rgb; ping: Rgb },
     showCone: boolean = false,
+    facingDeg: number = 0,
 ): void {
     if (!renderObj) return // e.g. in unit tests, where entity is a lightweight mock
 
@@ -147,13 +148,19 @@ export function buildSonarVisuals(
         const pLF = Vec2.rotateDeg(Vec2.add(pLN, Vec2.like(0, -maxRange)), -angle / 2)
         const pRF = Vec2.rotateDeg(Vec2.add(pRN, Vec2.like(0, -maxRange)),  angle / 2)
         const arc = appoximateArc({ x: 0, y: 0 }, maxRange, -angle / 2 - 90, angle / 2 - 90, 4)
-        const verts = [pLN, pRN, pRF, ...arc.reverse(), pLF, pLN]
+        const verts = [pLN, pRN, pRF, ...arc.reverse(), pLF, pLN].map(v => Vec2.rotateDeg(v, facingDeg))
+        // WAVE_OFFSET_X nudges the mesh in the sensor's own "right" direction,
+        // not the bot's raw local +x — rotate the nudge by the same facingDeg
+        // as the verts above, or it stays anchored to the bot's local +x on
+        // every mount (visibly correct only for facingDeg=0 frontal sensors,
+        // detached from the cone on sideLeft/sideRight/rearLeft/rearRight).
+        const waveOffset = Vec2.rotateDeg(Vec2.like(WAVE_OFFSET_X, 0), facingDeg)
 
         const waveSpec: EntityPolygonShapeSpec = {
             ...defaultEntityShape(),
             ...defaultPolygonShape(),
             label: waveLabel,
-            offset: { x: pos.x + WAVE_OFFSET_X, y: pos.y },
+            offset: { x: pos.x + waveOffset.x, y: pos.y + waveOffset.y },
             verts,
             roles: [],
             physics: { ...defaultShapePhysics(), sensor: true, density: 0 },
