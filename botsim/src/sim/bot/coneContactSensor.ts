@@ -88,7 +88,8 @@ export class ConeContactSensor {
      * object. Delegates mesh-building to the shared `sonarVisuals.ts` helper
      * (the sonar wave/cone mesh is disabled there by default — see that
      * file). `showCone` opts a sensor into also building the persistent
-     * wave/cone mesh (currently only used by LightSensor).
+     * wave/cone mesh (currently only used by LightSensor, whenever its mount
+     * is configured in "forward" mode).
      */
     private buildVisuals(): void {
         buildSonarVisuals(

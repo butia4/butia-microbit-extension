@@ -2,6 +2,7 @@ import * as Planck from "planck"
 import * as Pixi from "pixi.js"
 import { ALL_MOUNT_SIDES, BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
 import { SensorType } from "../../protocol"
+import { SensorSettings } from "../../settings/sensorSettingsStore"
 import { Entity } from "../entity"
 import { EntitySpec, defaultDynamicPhysics, defaultEntity } from "../entitySpec"
 import { Vec2Like } from "../../types/vec2"
@@ -52,8 +53,7 @@ export class Bot {
         },
         spawn: SpawnSpec,
         public spec: BotSpec,
-        sensorModes: Partial<Record<MountSide, "forward" | "surface">> = {},
-        showLightCone: boolean = false
+        sensorSettings: SensorSettings = {}
     ) {
         const chassisShape = Chassis.makeShapeSpec(spec)
         const wheelShapes = spec.wheels.map(ws => Wheel.makeShapeSpec(spec, ws))
@@ -81,19 +81,35 @@ export class Bot {
             this.wheels.set(ws.name, new Wheel(this, ws))
         }
 
-        // Pre-create sensors for each of the 6 physical mounts.
+        // Pre-create sensors for each of the 6 physical mounts. Both cone
+        // sensors (LightSensor/RangeSensor|SurfaceSensor) are pre-built
+        // regardless of runtime SensorType — the student's block code
+        // decides at runtime which one it actually reads (see readSensors).
         for (const side of MOUNT_SIDES) {
             const mount = spec.sensorMounts[side]
+            const cfg = sensorSettings[side]
+            // Absent mount entry (or absent settings entirely) defaults to
+            // "surface" — a deliberate breaking flip from the old
+            // map-driven "forward" default (see spec's "Default mode for
+            // unconfigured mounts").
+            const mode = cfg?.mode ?? "surface"
+            // `direction` only composes with the mount's fixed facingDeg
+            // when mode==="forward" — GraySensor stays untouched (always
+            // raw mount.facingDeg), out of scope per design.
+            const effectiveFacingDeg = (mount.facingDeg ?? 0) + (mode === "forward" ? (cfg?.direction ?? 0) : 0)
+            const lightAngle = cfg?.angle ?? DEFAULT_LIGHT_ANGLE
+            const rangeAngle = cfg?.angle ?? DEFAULT_RANGE_ANGLE
+            const showCone = mode === "forward"
+
             this.graySensors.set(side, new GraySensor(
                 this,
                 { pos: mount.pos, name: side, facingDeg: mount.facingDeg }
             ))
             this.lightSensors.set(side, new LightSensor(
                 this,
-                { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE, facingDeg: mount.facingDeg },
-                showLightCone
+                { pos: mount.pos, name: side, angle: lightAngle, maxRange: LIGHT_MAX_RANGE, facingDeg: effectiveFacingDeg },
+                showCone
             ))
-            const mode = sensorModes[side] ?? "forward"
             this.rangeSensors.set(side, mode === "surface"
                 ? new SurfaceSensor(
                     this,
@@ -101,7 +117,7 @@ export class Bot {
                 )
                 : new RangeSensor(
                     this,
-                    { pos: mount.pos, name: side, angle: DEFAULT_RANGE_ANGLE, maxRange: MAX_RANGE, facingDeg: mount.facingDeg }
+                    { pos: mount.pos, name: side, angle: rangeAngle, maxRange: MAX_RANGE, facingDeg: effectiveFacingDeg }
                 ))
         }
     }

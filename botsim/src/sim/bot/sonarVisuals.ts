@@ -48,7 +48,8 @@ export const SONAR_COLORS: Record<"range" | "gray" | "light" | "surface", { wave
 // default for all sensor types (see buildSonarVisuals's `showCone` param
 // below), but the shader itself is registered unconditionally so any sensor
 // call site can opt in via `showCone`. Currently only LightSensor opts in,
-// and only when the active map sets `MapSpec.showLightCone`.
+// per-mount, whenever that mount's settings-screen mode is "forward" (see
+// sim/bot/index.ts's `showCone = mode === "forward"`).
 //
 // Ported near-verbatim from microbit-robot/botsim/src/sim/bot/rangeSensor.ts
 // (moved here from rangeSensor.ts so all sonar-beam sensors share one shader
@@ -124,9 +125,9 @@ addShaderProgram(
  * The sonar wave/cone mesh (`waveLabel`) is pulse-only (not built) by default
  * for all sensor types, per product decision. Pass `showCone: true` to also
  * build a persistent, always-visible wave/cone mesh — currently only used by
- * `LightSensor` when the active map sets `MapSpec.showLightCone`. Cone
- * visibility is static: set once here at build time, never toggled by
- * `updateSonarVisuals`.
+ * `LightSensor`, per-mount, whenever that mount's settings-screen mode is
+ * "forward" (see sim/bot/index.ts). Cone visibility is static: set once here
+ * at build time, never toggled by `updateSonarVisuals`.
  */
 export function buildSonarVisuals(
     renderObj: RenderObject | undefined,

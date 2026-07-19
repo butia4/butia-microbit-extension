@@ -4,6 +4,7 @@ import { Entity } from "./entity"
 import { EntitySpec, defaultStaticPhysics, defaultShapePhysics, defaultColorBrush } from "./entitySpec"
 import { MapSpec } from "../maps/mapSpec"
 import { BotSpec, ConnectorSlot, MountSide } from "../botSpecs/botSpec"
+import { SensorSettings } from "../settings/sensorSettingsStore"
 import { Bot, SpawnSpec } from "./bot"
 import { InputController } from "./inputController"
 
@@ -22,6 +23,10 @@ export class Simulation {
     // not enabling live reassignment — reset() reuses these, it never
     // accepts new ones.
     private _lastPorts: Partial<Record<MountSide, ConnectorSlot>> | null = null
+    // Persists the last-known sensor settings across a mid-run reset(), the
+    // same way _lastPorts does for port assignment: the run keeps the SAME
+    // settings it armed with, they are not re-read mid-run.
+    private _lastSensorSettings: SensorSettings | null = null
     private lastTime = 0
     private lastPhysicsTime = 0
     private input: InputController
@@ -98,13 +103,21 @@ export class Simulation {
         }
     }
 
-    public spawnBot(spec: BotSpec, spawn?: SpawnSpec, portAssignment?: Partial<Record<MountSide, ConnectorSlot>>): Bot {
+    public spawnBot(
+        spec: BotSpec,
+        spawn?: SpawnSpec,
+        portAssignment?: Partial<Record<MountSide, ConnectorSlot>>,
+        sensorSettings?: SensorSettings
+    ): Bot {
         if (this._bot) {
             this._bot.destroy()
             this._bot = null
         }
         const spawnPt = spawn ?? (this._map?.spawns[0] ?? { pos: { x: 45, y: 45 }, angle: 0 })
-        this._bot = new Bot(this, spawnPt, spec, this._map?.sensorModes ?? {}, this._map?.showLightCone ?? false)
+        if (sensorSettings) {
+            this._lastSensorSettings = sensorSettings
+        }
+        this._bot = new Bot(this, spawnPt, spec, this._lastSensorSettings ?? {})
         if (portAssignment) {
             this._lastPorts = portAssignment
         }

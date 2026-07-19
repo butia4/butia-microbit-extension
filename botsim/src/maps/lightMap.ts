@@ -14,7 +14,6 @@ export const LIGHT_MAP: MapSpec = {
     width: ARENA,
     aspectRatio: MAP_ASPECT_RATIO,
     color: "#E7E9E7",
-    showLightCone: true,
     spawns: [
         { pos: { x: CENTER_X, y: CENTER_Y + 20 }, angle: 0 },
     ],
