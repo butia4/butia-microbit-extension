@@ -1,10 +1,10 @@
-import Physics from "./physics"
-import Renderer from "./renderer"
+import Physics from "./physics/physics"
+import Renderer from "./rendering/renderer"
 import { Entity } from "./entity"
 import { EntitySpec, defaultStaticPhysics, defaultShapePhysics, defaultColorBrush } from "./entitySpec"
 import { MapSpec } from "../maps/mapSpec"
 import { BotSpec, ConnectorSlot, MountSide } from "../botSpecs/botSpec"
-import { SensorSettings } from "../settings/sensorSettingsStore"
+import { SensorSettings } from "../botSpecs/sensorSettings.model"
 import { Bot, SpawnSpec } from "./bot"
 import { InputController } from "./inputController"
 

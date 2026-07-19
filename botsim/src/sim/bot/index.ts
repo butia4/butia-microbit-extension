@@ -1,20 +1,21 @@
 import * as Planck from "planck"
 import * as Pixi from "pixi.js"
 import { ALL_MOUNT_SIDES, BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
-import { SensorType } from "../../protocol"
-import { SensorSettings } from "../../settings/sensorSettingsStore"
+import { SensorType } from "../../simulatorBridge/protocol"
+import { SensorSettings } from "../../botSpecs/sensorSettings.model"
 import { Entity } from "../entity"
 import { EntitySpec, defaultDynamicPhysics, defaultEntity } from "../entitySpec"
-import { Vec2Like } from "../../types/vec2"
-import { toRenderScale } from "../util"
+import { Vec2Like } from "../../shared/types/vec2"
+import { toRenderScale } from "../rendering/util"
 import { Chassis } from "./chassis"
 import { Wheel } from "./wheel"
-import { GraySensor } from "./graySensor"
-import { LightSensor, LIGHT_MAX_RANGE, DEFAULT_LIGHT_ANGLE } from "./lightSensor"
-import { RangeSensor, MAX_RANGE, DEFAULT_RANGE_ANGLE, DistanceSensor } from "./rangeSensor"
-import { SurfaceSensor } from "./surfaceSensor"
+import { GraySensor } from "./sensors/graySensor"
+import { LightSensor, LIGHT_MAX_RANGE, DEFAULT_LIGHT_ANGLE } from "./sensors/lightSensor"
+import { RangeSensor, MAX_RANGE, DEFAULT_RANGE_ANGLE, DistanceSensor } from "./sensors/rangeSensor"
+import { SurfaceSensor } from "./sensors/surfaceSensor"
+import { SpawnSpec } from "../../maps/mapSpec"
 
-export type SpawnSpec = { pos: Vec2Like; angle: number }
+export type { SpawnSpec }
 
 const MOUNT_SIDES: readonly MountSide[] = ALL_MOUNT_SIDES
 

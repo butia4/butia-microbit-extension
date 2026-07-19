@@ -1,7 +1,7 @@
 import { MapSpec } from "./mapSpec"
 import { defaultStaticPhysics, defaultDynamicPhysics, defaultShapePhysics, defaultColorBrush } from "../sim/entitySpec"
-import { pickRandom } from "../util"
-import { MAP_ASPECT_RATIO, MICROBIT_COLORS } from "../constants"
+import { pickRandom } from "../shared/util"
+import { MAP_ASPECT_RATIO, MICROBIT_COLORS } from "../shared/constants"
 
 const ARENA = 90   // cm
 const CENTER_X = ARENA / 2

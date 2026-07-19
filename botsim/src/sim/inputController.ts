@@ -1,6 +1,6 @@
-import Physics from "./physics"
-import Renderer from "./renderer"
-import { Vec2Like } from "../types/vec2"
+import Physics from "./physics/physics"
+import Renderer from "./rendering/renderer"
+import { Vec2Like } from "../shared/types/vec2"
 
 // Extracted from Simulation — converts canvas-pixel coordinates (from DOM
 // mouse events, CSS-scaled) into simulation-space (cm) coordinates, then

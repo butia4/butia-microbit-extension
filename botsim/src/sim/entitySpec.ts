@@ -1,4 +1,4 @@
-import { Vec2Like } from "../types/vec2"
+import { Vec2Like } from "../shared/types/vec2"
 
 // --- Shape types ---
 

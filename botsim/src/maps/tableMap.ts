@@ -1,6 +1,6 @@
 import { MapSpec } from "./mapSpec"
 import { defaultShapePhysics, defaultColorBrush } from "../sim/entitySpec"
-import { MAP_ASPECT_RATIO } from "../constants"
+import { MAP_ASPECT_RATIO } from "../shared/constants"
 
 const ARENA = 90   // cm
 const CENTER_X = ARENA / 2

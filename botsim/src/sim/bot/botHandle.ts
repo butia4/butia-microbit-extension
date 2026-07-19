@@ -1,6 +1,6 @@
-import { Vec2Like } from "../../types/vec2"
-import { RenderObject } from "../renderer"
-import { PhysicsObject } from "../physics"
+import { Vec2Like } from "../../shared/types/vec2"
+import { RenderObject } from "../rendering/renderer"
+import { PhysicsObject } from "../physics/physics"
 
 // Consolidated bot-facing view used by wheels, sensors, and chassis. Replaces
 // the 5 near-identical `BotRef` type aliases that used to live one per file

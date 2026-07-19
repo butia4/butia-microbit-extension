@@ -1,7 +1,7 @@
-import { Vec2 } from "../../types/vec2"
+import { Vec2 } from "../../shared/types/vec2"
 import { WheelSpec } from "../../botSpecs/botSpec"
 import { defaultEntityShape, defaultBoxShape, defaultShapePhysics, defaultColorBrush, EntityShapeSpec } from "../entitySpec"
-import { FrictionJointHandle } from "../physics"
+import { FrictionJointHandle } from "../physics/physics"
 import { BotHandle } from "./botHandle"
 
 // Shared with Chassis.makeShapeSpec so chassis density can subtract the
@@ -11,7 +11,7 @@ export const WHEEL_DENSITY = 10
 
 export class Wheel {
     private currSpeed = 0
-    private localPos: import("../../types/vec2").Vec2Like
+    private localPos: import("../../shared/types/vec2").Vec2Like
     private frictionJoint: FrictionJointHandle | undefined
     private frictionJointStrength = { maxForce: 0, maxTorque: 0 }
     private wasHeld = false

@@ -1,7 +1,7 @@
 import { BotSpec, SquareChassisSpec } from "../../botSpecs/botSpec"
 import { BrushSpec, EntityShapeSpec, defaultEntityShape, defaultBoxShape, defaultCircleShape, defaultPolygonShape, defaultColorBrush, defaultTextureBrush, defaultShapePhysics } from "../entitySpec"
-import { Vec2Like } from "../../types/vec2"
-import { appoximateArc } from "../util"
+import { Vec2Like } from "../../shared/types/vec2"
+import { appoximateArc } from "../physics/util"
 import { WHEEL_DENSITY } from "./wheel"
 
 // Minimum chassis mass (grams) enforced when spec.wheels' own mass would
