@@ -18,17 +18,6 @@ export const GRAY_MAX_RANGE = 5 // cm, matches SURFACE_ON_VALUE
 
 const PING_RADIUS = 3 // cm
 
-// Nudges only the wave/cone graphic's anchor a bit to the right of the
-// sensor's actual mount point (`pos`, from sensorMounts), independent of it —
-// the ping/target always tracks `pos` live (recomputed every frame), so
-// tuning sensorMounts alone can't reposition the cone. Tune this value
-// directly.
-// Scaled 0.8x alongside BUTIA_BOT_SPEC's chassis shrink (was 2.5 on the
-// original 10cm-side chassis) — left unscaled, this nudge overpowers the
-// mount's own offset from center on the smaller 8cm chassis and the cone
-// visibly detaches from the sensor.
-const WAVE_OFFSET_X = 2.0 // cm
-
 // Wave/ping color pairs per sensor type — kept together so they're easy to
 // compare/tune for visual distinguishability.
 //
@@ -137,10 +126,6 @@ export function buildSonarVisuals(
         const upRad = -Math.PI / 2
         const startRad = upRad - halfAngleRad
         const endRad = upRad + halfAngleRad
-        // Nudges the whole cone in its own "right" direction — drawn here
-        // (so it's rotated along with everything else by `gfx.angle` above)
-        // instead of added to world-space verts, unlike the old shader mesh.
-        const apexX = toRenderScale(WAVE_OFFSET_X)
         const maxRangePx = toRenderScale(maxRange)
         const waveColor = parseInt(rgbToString(colors.wave).replace("#", "0x"), 16)
 
@@ -148,9 +133,9 @@ export function buildSonarVisuals(
             gfx.clear()
 
             // Constant translucent wedge — always-visible field-of-view marker.
-            gfx.moveTo(apexX, 0)
-            gfx.arc(apexX, 0, maxRangePx, startRad, endRad)
-            gfx.lineTo(apexX, 0)
+            gfx.moveTo(0, 0)
+            gfx.arc(0, 0, maxRangePx, startRad, endRad)
+            gfx.lineTo(0, 0)
             gfx.fill({ color: waveColor, alpha: WAVE_FILL_ALPHA })
 
             // WAVE_RING_COUNT rings travel apex -> maxRange on a loop,
@@ -160,7 +145,7 @@ export function buildSonarVisuals(
                 const phase = ((elapsedSecs / WAVE_CYCLE_SECS) + i / WAVE_RING_COUNT) % 1
                 const r = phase * maxRangePx
                 const fade = Math.sin(Math.PI * phase)
-                gfx.arc(apexX, 0, r, startRad, endRad)
+                gfx.arc(0, 0, r, startRad, endRad)
                     .stroke({ width: WAVE_RING_WIDTH_PX, color: waveColor, alpha: fade * WAVE_RING_ALPHA })
             }
         }
