@@ -100,6 +100,8 @@ export class Bot {
             const effectiveFacingDeg = (mount.facingDeg ?? 0) + (mode === "forward" ? (cfg?.direction ?? 0) : 0)
             const lightAngle = cfg?.angle ?? DEFAULT_LIGHT_ANGLE
             const rangeAngle = cfg?.angle ?? DEFAULT_RANGE_ANGLE
+            const lightMaxRange = cfg?.range ?? LIGHT_MAX_RANGE
+            const rangeMaxRange = cfg?.range ?? MAX_RANGE
             const showCone = mode === "forward"
 
             // Line-following only makes sense for a mount physically facing
@@ -116,7 +118,7 @@ export class Bot {
             }
             this.lightSensors.set(side, new LightSensor(
                 this,
-                { pos: mount.pos, name: side, angle: lightAngle, maxRange: LIGHT_MAX_RANGE, facingDeg: effectiveFacingDeg },
+                { pos: mount.pos, name: side, angle: lightAngle, maxRange: lightMaxRange, facingDeg: effectiveFacingDeg },
                 showCone
             ))
             this.rangeSensors.set(side, mode === "surface"
@@ -126,7 +128,7 @@ export class Bot {
                 )
                 : new RangeSensor(
                     this,
-                    { pos: mount.pos, name: side, angle: rangeAngle, maxRange: MAX_RANGE, facingDeg: effectiveFacingDeg }
+                    { pos: mount.pos, name: side, angle: rangeAngle, maxRange: rangeMaxRange, facingDeg: effectiveFacingDeg }
                 ))
         }
     }

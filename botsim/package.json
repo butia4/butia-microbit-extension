@@ -10,27 +10,27 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.10.0",
-    "@reduxjs/toolkit": "^2.12.0",
-    "earcut": "^3.2.3",
-    "pixi.js": "^8.19.0",
-    "planck": "^1.5.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-hook-form": "^7.82.0",
-    "react-redux": "^9.3.0",
-    "zod": "^4.4.3"
+    "@hookform/resolvers": "5.4.0",
+    "@reduxjs/toolkit": "2.12.0",
+    "earcut": "3.2.3",
+    "pixi.js": "8.19.0",
+    "planck": "1.5.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-hook-form": "7.82.0",
+    "react-redux": "9.3.0",
+    "zod": "4.4.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.2",
-    "@types/earcut": "^3.0.0",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
-    "jsdom": "^29.1.1",
-    "tailwindcss": "^4.3.2",
-    "typescript": "^7.0.2",
-    "vite": "^8.1.4",
-    "vitest": "^4.1.10"
+    "@tailwindcss/vite": "4.3.3",
+    "@types/earcut": "3.0.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "jsdom": "29.1.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "7.0.2",
+    "vite": "8.1.5",
+    "vitest": "4.1.10"
   }
 }

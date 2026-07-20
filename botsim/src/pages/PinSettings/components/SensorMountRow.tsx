@@ -1,19 +1,9 @@
 import { UseFormRegister, UseFormSetValue } from "react-hook-form"
 import { ALL_CONNECTOR_SLOTS, ConnectorSlot, MountSide } from "../../../botSpecs/botSpec"
 import { PinSettingsFormValues } from "../model/pinSettingsForm.model"
-import { MOUNT_LABELS } from "../constants"
+import { ANGLE_MAX, ANGLE_MIN, DIRECTION_MAX, DIRECTION_MIN, MOUNT_LABELS, RANGE_MAX, RANGE_MIN } from "../constants"
 
 const CONNECTOR_OPTIONS: readonly ConnectorSlot[] = ALL_CONNECTOR_SLOTS
-
-// Cone opening width: 1 (needle-thin) to 180 (full half-circle) — mirrors
-// the clamp coneWedgePoints applies when previewing this mount's cone.
-const ANGLE_MIN = 1
-const ANGLE_MAX = 180
-
-// Rotation offset added onto the mount's base facing (see MOUNT_FACING_DEG)
-// — a full turn either way.
-const DIRECTION_MIN = -180
-const DIRECTION_MAX = 180
 
 type SensorMountRowProps = {
     side: MountSide
@@ -23,6 +13,7 @@ type SensorMountRowProps = {
     isForward: boolean
     angle: number
     direction: number
+    range: number
 }
 
 // Paired range + number control for one numeric field: both inputs are
@@ -39,6 +30,17 @@ type BarNumberFieldProps = {
 }
 
 function BarNumberField({ id, label, value, min, max, onChange }: BarNumberFieldProps) {
+    // The number input's `min`/`max` attributes only affect its spinner
+    // buttons/native validity — typing (or pasting) a value still fires
+    // onChange with whatever was entered, so it must be clamped here
+    // explicitly. A cleared field yields NaN via valueAsNumber; ignored
+    // (not clamped to `min`) so the user can delete digits mid-edit without
+    // the field jumping to the boundary on every keystroke.
+    const handleChange = (raw: number): void => {
+        if (Number.isNaN(raw)) return
+        onChange(Math.min(Math.max(raw, min), max))
+    }
+
     return (
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between gap-3">
@@ -52,7 +54,7 @@ function BarNumberField({ id, label, value, min, max, onChange }: BarNumberField
                     min={min}
                     max={max}
                     value={value}
-                    onChange={(e) => onChange(e.target.valueAsNumber)}
+                    onChange={(e) => handleChange(e.target.valueAsNumber)}
                     className="h-8 w-16 rounded-lg border-2 border-(--butia-green-100) bg-white px-2 text-xs font-semibold text-(--butia-ink-900) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
                 />
             </div>
@@ -62,7 +64,7 @@ function BarNumberField({ id, label, value, min, max, onChange }: BarNumberField
                 min={min}
                 max={max}
                 value={value}
-                onChange={(e) => onChange(e.target.valueAsNumber)}
+                onChange={(e) => handleChange(e.target.valueAsNumber)}
                 className="h-2 w-full cursor-pointer accent-(--butia-green-600)"
             />
         </div>
@@ -70,17 +72,18 @@ function BarNumberField({ id, label, value, min, max, onChange }: BarNumberField
 }
 
 // One mount's row: connector select always visible; mode select appears once
-// a connector is chosen; angle/direction inputs appear only in "forward"
-// mode. connector/mode stay registered regardless of visibility (RHF's
-// default shouldUnregister: false); angle/direction are driven by setValue
-// instead of register (see BarNumberField) but PinSettingsPage always passes
-// their current watched value down, so they likewise survive a mode switch
-// away from "forward" and back.
-export function SensorMountRow({ side, register, setValue, isConnected, isForward, angle, direction }: SensorMountRowProps) {
+// a connector is chosen; angle/direction/range inputs appear only in
+// "forward" mode. connector/mode stay registered regardless of visibility
+// (RHF's default shouldUnregister: false); angle/direction/range are driven
+// by setValue instead of register (see BarNumberField) but PinSettingsPage
+// always passes their current watched value down, so they likewise survive a
+// mode switch away from "forward" and back.
+export function SensorMountRow({ side, register, setValue, isConnected, isForward, angle, direction, range }: SensorMountRowProps) {
     const selectId = `pin-settings-${side}`
     const modeId = `sensor-mode-${side}`
     const angleId = `sensor-angle-${side}`
     const directionId = `sensor-direction-${side}`
+    const rangeId = `sensor-range-${side}`
 
     return (
         <li className="flex flex-col gap-2 border-b border-(--butia-green-100) pb-2 last:border-b-0 last:pb-0">
@@ -137,6 +140,14 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
                         min={DIRECTION_MIN}
                         max={DIRECTION_MAX}
                         onChange={(value) => setValue(`mounts.${side}.direction`, value, { shouldValidate: true })}
+                    />
+                    <BarNumberField
+                        id={rangeId}
+                        label="Alcance (cm)"
+                        value={range}
+                        min={RANGE_MIN}
+                        max={RANGE_MAX}
+                        onChange={(value) => setValue(`mounts.${side}.range`, value, { shouldValidate: true })}
                     />
                 </div>
             )}

@@ -29,7 +29,7 @@ function splitFormValues(values: PinSettingsFormValues): { assignment: PinAssign
         if (mount.connector !== "") assignment[side] = mount.connector
 
         const setting: SensorMountSetting = mount.connector !== "" && mount.mode === "forward"
-            ? { mode: "forward", angle: mount.angle, direction: mount.direction }
+            ? { mode: "forward", angle: mount.angle, direction: mount.direction, range: mount.range }
             : { mode: "surface" }
         sensorSettings[side] = setting
     }

@@ -2,6 +2,15 @@ import { ALL_MOUNT_SIDES, MountSide } from "../../botSpecs/botSpec"
 
 export const DEFAULT_ANGLE = 45
 export const DEFAULT_DIRECTION = 0
+export const DEFAULT_RANGE = 40
+
+// Re-exported from botSpecs/sensorSettings.model (shared, not
+// PinSettings-feature-scoped) since the persisted schema needs the same
+// bounds as this settings screen's slider/number inputs — see that file for
+// the rationale. Kept importable from here too so SensorMountRow/
+// pinSettingsForm.model don't need to reach into botSpecs directly for a
+// value that's conceptually part of this feature's UI constants.
+export { ANGLE_MAX, ANGLE_MIN, DIRECTION_MAX, DIRECTION_MIN, RANGE_MAX, RANGE_MIN } from "../../botSpecs/sensorSettings.model"
 
 // Sim-space facingDeg per mount (mirrors butiaBotSpec's sensorMounts):
 // 0 = front (local -y), 90 = right, -90 = left, 180 = rear, clockwise-
@@ -16,12 +25,14 @@ export const MOUNT_FACING_DEG: Record<MountSide, number> = {
     rearRight: 180,
 }
 
-// Cone preview geometry, in the local 64x64 viewBox each mount's SVG uses
-// (see ChassisIllustration) — apex at the box center (32,32), pointing
-// toward (32,0) i.e. "up"/local -y before rotation, matching
-// MOUNT_FACING_DEG's 0deg. Length is a fixed decorative distance, not to
-// scale with the sim's actual sensor maxRange.
-export const CONE_LENGTH = 30
+// Cone preview geometry, expressed in the chassis illustration's own 0-100
+// viewBox (see ChassisIllustration's chamfered-square <svg>). That viewBox's
+// 0%..100% span was mapped from the bot's pre-scale (10cm-side) chassis
+// coordinates -5..5cm (see MOUNT_PREVIEW_POS's derivation comment), so
+// 100 viewBox units = 10cm, i.e. 10 units/cm. Used to draw the cone preview
+// to the same real-world scale as the sim's sonar cone (buildSonarVisuals),
+// instead of a fixed decorative length — see coneWedgePoints.
+export const PREVIEW_UNITS_PER_CM = 10
 
 // ALL_MOUNT_SIDES's declared order (frontal, then lateral, then rear) already
 // mirrors how a user reads the chassis illustration top-to-bottom, so the row

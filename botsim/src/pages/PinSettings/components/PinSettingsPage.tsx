@@ -49,6 +49,7 @@ export function PinSettings({ onClose }: PinSettingsProps) {
                             isForward={mounts[side].mode === "forward"}
                             angle={mounts[side].angle}
                             direction={mounts[side].direction}
+                            range={mounts[side].range}
                         />
                     ))}
                 </ul>

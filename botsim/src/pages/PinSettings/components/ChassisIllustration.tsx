@@ -14,7 +14,8 @@ type ChassisIllustrationProps = {
 // maps sim x/y to left/top with no flip (front, at sim y=-5, sits at top:0%;
 // rear, at y=+5, sits at top:100%), so MOUNT_FACING_DEG's sim-space rotation
 // convention (0=up/-y, clockwise-positive) applies directly to the cone
-// preview's CSS rotate() below. The 6 dots mirror each mount's connector
+// preview's point rotation in coneWedgePoints below. The 6 dots mirror each
+// mount's connector
 // state (filled+connector code = wired, hollow = "no configurado"); actual
 // connector selection lives in SensorMountRow, this is read-only
 // at-a-glance feedback.
@@ -64,30 +65,41 @@ export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
                 {/* Live cone preview — only for connected mounts in "forward"
                     mode, rotated to mount.direction (added onto the mount's
                     fixed facingDeg, same composition as sim/bot/index.ts's
-                    effectiveFacingDeg) and widened to mount.angle, so tuning
-                    either field in SensorMountRow visibly moves/resizes this
-                    shape. */}
-                {ALL_MOUNT_SIDES.map((side) => {
-                    const mount = mounts[side]
-                    if (mount.connector === "" || mount.mode !== "forward") return null
-                    const facingDeg = MOUNT_FACING_DEG[side] + mount.direction
-                    return (
-                        <svg
-                            key={`cone-${side}`}
-                            viewBox="0 0 64 64"
-                            className="pointer-events-none absolute z-15 h-16 w-16"
-                            style={{
-                                top: MOUNT_PREVIEW_POS[side].top,
-                                left: MOUNT_PREVIEW_POS[side].left,
-                                transform: `translate(-50%, -50%) rotate(${facingDeg}deg)`,
-                                transformOrigin: "50% 50%",
-                            }}
-                            aria-hidden="true"
-                        >
-                            <polygon points={coneWedgePoints(mount.angle)} fill="var(--butia-green-800)" fillOpacity="0.3" />
-                        </svg>
-                    )
-                })}
+                    effectiveFacingDeg), widened to mount.angle, and drawn to
+                    mount.range — the user-configured maxRange override that
+                    sim/bot/index.ts applies to whichever sensor type ends up
+                    reading this mount (LightSensor is the only one that also
+                    shows a persistent cone in the sim itself — see
+                    sim/bot/index.ts's showCone) — at the same real-world
+                    scale as the chassis (see coneWedgePoints/
+                    PREVIEW_UNITS_PER_CM), so this preview matches the sim's
+                    cone size instead of a fixed decorative wedge. Shares the
+                    chassis polygon's own 0-100 viewBox (not a separate
+                    per-mount box) so the cone can extend past the chassis
+                    silhouette without distorting — `overflow-visible` since
+                    a cone can be several times the 8cm chassis and must be
+                    allowed to draw outside it. */}
+                <svg
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                    className="pointer-events-none absolute inset-0 z-15 h-full w-full overflow-visible"
+                    aria-hidden="true"
+                >
+                    {ALL_MOUNT_SIDES.map((side) => {
+                        const mount = mounts[side]
+                        if (mount.connector === "" || mount.mode !== "forward") return null
+                        const facingDeg = MOUNT_FACING_DEG[side] + mount.direction
+                        const apex = { x: parseFloat(MOUNT_PREVIEW_POS[side].left), y: parseFloat(MOUNT_PREVIEW_POS[side].top) }
+                        return (
+                            <polygon
+                                key={`cone-${side}`}
+                                points={coneWedgePoints(apex, facingDeg, mount.angle, mount.range)}
+                                fill="var(--butia-green-800)"
+                                fillOpacity="0.3"
+                            />
+                        )
+                    })}
+                </svg>
 
                 {MOUNT_ORDER.map((side) => {
                     const connector = mounts[side].connector
