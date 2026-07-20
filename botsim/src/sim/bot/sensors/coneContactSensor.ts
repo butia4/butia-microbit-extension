@@ -13,12 +13,6 @@ import { Rgb } from "../../rendering/util"
 import { buildSonarVisuals, updateSonarVisuals } from "../../rendering/sonarVisuals"
 import { BotHandle } from "../botHandle"
 
-// Config-object-driven generic replacing the near-duplicate cone-cast/raycast
-// logic that used to live separately in RangeSensor and LightSensor. Both
-// sensors share identical cone geometry, contact-detection, and visuals code
-// — they differ only in which fixture role they look for and how the
-// detected distance maps to the sensor's output value (see RangeSensor's
-// `RANGE_CONFIG` / LightSensor's `LIGHT_CONFIG` thin-wrapper configs).
 export interface ConeSensorConfig {
     roleTag: string // e.g. "obstacle" | "light-source" — role tag matched on the other fixture
     labelPrefix: string // e.g. "range" | "light" — used to build this._fixtureLabel/_waveLabel/_targetLabel
@@ -85,14 +79,6 @@ export class ConeContactSensor {
         )
     }
 
-    /**
-     * Builds the pulse (ping) visual mesh and attaches it to the bot's render
-     * object. Delegates mesh-building to the shared `sonarVisuals.ts` helper
-     * (the sonar wave/cone mesh is disabled there by default — see that
-     * file). `showCone` opts a sensor into also building the persistent
-     * wave/cone mesh (currently only used by LightSensor, whenever its mount
-     * is configured in "forward" mode).
-     */
     private buildVisuals(): void {
         buildSonarVisuals(
             this.bot.entity.renderObj,
@@ -120,7 +106,6 @@ export class ConeContactSensor {
         const worldEdges = this.sensorEdges.map(e => LineSegment.transformDeg(e, sensorPos, botAngle))
 
         const detectedVerts: Vec2Like[] = []
-
         const isTarget = (roles: string[]) => roles.includes(this.config.roleTag)
         const isMe = (f: Planck.Fixture) => f.getBody() === body
 

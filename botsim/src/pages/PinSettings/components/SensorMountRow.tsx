@@ -19,10 +19,6 @@ type SensorMountRowProps = {
     range: number
 }
 
-// Paired range + number control for one numeric field: both inputs are
-// controlled off the same `value`/`onChange` so dragging the slider updates
-// the number box live and vice versa (plain `register` on two separate
-// uncontrolled inputs would let them drift out of sync).
 type BarNumberFieldProps = {
     id: string
     label: string
@@ -33,12 +29,7 @@ type BarNumberFieldProps = {
 }
 
 function BarNumberField({ id, label, value, min, max, onChange }: BarNumberFieldProps) {
-    // The number input's `min`/`max` attributes only affect its spinner
-    // buttons/native validity — typing (or pasting) a value still fires
-    // onChange with whatever was entered, so it must be clamped here
-    // explicitly. A cleared field yields NaN via valueAsNumber; ignored
-    // (not clamped to `min`) so the user can delete digits mid-edit without
-    // the field jumping to the boundary on every keystroke.
+    // NaN (cleared field) is ignored rather than clamped, so digits can be deleted mid-edit
     const handleChange = (raw: number): void => {
         if (Number.isNaN(raw)) return
         onChange(Math.min(Math.max(raw, min), max))
@@ -74,13 +65,6 @@ function BarNumberField({ id, label, value, min, max, onChange }: BarNumberField
     )
 }
 
-// One mount's row: connector select always visible; mode select appears once
-// a connector is chosen; angle/direction/range inputs appear only in
-// "forward" mode. connector/mode stay registered regardless of visibility
-// (RHF's default shouldUnregister: false); angle/direction/range are driven
-// by setValue instead of register (see BarNumberField) but PinSettingsPage
-// always passes their current watched value down, so they likewise survive a
-// mode switch away from "forward" and back.
 export function SensorMountRow({ side, register, setValue, isConnected, isForward, angle, direction, range }: SensorMountRowProps) {
     const selectId = `pin-settings-${side}`
     const modeId = `sensor-mode-${side}`
@@ -89,10 +73,6 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
     const rangeId = `sensor-range-${side}`
     const optionsId = `sensor-options-${side}`
 
-    // Local UI-only state: whether this mount's option block (mode +
-    // angle/direction/range) is expanded. Not form state — it never affects
-    // the submitted values, only what's rendered. Defaults open so a
-    // connected mount looks the same as before this toggle existed.
     const [isExpanded, setIsExpanded] = useState(true)
 
     return (

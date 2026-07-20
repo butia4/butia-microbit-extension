@@ -4,12 +4,7 @@ import * as Pixi from "pixi.js"
  * SHADERS
  ********************************************************************/
 
-// Shader programs are built lazily (on first actual use, via
-// getShaderProgram), not at registration time. Pixi.GlProgram.from() probes
-// the browser's WebGL context (max fragment precision), which doesn't exist
-// under jsdom/vitest — building eagerly at module-import time would break any
-// test that merely imports this module (e.g. RangeSensor, which registers
-// the sonar shaders) even if it never actually renders anything.
+// built lazily on first use: Pixi.GlProgram.from() probes WebGL, unavailable under jsdom/vitest
 type ShaderSource = { vert: string; frag: string }
 const shaderSources = new Map<string, ShaderSource>()
 const shaderPrograms = new Map<string, Pixi.GlProgram>()
@@ -31,10 +26,7 @@ export function getShaderProgram(name: string): Pixi.GlProgram {
     return pgm
 }
 
-// Meshes built with a shader brush that animates via `uTime` (e.g. the sonar
-// ping) — Pixi v8 removed the old renderer-wide globalUniforms.uniforms
-// escape hatch, so each shaded mesh gets its own `uTime` uniform that this
-// registry advances every frame (see Renderer.update below).
+// each shaded mesh gets its own uTime uniform, advanced every frame (Pixi v8 has no global uniform)
 const timedUniformGroups = new Map<Pixi.Container, Pixi.UniformGroup>()
 
 export function registerTimedShader(mesh: Pixi.Container, uniforms: Pixi.UniformGroup): void {
@@ -48,11 +40,6 @@ export function advanceShaderTime(dtSecs: number): void {
     }
 }
 
-// Per-frame redraw hook for plain (non-shader) animated Pixi.Graphics —
-// e.g. the sonar wave/cone, drawn as vector arcs instead of a per-pixel
-// shader (see sonarVisuals.ts). Mirrors registerTimedShader/
-// advanceShaderTime's per-frame-tick pattern, minus the uTime uniform
-// plumbing a plain Graphics object doesn't have.
 const timedRedraws = new Map<Pixi.Container, (elapsedSecs: number) => void>()
 let elapsedSecs = 0
 
@@ -67,10 +54,6 @@ export function advanceGraphicsAnimations(dtSecs: number): void {
     for (const redraw of timedRedraws.values()) redraw(elapsedSecs)
 }
 
-// Every uniform in a Shader's `resources` record gets independently wrapped
-// in its own single-member UniformGroup by Pixi unless it's already one —
-// so plain scalars/vectors must be combined into one explicit UniformGroup
-// (with an inferred glsl type per value) rather than passed as bare values.
 export type UniformValue = number | number[]
 
 export function inferUniformType(value: UniformValue): Pixi.UNIFORM_TYPES {
@@ -91,14 +74,8 @@ export function buildUniformGroup(uniforms: Record<string, UniformValue>): Pixi.
     return new Pixi.UniformGroup(structures)
 }
 
-// uProjectionMatrix/uWorldTransformMatrix (camera/stage) and uTransformMatrix
-// (this mesh's own local transform) are Pixi v8's built-in per-draw uniforms
-// — GlMeshAdaptor.execute() binds them (as well as the reserved uColor/
-// uRound/uResolution/uWorldColorAlpha names below) to every Mesh regardless
-// of whether it uses a custom shader, so our own uniform names must avoid
-// colliding with them or WebGL throws "Uniform size does not match uniform
-// method" (a same-named uniform declared with a different type/size here
-// than in Pixi's reserved bind groups).
+// uProjectionMatrix/uWorldTransformMatrix/uTransformMatrix are Pixi v8 reserved uniform
+// names bound to every Mesh; custom uniforms must avoid colliding with them
 export const CommonVertexShaderGlobals = `
     precision mediump float;
     attribute vec2 aVerts;

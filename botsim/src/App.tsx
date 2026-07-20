@@ -8,7 +8,7 @@ export function App() {
     const { armed, rearmOnSettingsClose, settingsOpen, setSettingsOpen } = useBotSimContext()
 
     return (
-        <Layout showSettingsButton={!settingsOpen} onOpenSettings={() => setSettingsOpen(true)}>
+        <Layout showSettingsButton={!settingsOpen && armed} onOpenSettings={() => setSettingsOpen(true)}>
             {settingsOpen ? (
                 <PinSettings
                     key="settings"

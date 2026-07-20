@@ -4,17 +4,9 @@ import { BrushSpec, EntityShapeSpec, defaultEntityShape, defaultBoxShape, defaul
 import { Vec2Like } from "../../shared/types/vec2"
 import { WHEEL_DENSITY } from "./wheel"
 
-// Minimum chassis mass (grams) enforced when spec.wheels' own mass would
-// otherwise consume all — or more than all — of spec.mass. Keeps chassis
-// density strictly positive so physics doesn't break on a misconfigured spec.
-const MIN_CHASSIS_MASS = 1
+const MIN_CHASSIS_MASS = 1 // grams; keeps density positive if wheels alone exceed spec.mass
 
 export class Chassis {
-    // Wheel fixtures are added to the same physics body as the chassis
-    // (see Bot constructor: shapes: [chassisShape, ...wheelShapes]), and
-    // Planck sums every fixture's density*area into the body's total mass.
-    // So spec.mass is only "the whole robot's mass" if the chassis density
-    // is computed net of the wheels' own contribution.
     private static totalWheelMass(spec: BotSpec): number {
         return spec.wheels.reduce((sum, w) => sum + w.width * (w.radius * 2) * WHEEL_DENSITY, 0)
     }
@@ -32,8 +24,6 @@ export class Chassis {
         }
         const brush = spec.chassis.texture ? textureBrush : colorBrush
 
-        // Circular chassis — no `size` field, so density comes from the
-        // circle-area formula instead of the box's width*height.
         if (spec.chassis.shape === "circle") {
             return {
                 ...defaultEntityShape(),
@@ -49,11 +39,7 @@ export class Chassis {
 
         if (spec.chassis.shape === "square") {
             const squareChassis = spec.chassis as SquareChassisSpec
-            // Physics collider is a plain 4-vertex square, not the chamfered
-            // octagon the visuals use — at this scale (cornerRadius cuts
-            // ~3% of the chassis area) the sharp corners are collision-
-            // negligible, so the simpler square skips both the extra verts
-            // and the shoelace-area computation the chamfer would need.
+            // collider stays a sharp 4-vertex square; only the visuals are chamfered
             const half = squareChassis.side / 2
             const verts: Vec2Like[] = [
                 { x: -half, y: -half }, { x: half, y: -half },
@@ -96,9 +82,6 @@ export class Chassis {
         return spec.chassis.size.x
     }
 
-    // LED color tint (Chassis.setColor) is out of scope for this iteration —
-    // see tasks doc "Deferred / Out of Scope". bot/spec intentionally
-    // discarded rather than stored as unused fields (strict noUnusedLocals).
     constructor(_bot: unknown, _spec: BotSpec["chassis"]) {}
     public destroy(): void {}
     public update(_dt: number): void {}

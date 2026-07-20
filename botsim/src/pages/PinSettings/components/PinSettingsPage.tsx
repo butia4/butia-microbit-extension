@@ -8,23 +8,10 @@ type PinSettingsProps = {
     onClose: () => void
 }
 
-// Settings screen: a static "big robot" illustration (approximating the
-// chassis proportions from butiaBotSpec, non-interactive — purely a "which
-// mount is which" visual reference) plus a 6-row list below it, one row per
-// physical sensor mount, each with a native <select> offering J1-J5 or "Sin
-// conector" (unconfigured). Native <select> keeps this keyboard-accessible
-// for free. Changes only take effect on the next arm/spawn — see design
-// decision "apply at next arm, not live".
 export function PinSettings({ onClose }: PinSettingsProps) {
     const { form, errorMessage, onSubmit, onCancel } = usePinSettingsForm(onClose)
     const mounts = form.watch("mounts")
 
-    // The settings panel is a flex sibling of the chassis wrapper (not an
-    // overlay) so the two genuinely share horizontal space while open — the
-    // chassis only re-centers across the full width once the panel's flex
-    // space collapses to zero. The outer wrapper animates width (collapsing
-    // the shared space) while the inner card animates translate-x (the visual
-    // slide), together reading as "slides out to the right".
     const [isPanelOpen, setIsPanelOpen] = useState(true)
 
     return (

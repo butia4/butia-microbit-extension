@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { DEFAULT_SENSOR_SETTINGS, SensorSettings } from "../../../botSpecs/sensorSettings.model"
 
-// Validation lives in botSpecs/sensorSettings.model.ts (sensorSettingsSchema),
-// run before dispatch — see components/PinSettingsPage.tsx.
 export const sensorSettingsSlice = createSlice({
     name: "sensorSettings",
     initialState: DEFAULT_SENSOR_SETTINGS,

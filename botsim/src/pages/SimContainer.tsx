@@ -10,8 +10,6 @@ export function SimContainer() {
         Simulation.instance.mountTo(el)
     }, [])
 
-    // Wire mouse drag-and-drop — exactly one body (bot or obstacle) can be
-    // grabbed at a time, delegated to Simulation/Physics.
     useEffect(() => {
         const el = containerRef.current
         if (!el) return

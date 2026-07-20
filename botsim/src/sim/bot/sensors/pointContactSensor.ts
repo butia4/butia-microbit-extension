@@ -8,13 +8,6 @@ import { buildSonarVisuals, DEFAULT_GRAY_COLOR_ANGLE, GRAY_MAX_RANGE, updateSona
 import { DistanceSensor } from "./rangeSensor"
 import { BotHandle } from "../botHandle"
 
-// Config-object-driven generic replacing the near-duplicate point-overlap
-// fixture/contact logic that used to live separately in GraySensor and
-// SurfaceSensor. Both sensors share identical small-circle fixture creation,
-// single-contact-role detection, and visuals code — they differ only in
-// which fixture role they look for and which on/off values they report (see
-// GraySensor's `GRAY_CONFIG` / SurfaceSensor's `SURFACE_CONFIG` thin-wrapper
-// configs).
 export interface PointSensorConfig {
     roleTag: string // e.g. "follow-line" | "table-surface" — role matched on the other fixture
     onValue: number // value reported while overlapping a roleTag-tagged fixture (e.g. 1023 | SURFACE_ON_VALUE)
@@ -68,12 +61,6 @@ export class PointContactSensor implements DistanceSensor {
         this._fixture = fixture
     }
 
-    /**
-     * Builds the pulse (ping) visual mesh for this sensor's beam.
-     * Unconditional: always builds a mesh, even when `spec.angle` is unset
-     * (falls back to DEFAULT_GRAY_COLOR_ANGLE) — there is no no-beam state.
-     * The sonar wave/cone mesh is disabled — see `sonarVisuals.ts`.
-     */
     private buildVisuals(): void {
         buildSonarVisuals(
             this.bot.entity.renderObj,

@@ -23,8 +23,6 @@ export class Bot {
     public entity: Entity
     public paused = false
 
-    // Derived, not stored: true whenever the active mouse-drag joint is
-    // grabbing this bot's body. Avoids a stale flag that never gets reset.
     public get held(): boolean {
         const heldBody = this.sim.physics.mouseJoint?.getBodyB()
         return heldBody === this.entity.physicsObj.body
@@ -37,10 +35,7 @@ export class Bot {
     private rangeSensors = new Map<MountSide, DistanceSensor>()
     private activeSensorMap: Record<string, SensorType> = {}
 
-    // Wire-level J-port -> physical-mount resolution. Set exactly once via
-    // setPortAssignment() (from the run's single `Butia.setMap()` call) — no
-    // code path re-invokes or mutates this after arm time (see spec's
-    // "Port assignment set once, at arm time" requirement).
+    // set exactly once at arm time via setPortAssignment(); never mutated after
     private portAssignment: Partial<Record<ConnectorSlot, MountSide>> = {}
 
     public get pos(): Vec2Like { return this.entity.physicsObj.pos }
@@ -82,21 +77,10 @@ export class Bot {
             this.wheels.set(ws.name, new Wheel(this, ws))
         }
 
-        // Pre-create sensors for each of the 6 physical mounts. Both cone
-        // sensors (LightSensor/RangeSensor|SurfaceSensor) are pre-built
-        // regardless of runtime SensorType — the student's block code
-        // decides at runtime which one it actually reads (see readSensors).
         for (const side of MOUNT_SIDES) {
             const mount = spec.sensorMounts[side]
             const cfg = sensorSettings[side]
-            // Absent mount entry (or absent settings entirely) defaults to
-            // "surface" — a deliberate breaking flip from the old
-            // map-driven "forward" default (see spec's "Default mode for
-            // unconfigured mounts").
-            const mode = cfg?.mode ?? "surface"
-            // `direction` only composes with the mount's fixed facingDeg
-            // when mode==="forward" — GraySensor doesn't take a facingDeg
-            // rotation at all (see below), so it's irrelevant there anyway.
+            const mode = cfg?.mode ?? "surface" // unconfigured mount defaults to surface
             const effectiveFacingDeg = (mount.facingDeg ?? 0) + (mode === "forward" ? (cfg?.direction ?? 0) : 0)
             const lightAngle = cfg?.angle ?? DEFAULT_LIGHT_ANGLE
             const rangeAngle = cfg?.angle ?? DEFAULT_RANGE_ANGLE
@@ -104,12 +88,6 @@ export class Bot {
             const rangeMaxRange = cfg?.range ?? MAX_RANGE
             const showCone = mode === "forward"
 
-            // Line-following only makes sense for a mount physically facing
-            // the floor ("surface" mode) — a mount configured "forward"
-            // (angled out for distance/light sensing) has no business
-            // reporting a line underneath it. Only wire up a GraySensor for
-            // "surface" mounts; readSensors()'s `?? 0` default already
-            // reports "no line" for any mount left unset here.
             if (mode === "surface") {
                 this.graySensors.set(side, new GraySensor(
                     this,
@@ -142,11 +120,6 @@ export class Bot {
         this.activeSensorMap = { ...map }
     }
 
-    // Resolves which J-port is wired to which physical mount for the run.
-    // MUST be called exactly once (at arm time, from the run's single
-    // `Butia.setMap()` call) — no live/mid-run reassignment. Inverts the
-    // mount->connector wiring map into the connector->mount lookup direction
-    // `readSensors()` needs at runtime.
     public setPortAssignment(assignment: Partial<Record<MountSide, ConnectorSlot>>): void {
         const inverted: Partial<Record<ConnectorSlot, MountSide>> = {}
         for (const side of Object.keys(assignment) as MountSide[]) {

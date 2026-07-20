@@ -19,8 +19,6 @@ export const TABLE_MAP: MapSpec = {
         { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
     entities: [
-        // Tabletop — sensor-only (never a physical collider), so the robot
-        // can drive off the edge and be detected losing the surface signal.
         {
             label: "table-surface",
             pos: { x: CENTER_X, y: CENTER_Y },

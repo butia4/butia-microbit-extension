@@ -41,11 +41,6 @@ export class RenderObject {
         }
     }
 
-    /**
-     * Attaches an already-built display object to this entity's container,
-     * after construction. Used by sensors (e.g. RangeSensor's sonar wave/ping
-     * visuals) that are built lazily once the entity/body already exists.
-     */
     public addShape(label: string, gfx: Pixi.Container): void {
         this.container.addChild(gfx)
         this.shapes.set(label, gfx)
@@ -165,10 +160,7 @@ export class RenderObject {
 // Renderer — Pixi app wrapper
 // -------------------------------------------------------------------
 export default class Renderer {
-    // Populated by init() — Pixi v8 requires the Application to be
-    // initialized asynchronously (await app.init(...)) before its stage,
-    // renderer, and canvas exist. Callers must await init() before using any
-    // other method on this class.
+    // callers must await init() before use (Pixi v8 async init)
     private pixi!: Pixi.Application
     private pixiRenderer!: Pixi.Renderer
     private _size: Vec2Like = { x: 90 * MAP_ASPECT_RATIO, y: 90 }

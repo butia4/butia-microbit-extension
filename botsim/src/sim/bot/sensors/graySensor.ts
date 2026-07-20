@@ -13,9 +13,6 @@ const GRAY_CONFIG: PointSensorConfig = {
     sonarColor: SONAR_COLORS.gray,
 }
 
-// Thin wrapper over PointContactSensor — see pointContactSensor.ts for the
-// shared point-overlap fixture/contact logic. GraySensor reports 1023 while
-// overlapping a "follow-line"-tagged fixture, 0 otherwise.
 export class GraySensor extends PointContactSensor {
     constructor(bot: BotHandle, spec: MountSensorSpec) {
         super(bot, spec, GRAY_CONFIG)

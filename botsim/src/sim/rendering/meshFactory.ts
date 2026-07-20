@@ -134,11 +134,6 @@ function createShadedPolygonGraphics(shape: EntityPolygonShapeSpec, brush: Shade
 
 type ShapeBrushFactory = (shape: EntityShapeSpec, brush: BrushSpec) => Pixi.Container
 
-/**
- * Factory matrix for non-color brushes. Only box/polygon shapes support
- * texture/shader brushes today (chassis texture + sonar wave/ping visuals) —
- * see design decision #5.
- */
 export const createGraphics: {
     box: { texture: ShapeBrushFactory; shader: ShapeBrushFactory }
     polygon: { texture: ShapeBrushFactory; shader: ShapeBrushFactory }

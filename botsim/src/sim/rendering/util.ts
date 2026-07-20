@@ -13,10 +13,6 @@ export function boxToVertices(box: BoxShapeSpec): Vec2Like[] {
 
 // --- Mesh / UV helpers (texture + shader brush pipeline) ---
 
-/**
- * Returns UV coordinates (0..1) for the given vertices, mapped against their
- * own bounding box.
- */
 export function calcUvs(verts: Vec2Like[]): Vec2Like[] {
     const aabb = AABB.from(verts)
     const w = AABB.width(aabb) || 1

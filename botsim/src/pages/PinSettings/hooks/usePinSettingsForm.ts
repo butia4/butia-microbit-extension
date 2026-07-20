@@ -17,10 +17,6 @@ export type UsePinSettingsFormResult = {
     onCancel: () => void
 }
 
-// Splits the combined, validated form values back into the two persisted
-// shapes — mirrors the pre-refactor handleSave: a mount only carries
-// "forward" angle/direction into SensorSettings when it's both connected
-// and explicitly in "forward" mode, otherwise it's persisted as "surface".
 function splitFormValues(values: PinSettingsFormValues): { assignment: PinAssignment; sensorSettings: SensorSettings } {
     const assignment: PinAssignment = {}
     const sensorSettings: SensorSettings = {}
@@ -56,10 +52,6 @@ export function usePinSettingsForm(onClose: () => void): UsePinSettingsFormResul
         onClose()
     })
 
-    // Discards any unsaved local changes and returns to the sim screen.
-    // Safe as a no-op reset: onClose() re-reads pin/sensor settings from
-    // their persisted stores (see App.tsx's rearmOnSettingsClose), never
-    // from this form's local state, so nothing unsaved here leaks out.
     const onCancel = (): void => {
         onClose()
     }

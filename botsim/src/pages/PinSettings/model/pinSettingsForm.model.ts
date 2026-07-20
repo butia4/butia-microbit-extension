@@ -5,16 +5,6 @@ import { sensorModeSchema } from "../../../botSpecs/sensorSettings.model"
 import { hasDuplicateConnector } from "../utils/pin"
 import { ANGLE_MAX, ANGLE_MIN, DIRECTION_MAX, DIRECTION_MIN, RANGE_MAX, RANGE_MIN } from "../constants"
 
-// Combined per-mount shape: connector (from pinAssignment) + mode/angle/
-// direction/range (from sensorSettings), unified into one RHF-friendly
-// schema. Unlike the persisted schemas, angle/direction/range are required
-// numbers here — the form always keeps every mount's inputs populated (even
-// while hidden), so toDefaultFormValues must supply DEFAULT_ANGLE/
-// DEFAULT_DIRECTION/DEFAULT_RANGE for unconfigured/surface mounts. Bounds
-// mirror ANGLE_MIN/MAX, DIRECTION_MIN/MAX and RANGE_MIN/MAX (also enforced
-// live by SensorMountRow's BarNumberField) so a submit can't smuggle in an
-// out-of-range value some other way (e.g. a future non-slider input, or
-// programmatic setValue).
 export const pinSettingsMountSchema = z
     .object({
         connector: connectorSlotSchema.or(z.literal("")),
@@ -25,8 +15,6 @@ export const pinSettingsMountSchema = z
     })
     .strict()
 
-// Built by iterating ALL_MOUNT_SIDES rather than hand-typing each of the 6
-// mount keys twice.
 const mountsShape = Object.fromEntries(
     ALL_MOUNT_SIDES.map((side) => [side, pinSettingsMountSchema])
 ) as Record<MountSide, typeof pinSettingsMountSchema>

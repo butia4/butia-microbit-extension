@@ -16,12 +16,6 @@ const SURFACE_CONFIG: PointSensorConfig = {
     sonarColor: SONAR_COLORS.surface,
 }
 
-// Heading-independent point-overlap distance sensor: reports a constant
-// SURFACE_ON_VALUE while its mount point overlaps a "table-surface"-tagged
-// shape, and MAX_RANGE otherwise. Thin wrapper over PointContactSensor — see
-// pointContactSensor.ts for the shared fixture/contact logic. Mirrors
-// GraySensor's shape but returns cm (distance sensor semantics) instead of
-// an analog 0/1023 value.
 export class SurfaceSensor extends PointContactSensor implements DistanceSensor {
     constructor(bot: BotHandle, spec: MountSensorSpec) {
         super(bot, spec, SURFACE_CONFIG)

@@ -31,7 +31,6 @@ export const DEFAULT_MAP: MapSpec = {
         { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
     entities: [
-        // Follow-line closed track path
         {
             pos: { x: 0, y: 0 },
             angle: 0,
@@ -49,7 +48,6 @@ export const DEFAULT_MAP: MapSpec = {
                 brush: { ...defaultColorBrush(), fillColor: "#1a1a1a", borderColor: "#1a1a1a", borderWidth: 0, visible: true, zIndex: 0 },
             }],
         },
-        // Obstacle box 1 — draggable, randomly colored
         {
             label: "obstacle-1",
             pos: { x: CENTER_X - 10, y: CENTER_Y },
@@ -67,7 +65,6 @@ export const DEFAULT_MAP: MapSpec = {
                 brush: { ...defaultColorBrush(), fillColor: pickRandom(Object.values(MICROBIT_COLORS)), borderColor: "#444444", borderWidth: 0.25, visible: true, zIndex: 1 },
             }],
         },
-        // Obstacle box 2 — draggable, randomly colored
         {
             label: "obstacle-2",
             pos: { x: CENTER_X + 10, y: CENTER_Y },

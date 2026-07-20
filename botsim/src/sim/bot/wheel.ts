@@ -4,9 +4,7 @@ import { defaultEntityShape, defaultBoxShape, defaultShapePhysics, defaultColorB
 import { FrictionJointHandle } from "../physics/physics"
 import { BotHandle } from "./botHandle"
 
-// Shared with Chassis.makeShapeSpec so chassis density can subtract the
-// wheels' contribution to the composite body's total mass — otherwise the
-// two fixture densities drift and the body ends up heavier than spec.mass.
+// shared with Chassis.makeShapeSpec so chassis density can subtract wheels' contribution
 export const WHEEL_DENSITY = 10
 
 export class Wheel {
@@ -45,10 +43,6 @@ export class Wheel {
     }
 
     public update(dtSecs: number): void {
-        // Keep the wheel-ground FrictionJoint's resistance in sync with the
-        // held state on every frame (including the grab/release transition
-        // frames), since it's a persistent constraint that keeps applying
-        // even while the early return below skips manual force application.
         if (this.bot.held !== this.wasHeld) {
             this.wasHeld = this.bot.held
             if (this.frictionJoint) {

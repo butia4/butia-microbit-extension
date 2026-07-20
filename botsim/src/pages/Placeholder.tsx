@@ -1,7 +1,7 @@
 export function Placeholder() {
     return (
         <div
-            className="butia-screen-transition flex items-center justify-center text-center"
+            className="butia-screen-transition flex items-center justify-center text-center bg-(--butia-green-25)"
             style={{ width: "100%", height: "100%" }}
         >
             <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-(--butia-green-300) bg-(--butia-green-50) px-8 py-7">

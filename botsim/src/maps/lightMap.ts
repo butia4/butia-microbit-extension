@@ -6,8 +6,6 @@ const ARENA = 90   // cm
 const CENTER_X = ARENA / 2
 const CENTER_Y = ARENA / MAP_ASPECT_RATIO / 2
 
-// Open arena with a single draggable light source — no follow-line track, no
-// obstacles — for validating follow-light seek behavior in the simulator.
 export const LIGHT_MAP: MapSpec = {
     id: 3,
     name: "Luz",
@@ -18,11 +16,7 @@ export const LIGHT_MAP: MapSpec = {
         { pos: { x: CENTER_X, y: CENTER_Y + 20 }, angle: 0 },
     ],
     entities: [
-        // Light source — draggable, dynamic physics so it can be pushed/
-        // dragged around the arena like the default map's obstacle boxes.
-        // The collider stays an invisible box (light-source detection in
-        // lightSensor.ts only understands polygon-shaped fixtures) while a
-        // circular bulb + radial-gradient halo provide the visible look.
+        // collider is an invisible box: lightSensor.ts only handles polygon fixtures
         {
             label: "light-source-1",
             pos: { x: CENTER_X, y: CENTER_Y - 20 },

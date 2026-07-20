@@ -69,16 +69,8 @@ export type ColorBrushSpec = {
     borderColor: string
     borderWidth: number
     fillColor: string
-    // Circle-only: renders as a radial gradient fading from fillColor to
-    // transparent instead of a flat fill, with no border — used for glow/halo
-    // effects (e.g. the light-source map's light bulb).
-    glow?: boolean
-    // Polygon-only: draws a rounded rect (Pixi's roundRect) sized to the
-    // verts' bounding box instead of tracing the verts themselves. Lets a
-    // shape keep a faceted polygon collider (e.g. Planck's 8-vertex cap)
-    // while rendering true curved corners — collider and mesh intentionally
-    // diverge here, unlike every other brush use.
-    cornerRadius?: number
+    glow?: boolean // circle-only: radial-gradient halo instead of flat fill
+    cornerRadius?: number // polygon-only: draw a rounded rect instead of tracing verts
 }
 
 export type TextureBrushSpec = {
