@@ -12,26 +12,18 @@ export const DEFAULT_RANGE = 40
 // value that's conceptually part of this feature's UI constants.
 export { ANGLE_MAX, ANGLE_MIN, DIRECTION_MAX, DIRECTION_MIN, RANGE_MAX, RANGE_MIN } from "../../botSpecs/sensorSettings.model"
 
-// Sim-space facingDeg per mount (mirrors butiaBotSpec's sensorMounts):
-// 0 = front (local -y), 90 = right, -90 = left, 180 = rear, clockwise-
-// positive. The settings-screen illustration maps sim x/y to left/top with
-// no flip, so this same convention drives the cone preview's rotation.
-export const MOUNT_FACING_DEG: Record<MountSide, number> = {
-    frontLeft: 0,
-    frontRight: 0,
-    sideLeft: -90,
-    sideRight: 90,
-    rearLeft: 180,
-    rearRight: 180,
-}
-
 // Cone preview geometry, expressed in the chassis illustration's own 0-100
 // viewBox (see ChassisIllustration's chamfered-square <svg>). That viewBox's
 // 0%..100% span was mapped from the bot's pre-scale (10cm-side) chassis
-// coordinates -5..5cm (see MOUNT_PREVIEW_POS's derivation comment), so
-// 100 viewBox units = 10cm, i.e. 10 units/cm. Used to draw the cone preview
-// to the same real-world scale as the sim's sonar cone (buildSonarVisuals),
-// instead of a fixed decorative length — see coneWedgePoints.
+// coordinates -5..5cm, so 100 viewBox units = 10cm, i.e. 10 units/cm. Used
+// to draw the cone preview to the same real-world scale as the sim's sonar
+// cone (buildSonarVisuals), instead of a fixed decorative length — see
+// coneWedgePoints. NOTE (pre-existing, out of scope): this is a fixed
+// units/cm derived from the pre-scale 10cm-side chassis, while
+// mountPreviewPos/chassisCornerRadiusPct (utils/geometry.ts) now map cm to %
+// as a ratio of the *current* 8cm chassis side — the two no longer agree on
+// units/cm, a latent scale mismatch flagged at design time and intentionally
+// not fixed here.
 export const PREVIEW_UNITS_PER_CM = 10
 
 // ALL_MOUNT_SIDES's declared order (frontal, then lateral, then rear) already
@@ -46,20 +38,4 @@ export const MOUNT_LABELS: Record<MountSide, string> = {
     sideRight: "Lateral Derecho",
     rearLeft: "Trasero Izquierdo",
     rearRight: "Trasero Derecho",
-}
-
-// Marker position for each mount on the illustration, as a % of the chassis
-// box — derived from butiaBotSpec's actual cm coordinates (chassis half=5cm,
-// front={x:±3,y:-5}, side={x:±5,y:-2} (closer to front than rear), rear=
-// {x:±3,y:5}), mapped the same way the chassis/wheels already are: x -5..5cm
-// -> 0..100%, y flipped (front=up) since this illustration points
-// forward-up while the sim's own convention is front=-y/"down" on screen.
-// front top=0%/side edge top=30%/rear bottom top=100%.
-export const MOUNT_PREVIEW_POS: Record<MountSide, { top: string; left: string }> = {
-    frontLeft: { top: "0%", left: "20%" },
-    frontRight: { top: "0%", left: "80%" },
-    sideLeft: { top: "30%", left: "0%" },
-    sideRight: { top: "30%", left: "100%" },
-    rearLeft: { top: "100%", left: "20%" },
-    rearRight: { top: "100%", left: "80%" },
 }

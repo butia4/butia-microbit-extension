@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { UseFormRegister, UseFormSetValue } from "react-hook-form"
 import { ALL_CONNECTOR_SLOTS, ConnectorSlot, MountSide } from "../../../botSpecs/botSpec"
 import { PinSettingsFormValues } from "../model/pinSettingsForm.model"
@@ -84,6 +85,13 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
     const angleId = `sensor-angle-${side}`
     const directionId = `sensor-direction-${side}`
     const rangeId = `sensor-range-${side}`
+    const optionsId = `sensor-options-${side}`
+
+    // Local UI-only state: whether this mount's option block (mode +
+    // angle/direction/range) is expanded. Not form state — it never affects
+    // the submitted values, only what's rendered. Defaults open so a
+    // connected mount looks the same as before this toggle existed.
+    const [isExpanded, setIsExpanded] = useState(true)
 
     return (
         <li className="flex flex-col gap-2 border-b border-(--butia-green-100) pb-2 last:border-b-0 last:pb-0">
@@ -91,64 +99,82 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
                 <label htmlFor={selectId} className="text-sm font-medium text-(--butia-ink-900)">
                     {MOUNT_LABELS[side]}
                 </label>
-                <select
-                    id={selectId}
-                    autoComplete="off"
-                    {...register(`mounts.${side}.connector`)}
-                    className="h-9 min-w-11 cursor-pointer rounded-lg border-2 border-(--butia-green-100) bg-white px-2 text-sm font-semibold text-(--butia-ink-900) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
-                >
-                    <option value="">Sin conector</option>
-                    {CONNECTOR_OPTIONS.map((slot) => (
-                        <option key={slot} value={slot}>
-                            {slot}
-                        </option>
-                    ))}
-                </select>
+                <div className="flex items-center gap-2">
+                    <select
+                        id={selectId}
+                        autoComplete="off"
+                        {...register(`mounts.${side}.connector`)}
+                        className="h-9 min-w-11 cursor-pointer rounded-lg border-2 border-(--butia-green-100) bg-white px-2 text-sm font-semibold text-(--butia-ink-900) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
+                    >
+                        <option value="">Sin conector</option>
+                        {CONNECTOR_OPTIONS.map((slot) => (
+                            <option key={slot} value={slot}>
+                                {slot}
+                            </option>
+                        ))}
+                    </select>
+                    {isConnected && (
+                        <button
+                            type="button"
+                            aria-expanded={isExpanded}
+                            aria-controls={optionsId}
+                            aria-label={isExpanded ? "Contraer opciones del sensor" : "Expandir opciones del sensor"}
+                            onClick={() => setIsExpanded((prev) => !prev)}
+                            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-2 border-(--butia-green-100) bg-white text-(--butia-green-800) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
+                        >
+                            <span aria-hidden="true" className={`inline-block transition-transform ${isExpanded ? "rotate-180" : ""}`}>
+                                ▾
+                            </span>
+                        </button>
+                    )}
+                </div>
             </div>
 
-            {isConnected && (
-                <div className="flex items-center justify-between gap-3">
-                    <label htmlFor={modeId} className="text-xs font-medium text-(--butia-ink-500)">
-                        Modo del sensor
-                    </label>
-                    <select
-                        id={modeId}
-                        autoComplete="off"
-                        {...register(`mounts.${side}.mode`)}
-                        className="h-8 min-w-11 cursor-pointer rounded-lg border-2 border-(--butia-green-100) bg-white px-2 text-xs font-semibold text-(--butia-ink-900) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
-                    >
-                        <option value="surface">Superficie</option>
-                        <option value="forward">Adelante</option>
-                    </select>
-                </div>
-            )}
+            {isConnected && isExpanded && (
+                <div id={optionsId} className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between gap-3">
+                        <label htmlFor={modeId} className="text-xs font-medium text-(--butia-ink-500)">
+                            Modo del sensor
+                        </label>
+                        <select
+                            id={modeId}
+                            autoComplete="off"
+                            {...register(`mounts.${side}.mode`)}
+                            className="h-8 min-w-11 cursor-pointer rounded-lg border-2 border-(--butia-green-100) bg-white px-2 text-xs font-semibold text-(--butia-ink-900) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
+                        >
+                            <option value="surface">Superficie</option>
+                            <option value="forward">Adelante</option>
+                        </select>
+                    </div>
 
-            {isConnected && isForward && (
-                <div className="flex flex-col gap-3 pl-2">
-                    <BarNumberField
-                        id={angleId}
-                        label="Ángulo (°)"
-                        value={angle}
-                        min={ANGLE_MIN}
-                        max={ANGLE_MAX}
-                        onChange={(value) => setValue(`mounts.${side}.angle`, value, { shouldValidate: true })}
-                    />
-                    <BarNumberField
-                        id={directionId}
-                        label="Dirección (°)"
-                        value={direction}
-                        min={DIRECTION_MIN}
-                        max={DIRECTION_MAX}
-                        onChange={(value) => setValue(`mounts.${side}.direction`, value, { shouldValidate: true })}
-                    />
-                    <BarNumberField
-                        id={rangeId}
-                        label="Alcance (cm)"
-                        value={range}
-                        min={RANGE_MIN}
-                        max={RANGE_MAX}
-                        onChange={(value) => setValue(`mounts.${side}.range`, value, { shouldValidate: true })}
-                    />
+                    {isForward && (
+                        <div className="flex flex-col gap-3 pl-2">
+                            <BarNumberField
+                                id={angleId}
+                                label="Ángulo (°)"
+                                value={angle}
+                                min={ANGLE_MIN}
+                                max={ANGLE_MAX}
+                                onChange={(value) => setValue(`mounts.${side}.angle`, value, { shouldValidate: true })}
+                            />
+                            <BarNumberField
+                                id={directionId}
+                                label="Dirección (°)"
+                                value={direction}
+                                min={DIRECTION_MIN}
+                                max={DIRECTION_MAX}
+                                onChange={(value) => setValue(`mounts.${side}.direction`, value, { shouldValidate: true })}
+                            />
+                            <BarNumberField
+                                id={rangeId}
+                                label="Alcance (cm)"
+                                value={range}
+                                min={RANGE_MIN}
+                                max={RANGE_MAX}
+                                onChange={(value) => setValue(`mounts.${side}.range`, value, { shouldValidate: true })}
+                            />
+                        </div>
+                    )}
                 </div>
             )}
         </li>

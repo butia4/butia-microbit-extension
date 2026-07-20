@@ -1,5 +1,4 @@
 import { Vec2, Vec2Like } from "../../shared/types/vec2"
-import { toRadians } from "../../shared/util"
 import * as Planck from "planck"
 
 export function catmullRom(p: Vec2Like[], closed: boolean, t: number): Vec2Like {
@@ -28,17 +27,6 @@ export function samplePath(verts: Vec2Like[], closed: boolean, stepSize: number)
     const result: Vec2Like[] = []
     for (let i = 0; i < steps; i++) {
         result.push(catmullRom(verts, closed, (i / steps) * n))
-    }
-    return result
-}
-
-export function appoximateArc(center: Vec2Like, radius: number, startDeg: number, endDeg: number, segments: number): Vec2Like[] {
-    const result: Vec2Like[] = []
-    const startRad = toRadians(startDeg)
-    const endRad = toRadians(endDeg)
-    for (let i = 0; i <= segments; i++) {
-        const angle = startRad + (endRad - startRad) * (i / segments)
-        result.push({ x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius })
     }
     return result
 }

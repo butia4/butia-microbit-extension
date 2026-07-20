@@ -104,9 +104,21 @@ export class RenderObject {
             }
             case "polygon": {
                 if (s.verts.length < 3) return null
+                if (brush.cornerRadius) {
+                    const xs = s.verts.map(v => v.x)
+                    const ys = s.verts.map(v => v.y)
+                    const minX = ox + toRenderScale(Math.min(...xs))
+                    const minY = oy + toRenderScale(Math.min(...ys))
+                    const maxX = ox + toRenderScale(Math.max(...xs))
+                    const maxY = oy + toRenderScale(Math.max(...ys))
+                    gfx.roundRect(minX, minY, maxX - minX, maxY - minY, toRenderScale(brush.cornerRadius))
+                        .fill(fill)
+                        .stroke({ width: borderW, color: border })
+                    break
+                }
                 const pts = s.verts.flatMap(v => [ox + toRenderScale(v.x), oy + toRenderScale(v.y)])
                 gfx.poly(pts)
-                    .fill({ color: fill, alpha: 0.5 })
+                    .fill(fill)
                     .stroke({ width: borderW, color: border })
                 break
             }

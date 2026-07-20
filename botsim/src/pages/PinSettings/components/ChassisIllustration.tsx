@@ -1,21 +1,25 @@
-import { ALL_MOUNT_SIDES, MountSide } from "../../../botSpecs/botSpec"
+import { ALL_MOUNT_SIDES, MountSide, SquareChassisSpec } from "../../../botSpecs/botSpec"
+import { BUTIA_BOT_SPEC, BUTIA_CHASSIS_COLORS } from "../../../botSpecs/butiaBotSpec"
 import { PinSettingsFormValues } from "../model/pinSettingsForm.model"
-import { MOUNT_FACING_DEG, MOUNT_ORDER, MOUNT_PREVIEW_POS } from "../constants"
-import { coneWedgePoints } from "../utils/geometry"
+import { MOUNT_ORDER } from "../constants"
+import { chassisCornerRadiusPct, coneWedgePoints, mountPreviewPos } from "../utils/geometry"
+
+const CHASSIS_SIDE_CM = (BUTIA_BOT_SPEC.chassis as SquareChassisSpec).side
+const CHASSIS_CORNER_RADIUS_CM = (BUTIA_BOT_SPEC.chassis as SquareChassisSpec).cornerRadius
 
 type ChassisIllustrationProps = {
     mounts: Record<MountSide, PinSettingsFormValues["mounts"][MountSide]>
 }
 
 // Colors/proportions mirror the real chassis+wheel rendering
-// (Chassis.makeShapeSpec, Wheel.makeShapeSpec, butiaBotSpec): flat fill, thin
-// dark border, near-square chamfered corners (not a rounded-rect), and
-// wheels protruding past the side edges toward the rear. The illustration
-// maps sim x/y to left/top with no flip (front, at sim y=-5, sits at top:0%;
-// rear, at y=+5, sits at top:100%), so MOUNT_FACING_DEG's sim-space rotation
-// convention (0=up/-y, clockwise-positive) applies directly to the cone
-// preview's point rotation in coneWedgePoints below. The 6 dots mirror each
-// mount's connector
+// (Chassis.makeShapeSpec, Wheel.makeShapeSpec, butiaBotSpec) via a shared
+// color source (BUTIA_CHASSIS_COLORS): flat fill, thin dark border, rounded
+// corners, and wheels protruding past the side edges toward the rear. The illustration
+// maps sim x/y to left/top with no flip (front, at sim y<0, sits near
+// top:0%; rear, at y>0, sits near top:100%), so BUTIA_BOT_SPEC.sensorMounts'
+// sim-space facingDeg convention (0=up/-y, clockwise-positive) applies
+// directly to the cone preview's point rotation in coneWedgePoints below.
+// The 6 dots mirror each mount's connector
 // state (filled+connector code = wired, hollow = "no configurado"); actual
 // connector selection lives in SensorMountRow, this is read-only
 // at-a-glance feedback.
@@ -28,39 +32,44 @@ export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
         // `scale()` transform repaints smaller but never changes the box's
         // layout size) can't feed back into the outer flex item's sizing.
         // It keeps every child's original size/position math (all tuned for
-        // a 160px box) and shrinks the whole thing uniformly via
-        // `scale-[0.8]` — matches BUTIA_BOT_SPEC's 0.8x chassis scale
-        // instead of hand-scaling each fixed-px child (wheels, cone previews,
-        // connector dots) individually.
+        // a 160px box) and shrinks the whole thing uniformly via a `scale()`
+        // transform instead of hand-scaling each fixed-px child (wheels,
+        // cone previews, connector dots) individually.
         <div className="relative aspect-square w-32 shrink-0" aria-hidden="true">
-            <div className="absolute top-1/2 left-1/2 flex h-40 w-40 origin-center -translate-x-1/2 -translate-y-1/2 items-center justify-center scale-[0.8]">
-                {/* roundedSquareVerts (chassis.ts) chamfers each corner with a
-                    single straight segment spanning cornerRadius (1.2cm) on a
-                    10cm side — a 12%-per-corner octagon cut, not a curve. An
-                    SVG polygon reproduces that exactly; a CSS border-radius
-                    would render a curved corner the sim never draws. */}
-                <svg
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
+            <div className="absolute top-1/2 left-1/2 flex h-40 w-40 origin-center -translate-x-1/2 -translate-y-1/2 items-center justify-center scale-[0.65]">
+                {/* A plain div+border, not an SVG shape: CSS border-radius
+                    draws a border of uniform thickness all the way around,
+                    including the curve — an SVG `stroke` instead follows the
+                    path length, so on a mostly-straight rounded-square outline
+                    a thicker stroke reads as barely-thicker on the long
+                    straight edges but visibly fatter on the short curved
+                    corners. Renders true rounded corners — unlike the sim's
+                    physics collider, which is a plain 4-vertex square (see
+                    chassis.ts): at this scale the chamfer/rounding is
+                    collision-negligible, so the collider stays sharp while
+                    only the visuals round off. The sim's own
+                    chassis mesh (Chassis.makeShapeSpec's cornerRadius brush
+                    field, drawn via Pixi's roundRect in renderer.ts) matches
+                    this same rounded look, so collider and visuals diverge
+                    but the two visuals (preview + sim) stay in sync. */}
+                <div
                     className="absolute inset-0 z-0 h-full w-full drop-shadow-[0_4px_14px_rgba(51,105,30,0.25)]"
+                    style={{
+                        backgroundColor: BUTIA_CHASSIS_COLORS.fill,
+                        border: `4px solid ${BUTIA_CHASSIS_COLORS.border}`,
+                        borderRadius: `${chassisCornerRadiusPct(CHASSIS_SIDE_CM, CHASSIS_CORNER_RADIUS_CM)}%`,
+                    }}
                     aria-hidden="true"
-                >
-                    <polygon
-                        points="12,0 88,0 100,12 100,88 88,100 12,100 0,88 0,12"
-                        fill="#A3D977"
-                        stroke="#555555"
-                        strokeWidth="1.5"
-                    />
-                </svg>
-                <div className="absolute top-1/2 -left-3 z-0 h-16 w-5 border border-black/40 bg-[#212738]" />
-                <div className="absolute top-1/2 -right-3 z-0 h-16 w-5 border border-black/40 bg-[#212738]" />
+                />
+                <div className="absolute top-1/2 -left-4 z-0 h-15 w-4 border border-black/40 bg-[#212738]" />
+                <div className="absolute top-1/2 -right-4 z-0 h-15 w-4 border border-black/40 bg-[#212738]" />
 
                 {/* Positioned (relative) + z-10 so it paints above the
                     absolutely-positioned chassis SVG — non-positioned elements
                     always sit below positioned siblings regardless of DOM order,
                     which is why this was invisible once the chassis became an
                     <svg>. */}
-                <img className="relative z-10 h-3/5 w-3/5 object-contain" src="assets/logo.svg" alt="" />
+                <img className="relative z-10 h-[70%] w-[70%] object-contain" src="assets/logo.svg" alt="" />
 
                 {/* Live cone preview — only for connected mounts in "forward"
                     mode, rotated to mount.direction (added onto the mount's
@@ -88,8 +97,10 @@ export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
                     {ALL_MOUNT_SIDES.map((side) => {
                         const mount = mounts[side]
                         if (mount.connector === "" || mount.mode !== "forward") return null
-                        const facingDeg = MOUNT_FACING_DEG[side] + mount.direction
-                        const apex = { x: parseFloat(MOUNT_PREVIEW_POS[side].left), y: parseFloat(MOUNT_PREVIEW_POS[side].top) }
+                        const mountSpec = BUTIA_BOT_SPEC.sensorMounts[side]
+                        const facingDeg = (mountSpec.facingDeg ?? 0) + mount.direction
+                        const previewPos = mountPreviewPos(mountSpec.pos, CHASSIS_SIDE_CM)
+                        const apex = { x: parseFloat(previewPos.left), y: parseFloat(previewPos.top) }
                         return (
                             <polygon
                                 key={`cone-${side}`}
@@ -104,11 +115,12 @@ export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
                 {MOUNT_ORDER.map((side) => {
                     const connector = mounts[side].connector
                     const configured = connector !== ""
+                    const previewPos = mountPreviewPos(BUTIA_BOT_SPEC.sensorMounts[side].pos, CHASSIS_SIDE_CM)
                     return (
                         <div
                             key={side}
                             className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
-                            style={{ top: MOUNT_PREVIEW_POS[side].top, left: MOUNT_PREVIEW_POS[side].left }}
+                            style={{ top: previewPos.top, left: previewPos.left }}
                         >
                             <div
                                 className={

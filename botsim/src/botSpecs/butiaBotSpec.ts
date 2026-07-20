@@ -1,5 +1,11 @@
 import { BotSpec, toWheels } from "./botSpec"
 
+// Chassis fill/border colors, shared between the sim's Pixi rendering
+// (Chassis.makeShapeSpec) and the PinSettings preview's SVG rendering
+// (ChassisIllustration) so both draw the same chassis with a single source
+// of truth instead of two independently hardcoded hex literals.
+export const BUTIA_CHASSIS_COLORS = { fill: "#C3E8A8", border: "#555555" } as const
+
 // Placeholder dimensions — update when Butia v4 schematic is confirmed.
 // All geometry (chassis/wheels/sensorMounts) is scaled 0.8x from the
 // original 10cm-side chassis so the bot reads smaller in the sim — keep

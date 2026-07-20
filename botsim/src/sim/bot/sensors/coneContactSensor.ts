@@ -7,7 +7,8 @@ import {
     defaultEntityShape, defaultPolygonShape, defaultShapePhysics, defaultColorBrush,
     EntityPolygonShapeSpec,
 } from "../../entitySpec"
-import { appoximateArc, pointInPolygon, testOverlap } from "../../physics/util"
+import { appoximateArc } from "../../../shared/geometry"
+import { pointInPolygon, testOverlap } from "../../physics/util"
 import { Rgb } from "../../rendering/util"
 import { buildSonarVisuals, updateSonarVisuals } from "../../rendering/sonarVisuals"
 import { BotHandle } from "../botHandle"
