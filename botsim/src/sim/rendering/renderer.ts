@@ -4,7 +4,7 @@ import { MAP_ASPECT_RATIO } from "../../shared/constants"
 import { EntitySpec, EntityShapeSpec, ColorBrushSpec, EntityPathShapeSpec } from "../entitySpec"
 import { samplePath } from "../physics/util"
 import { toRenderScale, numberToRgb } from "./util"
-import { advanceShaderTime } from "./shaderRegistry"
+import { advanceShaderTime, advanceGraphicsAnimations } from "./shaderRegistry"
 import { createGraphics } from "./meshFactory"
 
 // -------------------------------------------------------------------
@@ -218,6 +218,7 @@ export default class Renderer {
 
     public update(dtSecs: number): void {
         advanceShaderTime(dtSecs)
+        advanceGraphicsAnimations(dtSecs)
     }
 
     public createRenderObj(

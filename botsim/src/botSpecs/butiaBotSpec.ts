@@ -1,19 +1,23 @@
 import { BotSpec, toWheels } from "./botSpec"
 
-// Placeholder dimensions — update when Butia v4 schematic is confirmed
+// Placeholder dimensions — update when Butia v4 schematic is confirmed.
+// All geometry (chassis/wheels/sensorMounts) is scaled 0.8x from the
+// original 10cm-side chassis so the bot reads smaller in the sim — keep
+// every new measurement proportional to that same 0.8 factor if the spec
+// changes again, or the sensor mounts will drift off the chassis edge.
 export const BUTIA_BOT_SPEC: BotSpec = {
     name: "Butia",
     mass: 500, // grams
     chassis: {
         shape: "square",
-        side: 10,        // cm
-        cornerRadius: 1.2, // cm
+        side: 8,          // cm
+        cornerRadius: 0.96, // cm
     },
     wheels: toWheels({
-        separation: 10,  // cm between inner wheel edges — placeholder
-        diameter: 4,    // cm
-        width: 1.2,     // cm
-        y: 2,           // offset toward rear
+        separation: 8,   // cm between inner wheel edges — placeholder
+        diameter: 3.2,  // cm
+        width: 0.96,    // cm
+        y: 1.6,         // offset toward rear
         // Simulator-only speed cap — the requested speed (0-100 from blocks,
         // though nothing stops a higher value) is used as-is up to this
         // ceiling, then clamped. E.g. requesting 22 drives at 22; requesting
@@ -23,11 +27,11 @@ export const BUTIA_BOT_SPEC: BotSpec = {
     // facingDeg follows Vec2.rotateDeg's clockwise-positive convention:
     // 0 = front (local -y), 90 = right, -90 = left, 180 = rear.
     sensorMounts: {
-        frontLeft:  { pos: { x: -3, y: -5 }, facingDeg: 0 },
-        frontRight: { pos: { x:  3, y: -5 }, facingDeg: 0 },
-        sideLeft:   { pos: { x: -5, y: -2 }, facingDeg: -90 }, // closer to front (y=-5) than rear (y=5)
-        sideRight:  { pos: { x:  5, y: -2 }, facingDeg: 90 },  // closer to front (y=-5) than rear (y=5)
-        rearLeft:   { pos: { x: -3, y:  5 }, facingDeg: 180 },
-        rearRight:  { pos: { x:  3, y:  5 }, facingDeg: 180 },
+        frontLeft:  { pos: { x: -2.4, y: -4   }, facingDeg: 0 },
+        frontRight: { pos: { x:  2.4, y: -4   }, facingDeg: 0 },
+        sideLeft:   { pos: { x: -4,   y: -1.6 }, facingDeg: -90 }, // closer to front (y=-4) than rear (y=4)
+        sideRight:  { pos: { x:  4,   y: -1.6 }, facingDeg: 90 },  // closer to front (y=-4) than rear (y=4)
+        rearLeft:   { pos: { x: -2.4, y:  4   }, facingDeg: 180 },
+        rearRight:  { pos: { x:  2.4, y:  4   }, facingDeg: 180 },
     },
 }

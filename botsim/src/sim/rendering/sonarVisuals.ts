@@ -1,13 +1,13 @@
+import * as Pixi from "pixi.js"
 import { Vec2, Vec2Like } from "../../shared/types/vec2"
 import { RENDER_SCALE } from "../../shared/constants"
 import { toRadians } from "../../shared/util"
 import {
     defaultEntityShape, defaultPolygonShape, defaultShapePhysics, defaultShaderBrush, EntityPolygonShapeSpec,
 } from "../entitySpec"
-import { Rgb, rgbToFloatArray, toRenderScale } from "./util"
-import { appoximateArc } from "../physics/util"
+import { Rgb, rgbToFloatArray, rgbToString, toRenderScale } from "./util"
 import { RenderObject } from "./renderer"
-import { addShaderProgram, BasicVertexShader, CommonFragmentShaderGlobals } from "./shaderRegistry"
+import { addShaderProgram, BasicVertexShader, CommonFragmentShaderGlobals, registerTimedRedraw } from "./shaderRegistry"
 import { createGraphics } from "./meshFactory"
 
 // Default beam orientation/range for gray/color/surface sensors, used when a
@@ -18,11 +18,16 @@ export const GRAY_MAX_RANGE = 5 // cm, matches SURFACE_ON_VALUE
 
 const PING_RADIUS = 3 // cm
 
-// Nudges only the wave/cone mesh's anchor a bit to the right of the sensor's
-// actual mount point (`pos`, from sensorMounts), independent of it — the
-// ping/target always tracks `pos` live (recomputed every frame), so tuning
-// sensorMounts alone can't reposition the cone. Tune this value directly.
-const WAVE_OFFSET_X = 2.5 // cm
+// Nudges only the wave/cone graphic's anchor a bit to the right of the
+// sensor's actual mount point (`pos`, from sensorMounts), independent of it —
+// the ping/target always tracks `pos` live (recomputed every frame), so
+// tuning sensorMounts alone can't reposition the cone. Tune this value
+// directly.
+// Scaled 0.8x alongside BUTIA_BOT_SPEC's chassis shrink (was 2.5 on the
+// original 10cm-side chassis) — left unscaled, this nudge overpowers the
+// mount's own offset from center on the smaller 8cm chassis and the cone
+// visibly detaches from the sensor.
+const WAVE_OFFSET_X = 2.0 // cm
 
 // Wave/ping color pairs per sensor type — kept together so they're easy to
 // compare/tune for visual distinguishability.
@@ -46,51 +51,17 @@ export const SONAR_COLORS: Record<"range" | "gray" | "light" | "surface", { wave
     surface: { wave: { r: 0x39, g: 0xff, b: 0x14 }, ping: { r: 0x39, g: 0xff, b: 0x14 } }, // vivid green
 }
 
-// Sonar wave shader (cone/beam animation) — pulse-only feedback remains the
-// default for all sensor types (see buildSonarVisuals's `showCone` param
-// below), but the shader itself is registered unconditionally so any sensor
-// call site can opt in via `showCone`. Currently only LightSensor opts in,
-// per-mount, whenever that mount's settings-screen mode is "forward" (see
-// sim/bot/index.ts's `showCone = mode === "forward"`).
-//
-// Ported near-verbatim from microbit-robot/botsim/src/sim/bot/rangeSensor.ts
-// (moved here from rangeSensor.ts so all sonar-beam sensors share one shader
-// registration instead of duplicating it per sensor class).
-addShaderProgram(
-    "sonar_wave",
-    BasicVertexShader,
-    CommonFragmentShaderGlobals +
-        `
-    uniform vec3 uBrushColor;
-    uniform float uMaxRange;
-    uniform float uBeamAngle;
-
-    float dist(vec2 p0, vec2 p1) {
-        return sqrt(pow(p1.x - p0.x, 2.) + pow(p1.y - p0.y, 2.));
-    }
-    float angle(vec2 p0, vec2 p1) {
-        return atan(p1.y - p0.y, p1.x - p0.x) + 1.57;
-    }
-    void main() {
-        vec2 uv = vUvs;
-        uv = vec2(uv.x * uAspectRatio, uv.y);
-        vec2 ofs = vec2(0.265, 1.1); // hand-tuned to appear to emanate from the sensor
-        float maxRange = uMaxRange + ofs.y;
-        float maxAngle = uBeamAngle / 2.;
-        float waveSpeed = 5.;
-        float waveCount = 22.;
-        float d = dist(ofs, uv);
-        float c = mod(uTime * waveSpeed - d * waveCount, 1.);
-        c = 1. - c;
-        c = c * c;
-        c = .2 + c * .66;
-        float alpha = c * .75;
-        float linFade = 1. - smoothstep(0., 1., d - 0.33);
-        float angFade = 1. - smoothstep(0., 1., -0.5 + abs(angle(ofs, uv)) / maxAngle);
-        alpha *= linFade * angFade;
-        gl_FragColor = vec4(uBrushColor * alpha, alpha);
-    }`
-)
+// Ring pulse tuning for the sonar wave (drawn as plain Pixi.Graphics arcs —
+// see buildSonarVisuals's showCone branch — not a shader). Pulse-only
+// feedback remains the default for all sensor types; only LightSensor opts
+// into this persistent cone, per-mount, whenever that mount's
+// settings-screen mode is "forward" (see sim/bot/index.ts's
+// `showCone = mode === "forward"`).
+const WAVE_RING_COUNT = 3
+const WAVE_CYCLE_SECS = 2.2 // time for one ring to travel apex -> maxRange
+const WAVE_FILL_ALPHA = 0.08 // constant translucent wedge marking the beam's field of view
+const WAVE_RING_ALPHA = 0.85 // peak opacity of a traveling ring, at the middle of its fade envelope
+const WAVE_RING_WIDTH_PX = 2
 
 addShaderProgram(
     "sonar_ping",
@@ -145,42 +116,57 @@ export function buildSonarVisuals(
     if (!renderObj) return // e.g. in unit tests, where entity is a lightweight mock
 
     if (showCone) {
-        const hw = 2
-        const pLN = Vec2.like(-hw, 0)
-        const pRN = Vec2.like(hw, 0)
-        const pLF = Vec2.rotateDeg(Vec2.add(pLN, Vec2.like(0, -maxRange)), -angle / 2)
-        const pRF = Vec2.rotateDeg(Vec2.add(pRN, Vec2.like(0, -maxRange)),  angle / 2)
-        const arc = appoximateArc({ x: 0, y: 0 }, maxRange, -angle / 2 - 90, angle / 2 - 90, 4)
-        const verts = [pLN, pRN, pRF, ...arc.reverse(), pLF, pLN].map(v => Vec2.rotateDeg(v, facingDeg))
-        // WAVE_OFFSET_X nudges the mesh in the sensor's own "right" direction,
-        // not the bot's raw local +x — rotate the nudge by the same facingDeg
-        // as the verts above, or it stays anchored to the bot's local +x on
-        // every mount (visibly correct only for facingDeg=0 frontal sensors,
-        // detached from the cone on sideLeft/sideRight/rearLeft/rearRight).
-        const waveOffset = Vec2.rotateDeg(Vec2.like(WAVE_OFFSET_X, 0), facingDeg)
+        // Drawn as plain vector arcs (moveTo/arc/stroke), not a per-pixel
+        // shader — positioned/rotated via the Graphics object's own
+        // position/angle (like any other Pixi container: see RenderObject's
+        // shapes), so it's always anchored exactly at `pos` and pointed
+        // exactly at `facingDeg` for every mount. No UV/bounding-box math to
+        // get out of sync, unlike the old shader mesh (which built its verts
+        // pre-rotated by facingDeg, distorting the UV space a hand-tuned
+        // shader constant relied on for every mount that wasn't front-facing
+        // — see git history if this ever needs resurrecting for reference).
+        const gfx = new Pixi.Graphics()
+        gfx.position.set(toRenderScale(pos.x), toRenderScale(pos.y))
+        gfx.angle = facingDeg
+        gfx.zIndex = 5
 
-        const waveSpec: EntityPolygonShapeSpec = {
-            ...defaultEntityShape(),
-            ...defaultPolygonShape(),
-            label: waveLabel,
-            offset: { x: pos.x + waveOffset.x, y: pos.y + waveOffset.y },
-            verts,
-            roles: [],
-            physics: { ...defaultShapePhysics(), sensor: true, density: 0 },
-            brush: {
-                ...defaultShaderBrush(),
-                shader: "sonar_wave",
-                uniforms: {
-                    uBrushColor: rgbToFloatArray(colors.wave),
-                    uMaxRange: toRenderScale(maxRange),
-                    uBeamAngle: toRadians(angle),
-                },
-                visible: true,
-                zIndex: 5,
-            },
+        const halfAngleRad = toRadians(angle) / 2
+        // Pixi/canvas angle convention: 0 = +X, clockwise-positive. This
+        // cone's forward direction ("up", -Y — matches every other sensor
+        // convention in this file) sits at -90deg.
+        const upRad = -Math.PI / 2
+        const startRad = upRad - halfAngleRad
+        const endRad = upRad + halfAngleRad
+        // Nudges the whole cone in its own "right" direction — drawn here
+        // (so it's rotated along with everything else by `gfx.angle` above)
+        // instead of added to world-space verts, unlike the old shader mesh.
+        const apexX = toRenderScale(WAVE_OFFSET_X)
+        const maxRangePx = toRenderScale(maxRange)
+        const waveColor = parseInt(rgbToString(colors.wave).replace("#", "0x"), 16)
+
+        const redraw = (elapsedSecs: number): void => {
+            gfx.clear()
+
+            // Constant translucent wedge — always-visible field-of-view marker.
+            gfx.moveTo(apexX, 0)
+            gfx.arc(apexX, 0, maxRangePx, startRad, endRad)
+            gfx.lineTo(apexX, 0)
+            gfx.fill({ color: waveColor, alpha: WAVE_FILL_ALPHA })
+
+            // WAVE_RING_COUNT rings travel apex -> maxRange on a loop,
+            // staggered evenly in phase, fading in/out (0 at both ends of
+            // their travel, peak at the midpoint) instead of popping in/out.
+            for (let i = 0; i < WAVE_RING_COUNT; i++) {
+                const phase = ((elapsedSecs / WAVE_CYCLE_SECS) + i / WAVE_RING_COUNT) % 1
+                const r = phase * maxRangePx
+                const fade = Math.sin(Math.PI * phase)
+                gfx.arc(apexX, 0, r, startRad, endRad)
+                    .stroke({ width: WAVE_RING_WIDTH_PX, color: waveColor, alpha: fade * WAVE_RING_ALPHA })
+            }
         }
-        const waveGfx = createGraphics.polygon.shader(waveSpec, waveSpec.brush)
-        renderObj.addShape(waveLabel, waveGfx)
+
+        registerTimedRedraw(gfx, redraw)
+        renderObj.addShape(waveLabel, gfx)
     }
 
     const targetSpec: EntityPolygonShapeSpec = {

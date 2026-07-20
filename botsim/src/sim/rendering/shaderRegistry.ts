@@ -48,6 +48,25 @@ export function advanceShaderTime(dtSecs: number): void {
     }
 }
 
+// Per-frame redraw hook for plain (non-shader) animated Pixi.Graphics —
+// e.g. the sonar wave/cone, drawn as vector arcs instead of a per-pixel
+// shader (see sonarVisuals.ts). Mirrors registerTimedShader/
+// advanceShaderTime's per-frame-tick pattern, minus the uTime uniform
+// plumbing a plain Graphics object doesn't have.
+const timedRedraws = new Map<Pixi.Container, (elapsedSecs: number) => void>()
+let elapsedSecs = 0
+
+export function registerTimedRedraw(container: Pixi.Container, redraw: (elapsedSecs: number) => void): void {
+    timedRedraws.set(container, redraw)
+    container.once("destroyed", () => timedRedraws.delete(container))
+    redraw(elapsedSecs) // paint the first frame immediately, don't wait for the next tick
+}
+
+export function advanceGraphicsAnimations(dtSecs: number): void {
+    elapsedSecs += dtSecs
+    for (const redraw of timedRedraws.values()) redraw(elapsedSecs)
+}
+
 // Every uniform in a Shader's `resources` record gets independently wrapped
 // in its own single-member UniformGroup by Pixi unless it's already one —
 // so plain scalars/vectors must be combined into one explicit UniformGroup

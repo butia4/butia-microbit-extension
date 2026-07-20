@@ -95,17 +95,25 @@ export class Bot {
             // unconfigured mounts").
             const mode = cfg?.mode ?? "surface"
             // `direction` only composes with the mount's fixed facingDeg
-            // when mode==="forward" — GraySensor stays untouched (always
-            // raw mount.facingDeg), out of scope per design.
+            // when mode==="forward" — GraySensor doesn't take a facingDeg
+            // rotation at all (see below), so it's irrelevant there anyway.
             const effectiveFacingDeg = (mount.facingDeg ?? 0) + (mode === "forward" ? (cfg?.direction ?? 0) : 0)
             const lightAngle = cfg?.angle ?? DEFAULT_LIGHT_ANGLE
             const rangeAngle = cfg?.angle ?? DEFAULT_RANGE_ANGLE
             const showCone = mode === "forward"
 
-            this.graySensors.set(side, new GraySensor(
-                this,
-                { pos: mount.pos, name: side, facingDeg: mount.facingDeg }
-            ))
+            // Line-following only makes sense for a mount physically facing
+            // the floor ("surface" mode) — a mount configured "forward"
+            // (angled out for distance/light sensing) has no business
+            // reporting a line underneath it. Only wire up a GraySensor for
+            // "surface" mounts; readSensors()'s `?? 0` default already
+            // reports "no line" for any mount left unset here.
+            if (mode === "surface") {
+                this.graySensors.set(side, new GraySensor(
+                    this,
+                    { pos: mount.pos, name: side, facingDeg: mount.facingDeg }
+                ))
+            }
             this.lightSensors.set(side, new LightSensor(
                 this,
                 { pos: mount.pos, name: side, angle: lightAngle, maxRange: LIGHT_MAX_RANGE, facingDeg: effectiveFacingDeg },

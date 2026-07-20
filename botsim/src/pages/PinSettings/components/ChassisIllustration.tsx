@@ -20,84 +20,97 @@ type ChassisIllustrationProps = {
 // at-a-glance feedback.
 export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
     return (
-        <div className="relative flex h-40 w-40 items-center justify-center" aria-hidden="true">
-            {/* roundedSquareVerts (chassis.ts) chamfers each corner with a
-                single straight segment spanning cornerRadius (1.2cm) on a
-                10cm side — a 12%-per-corner octagon cut, not a curve. An
-                SVG polygon reproduces that exactly; a CSS border-radius
-                would render a curved corner the sim never draws. */}
-            <svg
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                className="absolute inset-0 z-0 h-full w-full drop-shadow-[0_4px_14px_rgba(51,105,30,0.25)]"
-                aria-hidden="true"
-            >
-                <polygon
-                    points="12,0 88,0 100,12 100,88 88,100 12,100 0,88 0,12"
-                    fill="#A3D977"
-                    stroke="#555555"
-                    strokeWidth="1.5"
-                />
-            </svg>
-            <div className="absolute top-1/2 -left-3 z-0 h-16 w-5 border border-black/40 bg-[#212738]" />
-            <div className="absolute top-1/2 -right-3 z-0 h-16 w-5 border border-black/40 bg-[#212738]" />
+        // Outer box reserves the final (scaled-down) square footprint in the
+        // page's flex layout (aspect-square + shrink-0 so a `grow` flex
+        // parent can't stretch/squish it off-square). The inner box is
+        // `absolute` — fully out of flow, so its own 160px layout size (a
+        // `scale()` transform repaints smaller but never changes the box's
+        // layout size) can't feed back into the outer flex item's sizing.
+        // It keeps every child's original size/position math (all tuned for
+        // a 160px box) and shrinks the whole thing uniformly via
+        // `scale-[0.8]` — matches BUTIA_BOT_SPEC's 0.8x chassis scale
+        // instead of hand-scaling each fixed-px child (wheels, cone previews,
+        // connector dots) individually.
+        <div className="relative aspect-square w-32 shrink-0" aria-hidden="true">
+            <div className="absolute top-1/2 left-1/2 flex h-40 w-40 origin-center -translate-x-1/2 -translate-y-1/2 items-center justify-center scale-[0.8]">
+                {/* roundedSquareVerts (chassis.ts) chamfers each corner with a
+                    single straight segment spanning cornerRadius (1.2cm) on a
+                    10cm side — a 12%-per-corner octagon cut, not a curve. An
+                    SVG polygon reproduces that exactly; a CSS border-radius
+                    would render a curved corner the sim never draws. */}
+                <svg
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                    className="absolute inset-0 z-0 h-full w-full drop-shadow-[0_4px_14px_rgba(51,105,30,0.25)]"
+                    aria-hidden="true"
+                >
+                    <polygon
+                        points="12,0 88,0 100,12 100,88 88,100 12,100 0,88 0,12"
+                        fill="#A3D977"
+                        stroke="#555555"
+                        strokeWidth="1.5"
+                    />
+                </svg>
+                <div className="absolute top-1/2 -left-3 z-0 h-16 w-5 border border-black/40 bg-[#212738]" />
+                <div className="absolute top-1/2 -right-3 z-0 h-16 w-5 border border-black/40 bg-[#212738]" />
 
-            {/* Positioned (relative) + z-10 so it paints above the
-                absolutely-positioned chassis SVG — non-positioned elements
-                always sit below positioned siblings regardless of DOM order,
-                which is why this was invisible once the chassis became an
-                <svg>. */}
-            <img className="relative z-10 h-3/5 w-3/5 object-contain" src="assets/logo.svg" alt="" />
+                {/* Positioned (relative) + z-10 so it paints above the
+                    absolutely-positioned chassis SVG — non-positioned elements
+                    always sit below positioned siblings regardless of DOM order,
+                    which is why this was invisible once the chassis became an
+                    <svg>. */}
+                <img className="relative z-10 h-3/5 w-3/5 object-contain" src="assets/logo.svg" alt="" />
 
-            {/* Live cone preview — only for connected mounts in "forward"
-                mode, rotated to mount.direction (added onto the mount's
-                fixed facingDeg, same composition as sim/bot/index.ts's
-                effectiveFacingDeg) and widened to mount.angle, so tuning
-                either field in SensorMountRow visibly moves/resizes this
-                shape. */}
-            {ALL_MOUNT_SIDES.map((side) => {
-                const mount = mounts[side]
-                if (mount.connector === "" || mount.mode !== "forward") return null
-                const facingDeg = MOUNT_FACING_DEG[side] + mount.direction
-                return (
-                    <svg
-                        key={`cone-${side}`}
-                        viewBox="0 0 64 64"
-                        className="pointer-events-none absolute z-[15] h-16 w-16"
-                        style={{
-                            top: MOUNT_PREVIEW_POS[side].top,
-                            left: MOUNT_PREVIEW_POS[side].left,
-                            transform: `translate(-50%, -50%) rotate(${facingDeg}deg)`,
-                            transformOrigin: "50% 50%",
-                        }}
-                        aria-hidden="true"
-                    >
-                        <polygon points={coneWedgePoints(mount.angle)} fill="var(--butia-green-800)" fillOpacity="0.3" />
-                    </svg>
-                )
-            })}
-
-            {MOUNT_ORDER.map((side) => {
-                const connector = mounts[side].connector
-                const configured = connector !== ""
-                return (
-                    <div
-                        key={side}
-                        className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
-                        style={{ top: MOUNT_PREVIEW_POS[side].top, left: MOUNT_PREVIEW_POS[side].left }}
-                    >
-                        <div
-                            className={
-                                configured
-                                    ? "flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-[var(--butia-green-800)] px-1 text-[0.6rem] font-bold text-white shadow-sm"
-                                    : "h-3 w-3 rounded-full border-2 border-dashed border-white/80 bg-black/10"
-                            }
+                {/* Live cone preview — only for connected mounts in "forward"
+                    mode, rotated to mount.direction (added onto the mount's
+                    fixed facingDeg, same composition as sim/bot/index.ts's
+                    effectiveFacingDeg) and widened to mount.angle, so tuning
+                    either field in SensorMountRow visibly moves/resizes this
+                    shape. */}
+                {ALL_MOUNT_SIDES.map((side) => {
+                    const mount = mounts[side]
+                    if (mount.connector === "" || mount.mode !== "forward") return null
+                    const facingDeg = MOUNT_FACING_DEG[side] + mount.direction
+                    return (
+                        <svg
+                            key={`cone-${side}`}
+                            viewBox="0 0 64 64"
+                            className="pointer-events-none absolute z-15 h-16 w-16"
+                            style={{
+                                top: MOUNT_PREVIEW_POS[side].top,
+                                left: MOUNT_PREVIEW_POS[side].left,
+                                transform: `translate(-50%, -50%) rotate(${facingDeg}deg)`,
+                                transformOrigin: "50% 50%",
+                            }}
+                            aria-hidden="true"
                         >
-                            {configured ? connector : null}
+                            <polygon points={coneWedgePoints(mount.angle)} fill="var(--butia-green-800)" fillOpacity="0.3" />
+                        </svg>
+                    )
+                })}
+
+                {MOUNT_ORDER.map((side) => {
+                    const connector = mounts[side].connector
+                    const configured = connector !== ""
+                    return (
+                        <div
+                            key={side}
+                            className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+                            style={{ top: MOUNT_PREVIEW_POS[side].top, left: MOUNT_PREVIEW_POS[side].left }}
+                        >
+                            <div
+                                className={
+                                    configured
+                                        ? "flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-(--butia-green-800) px-1 text-[0.6rem] font-bold text-white shadow-sm"
+                                        : "h-3 w-3 rounded-full border-2 border-dashed border-white/80 bg-black/10"
+                                }
+                            >
+                                {configured ? connector : null}
+                            </div>
                         </div>
-                    </div>
-                )
-            })}
+                    )
+                })}
+            </div>
         </div>
     )
 }
