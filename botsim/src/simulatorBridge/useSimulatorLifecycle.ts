@@ -6,6 +6,7 @@ import { ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
 import { resolveMap } from "../maps/registry"
 import { MapSpec } from "../maps/mapSpec"
 import store from "../redux/store"
+import { hydrateMapSettings } from "../redux/mapSettingsHydration"
 
 let currRunId: string | undefined
 
@@ -55,7 +56,10 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
             const mapSpec = resolveMap(msg.id)
             if (!mapSpec) return
 
-            const { pinAssignment: ports, sensorSettings } = store.getState()
+            store.dispatch(hydrateMapSettings(msg.id))
+            const { pinAssignment, sensorSettings } = store.getState()
+            const ports = pinAssignment[msg.id]
+            const settings = sensorSettings[msg.id]
 
             await sim.ready
             if (armedRef.current) return
@@ -63,7 +67,7 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
             armedRef.current = true
             lastArmedMapSpecRef.current = mapSpec
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports, sensorSettings)
+            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports, settings)
             sim.start()
             setArmed(true)
         }
@@ -72,11 +76,13 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
             const mapSpec = lastArmedMapSpecRef.current
             if (!mapSpec) return
 
-            const { pinAssignment: ports, sensorSettings } = store.getState()
+            const { currentMap, pinAssignment, sensorSettings } = store.getState()
+            const ports = pinAssignment[currentMap.mapId]
+            const settings = sensorSettings[currentMap.mapId]
             sim.stop()
             sim.clear()
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports, sensorSettings)
+            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports, settings)
             sim.start()
         }
         rearmOnSettingsCloseRef.current = rearmOnSettingsClose

@@ -1,70 +1,70 @@
 import { configureStore } from "@reduxjs/toolkit"
-import pinAssignmentReducer from "../pages/PinSettings/state/pinAssignment.slice"
-import sensorSettingsReducer from "../pages/PinSettings/state/sensorSettings.slice"
+import currentMapReducer from "./currentMap.slice"
+import pinAssignmentReducer, { PinAssignmentState } from "../pages/PinSettings/state/pinAssignment.slice"
+import sensorSettingsReducer, { SensorSettingsState } from "../pages/PinSettings/state/sensorSettings.slice"
+import { DEFAULT_MAP } from "../maps/defaultMap"
+import { resolveMap } from "../maps/registry"
 import { DEFAULT_PIN_ASSIGNMENT, PinAssignment, pinAssignmentSchema } from "../pages/PinSettings/model/pinAssignment.model"
 import { DEFAULT_SENSOR_SETTINGS, SensorSettings, sensorSettingsSchema } from "../botSpecs/sensorSettings.model"
-
-const PIN_ASSIGNMENT_KEY = "butia-sim:pinAssignment"
-const SENSOR_SETTINGS_KEY = "butia-sim:sensorSettings"
+import { loadOrDefaultMapSlot, persistMapSlot, pinAssignmentKey, sensorSettingsKey } from "./mapSlotPersistence"
 
 function loadPreloadedState() {
-    let pinAssignment: PinAssignment = DEFAULT_PIN_ASSIGNMENT
-    let sensorSettings: SensorSettings = DEFAULT_SENSOR_SETTINGS
+    const mapId = DEFAULT_MAP.id
+    const mapSpec = resolveMap(mapId)
+    const pinDefault: PinAssignment = mapSpec?.defaultPinAssignment ?? DEFAULT_PIN_ASSIGNMENT
+    const sensorDefault: SensorSettings = mapSpec?.defaultSensorSettings ?? DEFAULT_SENSOR_SETTINGS
 
-    try {
-        const raw = localStorage.getItem(PIN_ASSIGNMENT_KEY)
-        if (raw) {
-            const result = pinAssignmentSchema.safeParse(JSON.parse(raw))
-            if (result.success) pinAssignment = result.data
-        }
-    } catch {
-        // malformed/inaccessible localStorage — fall back to default
+    const pinAssignment = loadOrDefaultMapSlot(mapId, pinAssignmentKey, pinAssignmentSchema, pinDefault)
+    const sensorSettings = loadOrDefaultMapSlot(mapId, sensorSettingsKey, sensorSettingsSchema, sensorDefault)
+
+    // loadOrDefaultMapSlot returns the fallback by reference when nothing
+    // valid was persisted — persist the default immediately in that case
+    // (Requirement: Per-Map Default Application, "first-time use" scenario).
+    if (pinAssignment === pinDefault) persistMapSlot(mapId, pinAssignmentKey, pinAssignment)
+    if (sensorSettings === sensorDefault) persistMapSlot(mapId, sensorSettingsKey, sensorSettings)
+
+    return {
+        currentMap: { mapId },
+        pinAssignment: { [mapId]: pinAssignment } as PinAssignmentState,
+        sensorSettings: { [mapId]: sensorSettings } as SensorSettingsState,
     }
-
-    try {
-        const raw = localStorage.getItem(SENSOR_SETTINGS_KEY)
-        if (raw) {
-            const result = sensorSettingsSchema.safeParse(JSON.parse(raw))
-            if (result.success) sensorSettings = result.data
-        }
-    } catch {
-        // malformed/inaccessible localStorage — fall back to default
-    }
-
-    return { pinAssignment, sensorSettings }
 }
 
 const store = configureStore({
     reducer: {
+        currentMap: currentMapReducer,
         pinAssignment: pinAssignmentReducer,
         sensorSettings: sensorSettingsReducer,
     },
     preloadedState: loadPreloadedState(),
 })
 
-// Persists pinAssignment/sensorSettings to localStorage on change.
-let lastPersistedPinAssignment = store.getState().pinAssignment
-let lastPersistedSensorSettings = store.getState().sensorSettings
+// Persists pinAssignment/sensorSettings to localStorage on change, per
+// changed mapId key (see map-scoped-settings design: "Persistence trigger").
+let lastPinAssignment = store.getState().pinAssignment
+let lastSensorSettings = store.getState().sensorSettings
 
 store.subscribe(() => {
     const state = store.getState()
 
-    if (state.pinAssignment !== lastPersistedPinAssignment) {
-        lastPersistedPinAssignment = state.pinAssignment
-        try {
-            localStorage.setItem(PIN_ASSIGNMENT_KEY, JSON.stringify(state.pinAssignment))
-        } catch {
-            // no-op — persistence is best-effort
+    if (state.pinAssignment !== lastPinAssignment) {
+        for (const key of Object.keys(state.pinAssignment)) {
+            const mapId = Number(key)
+            if (state.pinAssignment[mapId] !== lastPinAssignment[mapId]) {
+                persistMapSlot(mapId, pinAssignmentKey, state.pinAssignment[mapId])
+            }
         }
+        lastPinAssignment = state.pinAssignment
     }
 
-    if (state.sensorSettings !== lastPersistedSensorSettings) {
-        lastPersistedSensorSettings = state.sensorSettings
-        try {
-            localStorage.setItem(SENSOR_SETTINGS_KEY, JSON.stringify(state.sensorSettings))
-        } catch {
-            // no-op — persistence is best-effort
+    if (state.sensorSettings !== lastSensorSettings) {
+        for (const key of Object.keys(state.sensorSettings)) {
+            const mapId = Number(key)
+            if (state.sensorSettings[mapId] !== lastSensorSettings[mapId]) {
+                persistMapSlot(mapId, sensorSettingsKey, state.sensorSettings[mapId])
+            }
         }
+        lastSensorSettings = state.sensorSettings
     }
 })
 

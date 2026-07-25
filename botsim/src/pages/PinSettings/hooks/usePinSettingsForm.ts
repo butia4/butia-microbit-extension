@@ -2,9 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, UseFormReturn } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { ALL_MOUNT_SIDES } from "../../../botSpecs/botSpec"
-import { PinAssignment } from "../model/pinAssignment.model"
+import { DEFAULT_PIN_ASSIGNMENT, PinAssignment } from "../model/pinAssignment.model"
 import { pinSettingsFormSchema, PinSettingsFormValues } from "../model/pinSettingsForm.model"
-import { SensorMountSetting, SensorSettings } from "../../../botSpecs/sensorSettings.model"
+import { DEFAULT_SENSOR_SETTINGS, SensorMountSetting, SensorSettings } from "../../../botSpecs/sensorSettings.model"
 import { RootState } from "../../../redux/store"
 import { setPinAssignment } from "../state/pinAssignment.slice"
 import { setSensorSettings } from "../state/sensorSettings.slice"
@@ -34,8 +34,9 @@ function splitFormValues(values: PinSettingsFormValues): { assignment: PinAssign
 
 export function usePinSettingsForm(onClose: () => void): UsePinSettingsFormResult {
     const dispatch = useDispatch()
-    const initialAssignment = useSelector((state: RootState) => state.pinAssignment)
-    const initialSensorSettings = useSelector((state: RootState) => state.sensorSettings)
+    const mapId = useSelector((state: RootState) => state.currentMap.mapId)
+    const initialAssignment = useSelector((state: RootState) => state.pinAssignment[mapId] ?? DEFAULT_PIN_ASSIGNMENT)
+    const initialSensorSettings = useSelector((state: RootState) => state.sensorSettings[mapId] ?? DEFAULT_SENSOR_SETTINGS)
 
     const form = useForm<PinSettingsFormValues>({
         mode: "onBlur",
@@ -47,8 +48,8 @@ export function usePinSettingsForm(onClose: () => void): UsePinSettingsFormResul
 
     const onSubmit = form.handleSubmit((values) => {
         const { assignment, sensorSettings } = splitFormValues(values)
-        dispatch(setPinAssignment(assignment))
-        dispatch(setSensorSettings(sensorSettings))
+        dispatch(setPinAssignment({ mapId, value: assignment }))
+        dispatch(setSensorSettings({ mapId, value: sensorSettings }))
         onClose()
     })
 

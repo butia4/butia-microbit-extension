@@ -30,6 +30,8 @@ export const DEFAULT_MAP: MapSpec = {
     spawns: [
         { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
+    defaultPinAssignment: {},
+    defaultSensorSettings: {},
     entities: [
         {
             pos: { x: 0, y: 0 },

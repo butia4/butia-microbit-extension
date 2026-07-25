@@ -15,6 +15,8 @@ export const LIGHT_MAP: MapSpec = {
     spawns: [
         { pos: { x: CENTER_X, y: CENTER_Y + 20 }, angle: 0 },
     ],
+    defaultPinAssignment: {},
+    defaultSensorSettings: {},
     entities: [
         // collider is an invisible box: lightSensor.ts only handles polygon fixtures
         {

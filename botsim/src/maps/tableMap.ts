@@ -18,6 +18,8 @@ export const TABLE_MAP: MapSpec = {
     spawns: [
         { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
+    defaultPinAssignment: {},
+    defaultSensorSettings: {},
     entities: [
         {
             label: "table-surface",
