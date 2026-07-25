@@ -1,227 +1,117 @@
 # Butia v4 MakeCode Extension
 
-> A MakeCode extension for the [micro:bit](https://microbit.org/) platform that brings the **Butia v4 educational robotics kit** into the classroom — enabling students to program real robots using drag-and-drop blocks, with no prior coding experience required.
+A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https://microbit.org/) that brings the **Butia v4 educational robotics kit** into the classroom with drag-and-drop blocks.
 
 [![MakeCode](https://img.shields.io/badge/MakeCode-micro%3Abit-blue)](https://makecode.microbit.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
----
+> Developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República, Uruguay. The block API may evolve during active development.
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Development Workflow](#development-workflow)
-- [Using the Extension in MakeCode](#using-the-extension-via-github-stable)
+- [Using the Extension](#using-the-extension)
+- [Block API Reference](#block-api-reference)
+- [Development](#development)
 - [Project Structure](#project-structure)
-- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
 - [Thesis Team](#thesis-team)
 
----
+## Using the Extension
 
-## Overview
+1. Open [https://makecode.microbit.org/](https://makecode.microbit.org/) and create a **New Project**.
+2. Go to ⚙ → **Extensions**.
+3. Search for or paste `https://github.com/butia4/butia-microbit-extension` and click **Import**.
 
-Butia v4 is an **open-source educational robotics platform** aimed at introducing programming and computational thinking to students of all ages. This repository provides a custom [MakeCode](https://makecode.microbit.org/) extension that exposes Butia v4 hardware capabilities — motors, sensors, and actuators — as intuitive visual blocks in the MakeCode block editor.
+The Butia blocks appear in the toolbox immediately, grouped as **Motores**, **Sensores**, and **Simulador**.
 
-Built on top of [Microsoft PXT](https://github.com/microsoft/pxt), the extension is designed to lower the barrier to entry for robotics education: teachers can integrate it directly into existing MakeCode projects without any additional tooling, and students can start programming their robots within minutes.
+## Block API Reference
 
-> **Note:** This extension is being developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República (Uruguay). The block API may evolve between versions during active development.
+Block text is in Spanish, as required for classroom use in Uruguay; the reference below is in English for maintainers.
 
----
+### Motores
 
-## Prerequisites
+| Block | Description | Parameters |
+|---|---|---|
+| `Avanzar a velocidad %speed \|\| durante %duration segundos` | Drives both motors forward. Runs indefinitely, or for `duration` seconds if given. | `speed`: 0–100 (default 50) · `duration`: seconds, optional |
+| `Retroceder a velocidad %speed \|\| durante %duration segundos` | Drives both motors backward. Runs indefinitely, or for `duration` seconds if given. | `speed`: 0–100 (default 50) · `duration`: seconds, optional |
+| `Girar hacia %direction a velocidad %speed \|\| durante %duration segundos` | Turns in place toward `Izquierda`/`Derecha`. | `direction`: Left/Right · `speed`: 0–100 (default 40) · `duration`: seconds, optional |
+| `Motor Izquierdo %left Derecho %right` | Sets each motor's speed independently (tank drive). | `left`, `right`: -100–100 (default 70) |
+| `Detener Motores` | Stops both motors. | — |
+| `Detener Motor %motor` | Stops a single motor, leaving the other running. | `motor`: Izquierdo/Derecho |
 
-Before getting started, ensure the following tools are installed on your system:
+### Sensores
 
-| Tool | Version | Notes |
-|------|---------|-------|
-| Node.js | v24.15.0 | [nodejs.org](https://nodejs.org/) — earlier versions may not work |
-| npm | bundled with Node.js | Used to install dev dependencies |
-| PXT CLI | latest | Install via `npm install -g pxt` |
-| Git | any | [git-scm.com](https://git-scm.com/) |
+| Block | Description | Returns |
+|---|---|---|
+| `Sensor de grises en %connector` | Reads the analog gray/line sensor on the given connector. | `number` |
+| `Sensor de luz en %connector` | Reads the light sensor on the given connector. | `number` |
+| `Sensor de distancia en %connector` | Reads the ultrasonic distance sensor on the given connector (cm). | `number` |
+| `Botón en %connector presionado` | Reads whether the button on the given connector is currently pressed. | `boolean` |
+| `Sensor genérico en %connector` | Reads a generic analog sensor on the given connector. | `number` |
 
----
+`%connector` is a Butia connector picker (e.g. C1–C4).
 
-## Installation
+### Eventos (advanced)
 
-### 1. Clone the repository
+Reactive blocks that run a handler when a sensor condition is met, guarded by a `priority` (1 highest–5 lowest) so only the highest-priority active handler fires at a time.
+
+| Block | Fires when |
+|---|---|
+| `Cuando el sensor de distancia en %connector sea %op %threshold cm con prioridad %priority` | Distance reading compares against `threshold` (cm) using `op` (mayor/menor que, etc.) |
+| `Cuando el sensor de luz en %connector sea %op %threshold con prioridad %priority` | Light reading compares against `threshold` |
+| `Cuando el sensor de grises en %connector sea %op %threshold con prioridad %priority` | Gray sensor reading compares against `threshold` |
+| `Cuando se %state el botón en %connector con prioridad %priority` | Button transitions to `presione`/`suelte` |
+
+### Simulador
+
+| Block | Description |
+|---|---|
+| `usar mapa %map` | Selects the botsim map (`Seguidor de línea`, `Mesa`, `Luz`) used when the project runs in the MakeCode simulator. No effect on real hardware. |
+
+## Development
 
 ```bash
 git clone https://github.com/butia4/butia-microbit-extension.git
 cd butia-microbit-extension
+npm install       # installs dev tools (pxt, TypeScript, ESLint)
 ```
 
-### 2. Install npm dependencies
+| Command | Purpose |
+|---|---|
+| `npm run build` | Compile TypeScript → `built/binary.hex` |
+| `npm test` | Run the test suite (`test/`, via `pxt test`) |
+| `npm run typecheck` | Type-check without emitting files |
+| `npm run lint` | ESLint |
+| `npm run sync` | Sync `src/`/`test/` file lists into `pxt.json` — run after adding/renaming/deleting a `.ts` file |
+| `npm run deploy` | Flash `built/binary.hex` to a connected micro:bit |
+| `make clean` | Remove `built/` output |
 
-```bash
-npm install
-```
-
-This installs dev tools (TypeScript, ESLint, pxt-microbit) and automatically creates `node_modules/pxtcli.json`, which the `pxt` CLI needs to locate its runtime. Without this step, all `pxt` commands will fail.
-
----
-
-## Development Workflow
-
-The recommended cycle for developing and testing changes:
-
-### Build
-
-```bash
-npm run build
-```
-
-Compiles all TypeScript sources and produces a flashable binary at `built/binary.hex`.
-
-### Test
-
-```bash
-npm test
-```
-
-Runs the test suite in `test.ts`. Tests are excluded from the extension build — they only run via this command.
-
-### Type check
-
-```bash
-npm run typecheck
-```
-
-Validates TypeScript types without producing any files. Useful for catching errors before building.
-
-### Lint
-
-```bash
-npm run lint
-```
-
-### Sync file manifest
-
-```bash
-npm run sync
-# or: bun scripts/sync-pxt.ts
-# or: npx tsx scripts/sync-pxt.ts
-```
-
-Scans `src/` and `test/` and updates the file lists in `pxt.json` automatically. Run this after adding, renaming, or deleting any `.ts` file — otherwise PXT won't pick up the change.
-
-### Flash to micro:bit
-
-```bash
-npm run deploy
-```
-
-Requires a micro:bit connected via USB.
-
-### Clean
-
-```bash
-make clean
-```
-
----
-
-### Load the built extension in MakeCode
-
-After `npm run build`:
-
-1. Go to [https://makecode.microbit.org/](https://makecode.microbit.org/) and create a **New Project**
-2. Click **Extensions** → **Import File**
-3. Upload `built/binary.hex`
-
-The Butia v4 blocks will appear in the block palette immediately.
-
-> **Tip:** After each code change, run `npm run build` and re-import the `.hex` file to pick up your updates.
-
----
-
-## Using the Extension via GitHub (Stable)
-
-For classroom use or when you just want to use the extension without building from source:
-
-1. Open [https://makecode.microbit.org/](https://makecode.microbit.org/)
-2. Click **New Project**
-3. Go to ⚙ → **Extensions**
-4. Search for or paste:
-   ```
-   https://github.com/butia4/butia-microbit-extension
-   ```
-5. Click **Import**
-
-The extension is now ready to use in your project.
-
----
+To test a local build in the editor: `npm run build`, then in MakeCode go to ⚙ → **Extensions** → **Import File** and upload `built/binary.hex`. See [SIMULATOR.md](SIMULATOR.md) for running the botsim simulator locally.
 
 ## Project Structure
 
 ```
-butia-microbit-extension/
-├── src/
-│   ├── main.ts                     # Runtime entry point
-│   ├── types/
-│   │   ├── enums.d.ts              # Ambient const enum declarations (TurnDirection, LineSensorId, RobotAssist, ButiaEvent)
-│   │   ├── components.d.ts         # Component interface hierarchy (IRobotComponent → IMotorDriver, ILineSensor, IDistanceSensor)
-│   │   └── robot.d.ts              # IRobot interface
-│   ├── core/
-│   │   ├── constants.ts            # Value constants (POLL_INTERVAL_MS, LINE_THRESHOLD, OBSTACLE_STOP_DISTANCE_CM, BUTIA_EVENT_SOURCE, MAX_DISTANCE_CM)
-│   │   └── robot-base.ts           # RobotBase no-op class (PXT abstract workaround)
-│   ├── hardware/
-│   │   ├── butia-robot.ts          # ButiaRobot — concrete hardware implementation
-│   │   ├── i2c-motor-driver.ts     # I2CMotorDriver — I2C motor controller
-│   │   ├── analog-line-sensor.ts   # AnalogLineSensor — analog line detection
-│   │   └── sr04-distance-sensor.ts # SR04DistanceSensor — HC-SR04 ultrasonic sensor
-│   └── blocks/
-│       ├── imperative.ts           # Imperative (sequential) block API
-│       └── events.ts               # Event-based (reactive) block API
-├── test/                           # Unit tests (excluded from extension build)
-│   ├── robot.test.ts
-│   ├── imperative.test.ts
-│   ├── events.test.ts
-│   └── sensor.test.ts
-├── scripts/
-│   └── sync-pxt.ts                 # Syncs src/ and test/ file lists into pxt.json
-├── pxt.json                        # PXT extension manifest
-├── package.json                    # npm metadata and dev scripts
-├── tsconfig.json                   # TypeScript compiler configuration
-├── built/                          # Compiled output — do not edit manually
-│   └── binary.hex                  # Flashable micro:bit binary
-└── README.md
+src/
+├── main.ts       # Runtime entry point — starts the robot singleton
+├── types/        # Ambient interfaces and const enums
+├── core/         # RobotBase (DI base class) + constants, connector, logger, event-monitor
+├── hardware/     # Concrete hardware drivers (motors, line/light/distance/button/generic sensors)
+├── sim/          # MakeCode simulator bridge — swaps hardware drivers for sim equivalents
+└── blocks/       # blocks.ts — the public MakeCode block API documented above
+test/             # Unit tests, excluded from the extension build
+scripts/          # Dev tooling (sync-pxt.ts)
 ```
-
----
-
-## Troubleshooting
-
-### Blocks do not appear after importing the `.hex`
-
-Make sure `pxt build` completed without errors. A build with TypeScript compilation errors may still produce a `.hex` that loads without exposing any blocks. Review the terminal output for error details before re-importing.
-
----
 
 ## Contributing
 
-Contributions, bug reports, and feature requests are welcome. Please open an issue before submitting a pull request to align on the proposed change.
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m 'feat: add my feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Open a Pull Request
-
----
+Open an issue before submitting a pull request to align on the proposed change.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
+MIT — see [LICENSE.txt](LICENSE.txt).
 
 ## Thesis Team
-
-Developed as part of a Computer Engineering thesis at the **Faculty of Engineering, Universidad de la República, Uruguay**.
 
 | Name | GitHub | LinkedIn |
 |------|--------|----------|
