@@ -66,7 +66,7 @@ export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
                             <div
                                 className={
                                     configured
-                                        ? "flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-(--butia-green-800) px-1 text-[0.6rem] font-bold text-white shadow-sm"
+                                        ? "flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-(--butia-green-800) px-1 text-2xs font-bold text-white shadow-sm"
                                         : "h-3 w-3 rounded-full border-2 border-dashed border-white/80 bg-black/10"
                                 }
                             >

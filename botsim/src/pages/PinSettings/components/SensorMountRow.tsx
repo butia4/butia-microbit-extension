@@ -88,7 +88,7 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
                         {...register(`mounts.${side}.connector`)}
                         className="h-9 min-w-11 cursor-pointer rounded-lg border-2 border-(--butia-green-100) bg-white px-2 text-sm font-semibold text-(--butia-ink-900) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
                     >
-                        <option value="">Sin conector</option>
+                        <option value="">Ninguno</option>
                         {CONNECTOR_OPTIONS.map((slot) => (
                             <option key={slot} value={slot}>
                                 {slot}
@@ -104,9 +104,18 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
                             onClick={() => setIsExpanded((prev) => !prev)}
                             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-2 border-(--butia-green-100) bg-white text-(--butia-green-800) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
                         >
-                            <span aria-hidden="true" className={`inline-block transition-transform ${isExpanded ? "rotate-180" : ""}`}>
-                                ▾
-                            </span>
+                            <svg
+                                aria-hidden="true"
+                                viewBox="0 0 24 24"
+                                className={`h-3 w-3 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
                         </button>
                     )}
                 </div>

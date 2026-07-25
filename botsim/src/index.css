@@ -16,6 +16,26 @@
     src: url("./assets/fonts/WorkSans-Variable.woff2") format("woff2");
 }
 
+/* Fluid type scale: every text-* Tailwind utility resolves to a clamp(),
+   so a single edit here rescales all text in the simulator. Line-heights
+   mirror Tailwind's default ratios for each step. */
+@theme {
+    --text-2xs: clamp(0.5625rem, 0.52rem + 0.2vw, 0.625rem);
+    --text-2xs--line-height: calc(1 / 0.5625);
+    --text-xs: clamp(0.6875rem, 0.63rem + 0.3vw, 0.75rem);
+    --text-xs--line-height: calc(1 / 0.6875);
+    --text-sm: clamp(0.8125rem, 0.75rem + 0.35vw, 0.875rem);
+    --text-sm--line-height: calc(1.25 / 0.8125);
+    --text-base: clamp(0.9375rem, 0.85rem + 0.45vw, 1rem);
+    --text-base--line-height: calc(1.5 / 0.9375);
+    --text-lg: clamp(1.0625rem, 0.95rem + 0.55vw, 1.125rem);
+    --text-lg--line-height: calc(1.75 / 1.0625);
+    --text-xl: clamp(1.125rem, 1rem + 0.65vw, 1.25rem);
+    --text-xl--line-height: calc(1.75 / 1.125);
+    --text-2xl: clamp(1.25rem, 1.05rem + 1vw, 1.5rem);
+    --text-2xl--line-height: calc(2 / 1.25);
+}
+
 :root {
     --butia-green-25: #f4faf5;
     --butia-green-50: #e8f5e9;
