@@ -30,8 +30,14 @@ export const DEFAULT_MAP: MapSpec = {
     spawns: [
         { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
-    defaultPinAssignment: {},
-    defaultSensorSettings: {},
+    defaultPinAssignment: {
+        frontLeft: "J1",
+        frontRight: "J2",
+    },
+    defaultSensorSettings: {
+        frontLeft: { mode: "surface" },
+        frontRight: { mode: "surface" },
+    },
     entities: [
         {
             pos: { x: 0, y: 0 },
@@ -41,7 +47,7 @@ export const DEFAULT_MAP: MapSpec = {
                 type: "path",
                 roles: ["follow-line"],
                 verts: TRACK_VERTS,
-                width: 3,
+                width: 2,
                 closed: true,
                 stepSize: 0.1,
                 offset: { x: 0, y: 0 },

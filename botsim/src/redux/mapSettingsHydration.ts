@@ -10,7 +10,7 @@ import { resolveMap } from "../maps/registry"
 /**
  * Sets the current map id and, the first time a given map id is used in
  * this session, hydrates its pin assignment / sensor settings from
- * localStorage (or the map's hardcoded default if nothing was persisted).
+ * sessionStorage (or the map's hardcoded default if nothing was persisted).
  *
  * Idempotent per `mapId`: once a map's settings are present in state,
  * subsequent calls for the same `mapId` only update the current map id

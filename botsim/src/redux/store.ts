@@ -39,7 +39,7 @@ const store = configureStore({
     preloadedState: loadPreloadedState(),
 })
 
-// Persists pinAssignment/sensorSettings to localStorage on change, per
+// Persists pinAssignment/sensorSettings to sessionStorage on change, per
 // changed mapId key (see map-scoped-settings design: "Persistence trigger").
 let lastPinAssignment = store.getState().pinAssignment
 let lastSensorSettings = store.getState().sensorSettings
