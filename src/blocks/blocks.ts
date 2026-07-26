@@ -2,6 +2,7 @@
 //% groups="['Sensores', 'Motores', 'Simulador']"
 namespace Butia {
 
+
     //% blockId="butia_imp_move_forward"
     //% block="Avanzar a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
@@ -99,15 +100,27 @@ namespace Butia {
     export function readButton(connector: Butia.Connector): boolean {
         return Butia.RobotDriver.getCurrentRobot().readButton(connector);
     }
-
-    //% blockId="butia_imp_read_generic"
-    //% block="Sensor genérico en %connector"
-    //% weight=67
-    //% group="Sensores"
-    export function readGenericSensor(connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readGenericSensor(connector);
+    //% shim=ENUM_GET
+    //% blockId=sensor_enum_shim
+    //% blockHidden=true
+    //% block="Sensor $arg"
+    //% enumName="SensorName"
+    //% enumMemberName="sensor"
+    //% enumPromptHint="Ej: Humedad"
+    //% enumInitialMembers="Humedad,presión,sonido"
+    //% group="Sensores Genericos"
+    export function _sensorEnumShim(arg: number) {
+        return arg;
     }
-
+    //% blockId="butia_imp_read_generic"
+    //% block="Sensor de $sensorName en $connector"
+    //% sensorName.shadow="sensor_enum_shim"
+    //% weight=67
+    //% group="Sensores Genericos"
+    export function readGenericSensor(sensorName: number, connector: Butia.Connector): number {
+        return Butia.RobotDriver.getCurrentRobot().readGenericSensor(connector, sensorName);
+    }
+    
     //% blockId="butia_evt_distance"
     //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100

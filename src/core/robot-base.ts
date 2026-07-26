@@ -72,7 +72,7 @@ namespace Butia {
         protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor { return new GraySensor(pin); }
         protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor { return new DistanceSensor(pin); }
         protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor { return new ButtonSensor(pin as DigitalPin); }
-        protected _newGenericSensor(pin: AnalogPin | DigitalPin): IGenericSensor { return new GenericSensor(pin); }
+        protected _newGenericSensor(name: number, pin: AnalogPin | DigitalPin): IGenericSensor { return new GenericSensor( pin,name); }
 
         private _getLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
             for (const entry of this._lights) {
@@ -114,12 +114,12 @@ namespace Butia {
             return sensor;
         }
 
-        private _getGenericSensor(pin: AnalogPin | DigitalPin): IGenericSensor {
+        private _getGenericSensor(pin: AnalogPin | DigitalPin, name: number): IGenericSensor {
             for (const entry of this._generics) {
                 if (entry.pin === pin) return entry.sensor;
             }
             this._claimPin(pin, "generic");
-            const sensor = this._newGenericSensor(pin);
+            const sensor = this._newGenericSensor(name, pin);
             this._generics.push({ pin, sensor });
             return sensor;
         }
@@ -188,8 +188,8 @@ namespace Butia {
             return s.read() === 1;
         }
 
-        readGenericSensor(connector: IConnector): number {
-            const s = this._getGenericSensor(this._resolvePin(connector));
+        readGenericSensor(connector: IConnector, name: number): number {
+            const s = this._getGenericSensor(this._resolvePin(connector),name);
             return s.read();
         }
 
