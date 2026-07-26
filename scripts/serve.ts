@@ -9,9 +9,8 @@
 //   3. Start the local MakeCode editor (`pxt serve`).
 //
 // What this script can NOT automate (must be done manually):
-//   - Start the botsim dev server yourself in another terminal, from the
-//     sibling repo:
-//       cd ../butia-botsim && npm run dev
+//   - Start the botsim dev server yourself in another terminal:
+//       cd botsim && npm run dev
 //   - Once both servers are up (see SIMULATOR.md steps 4-5): import
 //     built/binary.hex as a project via Extensions -> Import File, and add
 //     ?simxdev to the editor URL.
@@ -67,7 +66,7 @@ console.log('[serve] Starting local MakeCode editor (pxt serve)...');
 const pxt = spawn('npx', ['pxt', 'serve'], { cwd: ROOT, shell: true });
 prefixOutput(pxt, 'pxt');
 
-console.log(`[serve] Remember to start the botsim dev server yourself in another terminal: cd ../butia-botsim && npm run dev (expected at ${BOTSIM_DEV_URL})`);
+console.log(`[serve] Remember to start the botsim dev server yourself in another terminal: cd botsim && npm run dev (expected at ${BOTSIM_DEV_URL})`);
 console.log('[serve] Once both servers are up: import built/binary.hex into the editor (Extensions -> Import File),');
 console.log('[serve] then open it with ?simxdev added to the URL, e.g. http://localhost:3232/index.html?simxdev#editor');
 

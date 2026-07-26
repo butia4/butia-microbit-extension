@@ -2,10 +2,10 @@
 
 ## Steps
 
-1. Start the botsim dev server (from the sibling `butia-botsim` repo):
+1. Start the botsim dev server (from the local `botsim/` folder):
 
    ```sh
-   cd ../butia-botsim
+   cd botsim
    npm run build
    npm run dev
    ```

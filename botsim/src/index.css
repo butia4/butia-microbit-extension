@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "Fredoka";
+    font-style: normal;
+    font-weight: 600 700;
+    font-display: swap;
+    src: url("./assets/fonts/Fredoka-Variable.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Work Sans";
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url("./assets/fonts/WorkSans-Variable.woff2") format("woff2");
+}
+
+/* Fluid type scale: every text-* Tailwind utility resolves to a clamp(),
+   so a single edit here rescales all text in the simulator. Line-heights
+   mirror Tailwind's default ratios for each step. */
+@theme {
+    --text-2xs: clamp(0.5625rem, 0.52rem + 0.2vw, 0.625rem);
+    --text-2xs--line-height: calc(1 / 0.5625);
+    --text-xs: clamp(0.6875rem, 0.63rem + 0.3vw, 0.75rem);
+    --text-xs--line-height: calc(1 / 0.6875);
+    --text-sm: clamp(0.8125rem, 0.75rem + 0.35vw, 0.875rem);
+    --text-sm--line-height: calc(1.25 / 0.8125);
+    --text-base: clamp(0.9375rem, 0.85rem + 0.45vw, 1rem);
+    --text-base--line-height: calc(1.5 / 0.9375);
+    --text-lg: clamp(1.0625rem, 0.95rem + 0.55vw, 1.125rem);
+    --text-lg--line-height: calc(1.75 / 1.0625);
+    --text-xl: clamp(1.125rem, 1rem + 0.65vw, 1.25rem);
+    --text-xl--line-height: calc(1.75 / 1.125);
+    --text-2xl: clamp(1.25rem, 1.05rem + 1vw, 1.5rem);
+    --text-2xl--line-height: calc(2 / 1.25);
+}
+
+:root {
+    --butia-green-25: #f4faf5;
+    --butia-green-50: #e8f5e9;
+    --butia-green-100: #c8e6c9;
+    --butia-green-300: #a5d6a7;
+    --butia-green-600: #558b2f;
+    --butia-green-800: #33691e;
+    --butia-error: #b3261e;
+    --butia-ink-900: #2e2e2e;
+    --butia-ink-700: #444444;
+    --butia-ink-500: #555555;
+
+    --font-display: "Fredoka", ui-rounded, sans-serif;
+    --font-body: "Work Sans", system-ui, sans-serif;
+    /* Tailwind v4 reads this as the `font-sans` utility token, so existing
+       font-sans usages in components pick up Work Sans without per-component edits. */
+    --font-sans: var(--font-body);
+}
+
+/* Global rules that can't be expressed as Tailwind utilities in JSX because
+   they apply outside React's render tree (body) or must survive Tailwind's
+   preflight reset unconditionally (#root sizing). Font stack/height/margin
+   concerns move to Tailwind utilities on #root and body className instead. */
+body {
+    overflow: hidden;
+    background-color: transparent;
+    font-family: var(--font-body);
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+@keyframes butia-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes butia-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.55;
+    }
+}
+
+.butia-screen-transition {
+    animation: butia-fade-in 0.25s ease-out;
+}
+
+.butia-pulse {
+    animation: butia-pulse 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .butia-screen-transition,
+    .butia-pulse {
+        animation: none;
+    }
+}
+
+.butia-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--butia-green-300) transparent;
+}
+
+.butia-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.butia-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.butia-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--butia-green-300);
+    border-radius: 9999px;
+}
+
+.butia-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--butia-green-600);
+}

@@ -1,0 +1,47 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Activa el flujo de trabajo cada vez que hagas push a `master` con cambios en botsim/
+  push:
+    branches: [ master ]
+    paths: [ 'botsim/**' ]
+  # Te permite ejecutar este flujo de trabajo manualmente desde la pestaña Acciones en GitHub.
+  workflow_dispatch:
+
+# Permite que este trabajo clone el repositorio y publique en la rama gh-pages
+permissions:
+  contents: write
+
+# Evita que dos deploys se pisen si hay pushes seguidos a main
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: botsim/package-lock.json
+
+      - name: Install dependencies
+        working-directory: botsim
+        run: npm ci
+
+      - name: Build
+        working-directory: botsim
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./botsim/dist
