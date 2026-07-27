@@ -12,4 +12,4 @@ Butia.onDistance(Butia.J2, Comparison.Greater, 20, 2, function () {
 Butia.onDistance(Butia.J1, Comparison.Less, 20, 1, function () {
     Butia.moveForward(20)
 })
-Butia.setMap(SimMap.Mesa, Butia.J1, Butia.J2)
+Butia.setMap(SimMap.Mesa)

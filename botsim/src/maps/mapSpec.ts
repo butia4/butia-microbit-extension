@@ -1,6 +1,7 @@
-import { Vec2Like } from "../types/vec2"
+import { Vec2Like } from "../shared/types/vec2"
 import { EntitySpec } from "../sim/entitySpec"
-import { MountSide } from "../botSpecs/botSpec"
+import { PinAssignment } from "../pages/PinSettings/model/pinAssignment.model"
+import { SensorSettings } from "../botSpecs/sensorSettings.model"
 
 export type SpawnSpec = { pos: Vec2Like; angle: number }
 
@@ -12,15 +13,8 @@ export type MapSpec = {
     color: string
     spawns: SpawnSpec[]
     entities: EntitySpec[]
-    // Optional per-mount sensor mode override, keyed by physical mount
-    // (left/right) — not by J-port. The mode follows whichever J-port is
-    // currently wired to that mount for the run. Absent mounts (or an absent
-    // field entirely) default to "forward" (existing cone-raycast behavior)
-    // — see Bot's constructor.
-    sensorModes?: Partial<Record<MountSide, "forward" | "surface">>
-    // Optional per-map override that keeps the sonar cone (wave mesh) always
-    // visible for both light sensors while this map is active, instead of
-    // the default pulse-only ping feedback. Absent (or false) keeps the
-    // default pulse-only behavior — see LightSensor/buildSonarVisuals.
-    showLightCone?: boolean
+    // Hardcoded per-map defaults applied the first time this map is used
+    // with no persisted configuration (see map-scoped-settings design).
+    defaultPinAssignment?: PinAssignment
+    defaultSensorSettings?: SensorSettings
 }

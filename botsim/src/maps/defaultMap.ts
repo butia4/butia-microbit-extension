@@ -1,7 +1,7 @@
 import { MapSpec } from "./mapSpec"
 import { defaultStaticPhysics, defaultDynamicPhysics, defaultShapePhysics, defaultColorBrush } from "../sim/entitySpec"
-import { pickRandom } from "../util"
-import { MAP_ASPECT_RATIO, MICROBIT_COLORS } from "../constants"
+import { pickRandom } from "../shared/util"
+import { MAP_ASPECT_RATIO, MICROBIT_COLORS } from "../shared/constants"
 
 const ARENA = 90   // cm
 const CENTER_X = ARENA / 2
@@ -30,8 +30,15 @@ export const DEFAULT_MAP: MapSpec = {
     spawns: [
         { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
+    defaultPinAssignment: {
+        frontLeft: "J1",
+        frontRight: "J2",
+    },
+    defaultSensorSettings: {
+        frontLeft: { mode: "surface" },
+        frontRight: { mode: "surface" },
+    },
     entities: [
-        // Follow-line closed track path
         {
             pos: { x: 0, y: 0 },
             angle: 0,
@@ -40,7 +47,7 @@ export const DEFAULT_MAP: MapSpec = {
                 type: "path",
                 roles: ["follow-line"],
                 verts: TRACK_VERTS,
-                width: 3,
+                width: 2,
                 closed: true,
                 stepSize: 0.1,
                 offset: { x: 0, y: 0 },
@@ -49,7 +56,6 @@ export const DEFAULT_MAP: MapSpec = {
                 brush: { ...defaultColorBrush(), fillColor: "#1a1a1a", borderColor: "#1a1a1a", borderWidth: 0, visible: true, zIndex: 0 },
             }],
         },
-        // Obstacle box 1 — draggable, randomly colored
         {
             label: "obstacle-1",
             pos: { x: CENTER_X - 10, y: CENTER_Y },
@@ -67,7 +73,6 @@ export const DEFAULT_MAP: MapSpec = {
                 brush: { ...defaultColorBrush(), fillColor: pickRandom(Object.values(MICROBIT_COLORS)), borderColor: "#444444", borderWidth: 0.25, visible: true, zIndex: 1 },
             }],
         },
-        // Obstacle box 2 — draggable, randomly colored
         {
             label: "obstacle-2",
             pos: { x: CENTER_X + 10, y: CENTER_Y },

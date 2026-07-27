@@ -2,7 +2,7 @@
 
 ## Steps
 
-1. Start the botsim dev server:
+1. Start the botsim dev server (from the local `botsim/` folder):
 
    ```sh
    cd botsim

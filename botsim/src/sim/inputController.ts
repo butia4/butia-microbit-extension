@@ -1,12 +1,7 @@
-import Physics from "./physics"
-import Renderer from "./renderer"
-import { Vec2Like } from "../types/vec2"
+import Physics from "./physics/physics"
+import Renderer from "./rendering/renderer"
+import { Vec2Like } from "../shared/types/vec2"
 
-// Extracted from Simulation — converts canvas-pixel coordinates (from DOM
-// mouse events, CSS-scaled) into simulation-space (cm) coordinates, then
-// delegates to Physics. Exactly one body (bot or obstacle) can be dragged
-// at a time. Also owns the cursor-feedback logic (grab/grabbing/default)
-// based on the current drag/hover state.
 export class InputController {
     private _lastMousePos: Vec2Like = { x: 0, y: 0 }
 

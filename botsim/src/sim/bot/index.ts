@@ -1,26 +1,28 @@
 import * as Planck from "planck"
-import { BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
-import { SensorType } from "../../protocol"
+import * as Pixi from "pixi.js"
+import { ALL_MOUNT_SIDES, BotSpec, ConnectorSlot, MountSide } from "../../botSpecs/botSpec"
+import { SensorType } from "../../simulatorBridge/protocol"
+import { SensorSettings } from "../../botSpecs/sensorSettings.model"
 import { Entity } from "../entity"
 import { EntitySpec, defaultDynamicPhysics, defaultEntity } from "../entitySpec"
-import { Vec2Like } from "../../types/vec2"
+import { Vec2Like } from "../../shared/types/vec2"
+import { toRenderScale } from "../rendering/util"
 import { Chassis } from "./chassis"
 import { Wheel } from "./wheel"
-import { GraySensor } from "./graySensor"
-import { LightSensor, LIGHT_MAX_RANGE, DEFAULT_LIGHT_ANGLE } from "./lightSensor"
-import { RangeSensor, MAX_RANGE, DEFAULT_RANGE_ANGLE, DistanceSensor } from "./rangeSensor"
-import { SurfaceSensor } from "./surfaceSensor"
+import { GraySensor } from "./sensors/graySensor"
+import { LightSensor, LIGHT_MAX_RANGE, DEFAULT_LIGHT_ANGLE } from "./sensors/lightSensor"
+import { RangeSensor, MAX_RANGE, DEFAULT_RANGE_ANGLE, DistanceSensor } from "./sensors/rangeSensor"
+import { SurfaceSensor } from "./sensors/surfaceSensor"
+import { SpawnSpec } from "../../maps/mapSpec"
 
-export type SpawnSpec = { pos: Vec2Like; angle: number }
+export type { SpawnSpec }
 
-const MOUNT_SIDES: MountSide[] = ["left", "right"]
+const MOUNT_SIDES: readonly MountSide[] = ALL_MOUNT_SIDES
 
 export class Bot {
     public entity: Entity
     public paused = false
 
-    // Derived, not stored: true whenever the active mouse-drag joint is
-    // grabbing this bot's body. Avoids a stale flag that never gets reset.
     public get held(): boolean {
         const heldBody = this.sim.physics.mouseJoint?.getBodyB()
         return heldBody === this.entity.physicsObj.body
@@ -33,10 +35,7 @@ export class Bot {
     private rangeSensors = new Map<MountSide, DistanceSensor>()
     private activeSensorMap: Record<string, SensorType> = {}
 
-    // Wire-level J-port -> physical-mount resolution. Set exactly once via
-    // setPortAssignment() (from the run's single `Butia.setMap()` call) — no
-    // code path re-invokes or mutates this after arm time (see spec's
-    // "Port assignment set once, at arm time" requirement).
+    // set exactly once at arm time via setPortAssignment(); never mutated after
     private portAssignment: Partial<Record<ConnectorSlot, MountSide>> = {}
 
     public get pos(): Vec2Like { return this.entity.physicsObj.pos }
@@ -50,8 +49,7 @@ export class Bot {
         },
         spawn: SpawnSpec,
         public spec: BotSpec,
-        sensorModes: Partial<Record<MountSide, "forward" | "surface">> = {},
-        showLightCone: boolean = false
+        sensorSettings: SensorSettings = {}
     ) {
         const chassisShape = Chassis.makeShapeSpec(spec)
         const wheelShapes = spec.wheels.map(ws => Wheel.makeShapeSpec(spec, ws))
@@ -65,33 +63,50 @@ export class Bot {
         }
         this.entity = sim.createEntity(entitySpec)
 
+        const logoSprite = Pixi.Sprite.from("assets/logo.png")
+        logoSprite.anchor.set(0.5)
+        const targetWidthCm = Chassis.footprintWidth(spec) * 0.65
+        const targetWidthPx = toRenderScale(targetWidthCm)
+        const scale = targetWidthPx / logoSprite.texture.width
+        logoSprite.scale.set(scale)
+        logoSprite.zIndex = 3 // above chassis (zIndex 2), below sonar visuals (5-6)
+        this.entity.renderObj.addShape("logo", logoSprite)
+
         this.chassis = new Chassis(this, spec.chassis)
         for (const ws of spec.wheels) {
             this.wheels.set(ws.name, new Wheel(this, ws))
         }
 
-        // Pre-create sensors for each physical mount (left, right) — exactly
-        // 2 sets, replacing the old 5-connector loop.
         for (const side of MOUNT_SIDES) {
             const mount = spec.sensorMounts[side]
-            this.graySensors.set(side, new GraySensor(
-                this,
-                { pos: mount.pos, name: side }
-            ))
+            const cfg = sensorSettings[side]
+            const mode = cfg?.mode ?? "surface" // unconfigured mount defaults to surface
+            const effectiveFacingDeg = (mount.facingDeg ?? 0) + (mode === "forward" ? (cfg?.direction ?? 0) : 0)
+            const lightAngle = cfg?.angle ?? DEFAULT_LIGHT_ANGLE
+            const rangeAngle = cfg?.angle ?? DEFAULT_RANGE_ANGLE
+            const lightMaxRange = cfg?.range ?? LIGHT_MAX_RANGE
+            const rangeMaxRange = cfg?.range ?? MAX_RANGE
+            const showCone = mode === "forward"
+
+            if (mode === "surface") {
+                this.graySensors.set(side, new GraySensor(
+                    this,
+                    { pos: mount.pos, name: side, facingDeg: mount.facingDeg }
+                ))
+            }
             this.lightSensors.set(side, new LightSensor(
                 this,
-                { pos: mount.pos, name: side, angle: DEFAULT_LIGHT_ANGLE, maxRange: LIGHT_MAX_RANGE },
-                showLightCone
+                { pos: mount.pos, name: side, angle: lightAngle, maxRange: lightMaxRange, facingDeg: effectiveFacingDeg },
+                showCone
             ))
-            const mode = sensorModes[side] ?? "forward"
             this.rangeSensors.set(side, mode === "surface"
                 ? new SurfaceSensor(
                     this,
-                    { pos: mount.pos, name: side }
+                    { pos: mount.pos, name: side, facingDeg: mount.facingDeg }
                 )
                 : new RangeSensor(
                     this,
-                    { pos: mount.pos, name: side, angle: DEFAULT_RANGE_ANGLE, maxRange: MAX_RANGE }
+                    { pos: mount.pos, name: side, angle: rangeAngle, maxRange: rangeMaxRange, facingDeg: effectiveFacingDeg }
                 ))
         }
     }
@@ -105,11 +120,13 @@ export class Bot {
         this.activeSensorMap = { ...map }
     }
 
-    // Resolves which J-port is wired to the `left`/`right` physical mount for
-    // the run. MUST be called exactly once (at arm time, from the run's
-    // single `Butia.setMap()` call) — no live/mid-run reassignment.
-    public setPortAssignment(left: ConnectorSlot, right: ConnectorSlot): void {
-        this.portAssignment = { [left]: "left", [right]: "right" }
+    public setPortAssignment(assignment: Partial<Record<MountSide, ConnectorSlot>>): void {
+        const inverted: Partial<Record<ConnectorSlot, MountSide>> = {}
+        for (const side of Object.keys(assignment) as MountSide[]) {
+            const slot = assignment[side]
+            if (slot) inverted[slot] = side
+        }
+        this.portAssignment = inverted
     }
 
     public readSensors(): Record<string, number> {

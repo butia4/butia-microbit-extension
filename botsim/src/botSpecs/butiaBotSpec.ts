@@ -1,27 +1,30 @@
 import { BotSpec, toWheels } from "./botSpec"
 
-// Placeholder dimensions — update when Butia v4 schematic is confirmed
+export const BUTIA_CHASSIS_COLORS = { fill: "#C3E8A8", border: "#555555" } as const
+
+// Placeholder dimensions; geometry is scaled 0.8x from the original 10cm-side chassis.
 export const BUTIA_BOT_SPEC: BotSpec = {
     name: "Butia",
     mass: 500, // grams
     chassis: {
         shape: "square",
-        side: 10,        // cm
-        cornerRadius: 1.2, // cm
+        side: 8,          // cm
+        cornerRadius: 0.96, // cm
     },
     wheels: toWheels({
-        separation: 10,  // cm between inner wheel edges — placeholder
-        diameter: 4,    // cm
-        width: 1.2,     // cm
-        y: 2,           // offset toward rear
-        // Simulator-only speed cap — the requested speed (0-100 from blocks,
-        // though nothing stops a higher value) is used as-is up to this
-        // ceiling, then clamped. E.g. requesting 22 drives at 22; requesting
-        // 26 drives at 25. Hardware is unaffected; this only clamps physics.
-        maxSpeed: 25,
+        separation: 8,   // cm between inner wheel edges — placeholder
+        diameter: 3.2,  // cm
+        width: 0.96,    // cm
+        y: 1.6,         // offset toward rear
+        maxSpeed: 25, // sim-only speed clamp; hardware unaffected
     }),
+    // facingDeg: 0=front(-y), clockwise-positive (Vec2.rotateDeg convention)
     sensorMounts: {
-        left:  { pos: { x: -3, y: -5 } },
-        right: { pos: { x:  3, y: -5 } },
+        frontLeft:  { pos: { x: -2.4, y: -4   }, facingDeg: 0 },
+        frontRight: { pos: { x:  2.4, y: -4   }, facingDeg: 0 },
+        sideLeft:   { pos: { x: -4,   y: -1.6 }, facingDeg: -90 },
+        sideRight:  { pos: { x:  4,   y: -1.6 }, facingDeg: 90 },
+        rearLeft:   { pos: { x: -2.4, y:  4   }, facingDeg: 180 },
+        rearRight:  { pos: { x:  2.4, y:  4   }, facingDeg: 180 },
     },
 }

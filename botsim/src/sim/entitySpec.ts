@@ -1,4 +1,4 @@
-import { Vec2Like } from "../types/vec2"
+import { Vec2Like } from "../shared/types/vec2"
 
 // --- Shape types ---
 
@@ -69,10 +69,8 @@ export type ColorBrushSpec = {
     borderColor: string
     borderWidth: number
     fillColor: string
-    // Circle-only: renders as a radial gradient fading from fillColor to
-    // transparent instead of a flat fill, with no border — used for glow/halo
-    // effects (e.g. the light-source map's light bulb).
-    glow?: boolean
+    glow?: boolean // circle-only: radial-gradient halo instead of flat fill
+    cornerRadius?: number // polygon-only: draw a rounded rect instead of tracing verts
 }
 
 export type TextureBrushSpec = {

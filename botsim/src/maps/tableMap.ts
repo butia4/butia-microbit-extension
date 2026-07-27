@@ -1,6 +1,6 @@
 import { MapSpec } from "./mapSpec"
 import { defaultShapePhysics, defaultColorBrush } from "../sim/entitySpec"
-import { MAP_ASPECT_RATIO } from "../constants"
+import { MAP_ASPECT_RATIO } from "../shared/constants"
 
 const ARENA = 90   // cm
 const CENTER_X = ARENA / 2
@@ -18,9 +18,15 @@ export const TABLE_MAP: MapSpec = {
     spawns: [
         { pos: { x: CENTER_X, y: CENTER_Y }, angle: 0 },
     ],
+    defaultPinAssignment: {
+        frontLeft: "J1",
+        frontRight: "J2",
+    },
+    defaultSensorSettings: {
+        frontLeft: { mode: "surface" },
+        frontRight: { mode: "surface" },
+    },
     entities: [
-        // Tabletop — sensor-only (never a physical collider), so the robot
-        // can drive off the edge and be detected losing the surface signal.
         {
             label: "table-surface",
             pos: { x: CENTER_X, y: CENTER_Y },
@@ -39,5 +45,4 @@ export const TABLE_MAP: MapSpec = {
             }],
         },
     ],
-    sensorModes: { left: "surface", right: "surface" },
 }

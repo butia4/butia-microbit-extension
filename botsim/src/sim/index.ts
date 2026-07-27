@@ -1,9 +1,10 @@
-import Physics from "./physics"
-import Renderer from "./renderer"
+import Physics from "./physics/physics"
+import Renderer from "./rendering/renderer"
 import { Entity } from "./entity"
 import { EntitySpec, defaultStaticPhysics, defaultShapePhysics, defaultColorBrush } from "./entitySpec"
 import { MapSpec } from "../maps/mapSpec"
-import { BotSpec, ConnectorSlot } from "../botSpecs/botSpec"
+import { BotSpec, ConnectorSlot, MountSide } from "../botSpecs/botSpec"
+import { SensorSettings } from "../botSpecs/sensorSettings.model"
 import { Bot, SpawnSpec } from "./bot"
 import { InputController } from "./inputController"
 
@@ -16,12 +17,9 @@ export class Simulation {
     private _entities: Entity[] = []
     private _bot: Bot | null = null
     private _map: MapSpec | null = null
-    // Persists the last-known left/right port assignment across a mid-run
-    // reset() (new state.id): the run keeps the SAME assignment it armed
-    // with, it is not re-negotiated. This is about surviving a reset, not
-    // enabling live reassignment — reset() reuses these, it never accepts
-    // new ones.
-    private _lastPorts: { left: ConnectorSlot; right: ConnectorSlot } | null = null
+    // survives reset() with the same assignment it armed with; not re-negotiated mid-run
+    private _lastPorts: Partial<Record<MountSide, ConnectorSlot>> | null = null
+    private _lastSensorSettings: SensorSettings | null = null
     private lastTime = 0
     private lastPhysicsTime = 0
     private input: InputController
@@ -29,10 +27,7 @@ export class Simulation {
     public get physics() { return this._physics }
     public get renderer() { return this._renderer }
     public get bot(): Bot | null { return this._bot }
-    // Resolves once the Pixi renderer has finished its async init (Pixi v8
-    // requires `await app.init(...)` before the stage/canvas exist). Callers
-    // that touch the renderer (loadMap, spawnBot, mountTo, ...) must await
-    // this before doing so.
+    // callers touching the renderer must await this (Pixi v8 async init)
     public readonly ready: Promise<void>
 
     private constructor() {
@@ -98,32 +93,30 @@ export class Simulation {
         }
     }
 
-    public spawnBot(spec: BotSpec, spawn?: SpawnSpec, leftPort?: ConnectorSlot, rightPort?: ConnectorSlot): Bot {
+    public spawnBot(
+        spec: BotSpec,
+        spawn?: SpawnSpec,
+        portAssignment?: Partial<Record<MountSide, ConnectorSlot>>,
+        sensorSettings?: SensorSettings
+    ): Bot {
         if (this._bot) {
             this._bot.destroy()
             this._bot = null
         }
         const spawnPt = spawn ?? (this._map?.spawns[0] ?? { pos: { x: 45, y: 45 }, angle: 0 })
-        this._bot = new Bot(this, spawnPt, spec, this._map?.sensorModes ?? {}, this._map?.showLightCone ?? false)
-        if (leftPort && rightPort) {
-            this._lastPorts = { left: leftPort, right: rightPort }
+        if (sensorSettings) {
+            this._lastSensorSettings = sensorSettings
+        }
+        this._bot = new Bot(this, spawnPt, spec, this._lastSensorSettings ?? {})
+        if (portAssignment) {
+            this._lastPorts = portAssignment
         }
         if (this._lastPorts) {
-            this._bot.setPortAssignment(this._lastPorts.left, this._lastPorts.right)
+            this._bot.setPortAssignment(this._lastPorts)
         }
-        // Planck only populates Fixture contacts (used by GraySensor/
-        // LightSensor/SurfaceSensor's overlap detection) after at least one
-        // world.step() — without this, the very first readSensors() call
-        // right after a (re)spawn sees every contact-based sensor as
-        // "disconnected" (MAX_RANGE/0), even when the robot is already
-        // spawned on top of e.g. the table surface. A zero-duration step
-        // runs collision detection without advancing time/position, so
-        // contacts settle before any sensor is ever read. This mattered in
-        // practice: the extension's onDistance handlers can call motor
-        // blocks with an explicit duration, which block its polling fiber
-        // for that whole duration — so a single spurious "disconnected"
-        // read right after spawn could lock in a wrong-direction move for
-        // seconds instead of self-correcting on the next poll.
+        // zero-duration step: Planck only populates Fixture contacts after one
+        // world.step(), else the first readSensors() right after spawn sees every
+        // contact-based sensor as disconnected
         this._physics.update(0)
         return this._bot
     }
@@ -181,14 +174,6 @@ export class Simulation {
         this._renderer.mountTo(container)
     }
 
-    // -------------------------------------------------------------------
-    // Mouse drag-and-drop — delegates canvas-to-sim conversion, drag state,
-    // and cursor feedback to InputController (see ./inputController.ts).
-    // -------------------------------------------------------------------
-
-    // Kept as a forwarding accessor so existing internals (and tests that
-    // introspect Simulation's private state) can keep reading the last
-    // known mouse position without depending on InputController directly.
     private get _lastMousePos(): { x: number; y: number } { return this.input.lastMousePos }
     private set _lastMousePos(pos: { x: number; y: number }) { this.input.lastMousePos = pos }
 
@@ -205,11 +190,7 @@ export class Simulation {
     }
 
     private updateCursor(): void {
-        // Exercises the `_lastMousePos` forwarding accessor above so it
-        // counts as "read" for tsc's noUnusedLocals — it exists purely for
-        // backward-compat introspection (tests read/write it directly),
-        // the actual cursor logic lives in InputController.
-        void this._lastMousePos
+        void this._lastMousePos // keeps the forwarding accessor "read" for noUnusedLocals
         this.input.updateCursor()
     }
 }

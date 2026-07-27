@@ -1,26 +1,20 @@
-import { Vec2Like } from "../types/vec2"
+import { Vec2Like } from "../shared/types/vec2"
+import { MountSide } from "./mountSide"
 
-// Wire-level slot naming (J1-J5) — what a student's `Butia.setMap()` call
-// wires up. Fully decoupled from the physical mount naming below (MountSide):
-// a run maps exactly 2 of these J-ports onto the bot's `left`/`right` mounts.
-export type ConnectorSlot = "J1" | "J2" | "J3" | "J4" | "J5"
-
-// Physical sensor mount naming — the bot has exactly 2 fixed physical mount
-// positions, both on the chassis front face. Replaces the old 5-connector
-// (J1-J5) physical model; J-port naming now lives purely at the wire/protocol
-// level (see ConnectorSlot) and is resolved to a MountSide via
-// Bot.portAssignment.
-export type MountSide = "left" | "right"
+export * from "./mountSide"
+export * from "./connectorSlot"
 
 export type MountSpec = {
-    pos: Vec2Like   // offset from chassis center, cm
+    pos: Vec2Like       // offset from chassis center, cm
+    facingDeg?: number  // heading offset from bot forward, degrees, clockwise-positive; default 0 (front)
 }
 
 export type MountSensorSpec = {
     name: MountSide
     pos: Vec2Like   // offset from chassis center, cm
-    angle?: number      // beam/facing orientation, degrees; undefined = sensor-type default, beam is ALWAYS rendered
+    angle?: number      // beam/facing SPREAD width, degrees; undefined = sensor-type default, beam is ALWAYS rendered
     maxRange?: number   // visual beam length, cm; unused by gray/color/surface (they use a fixed constant)
+    facingDeg?: number  // heading offset from bot forward, degrees, clockwise-positive; default 0 (front)
 }
 
 export type CircleChassisSpec = {
@@ -59,7 +53,7 @@ export type BotSpec = {
     mass: number
     chassis: ChassisSpec
     wheels: WheelSpec[]
-    sensorMounts: { left: MountSpec; right: MountSpec }
+    sensorMounts: Record<MountSide, MountSpec>
 }
 
 export type RangeSensorSpec = MountSensorSpec & {

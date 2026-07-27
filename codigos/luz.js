@@ -6,4 +6,4 @@ Butia.onLight(Butia.J1, Comparison.Greater, 20, 1, function () {
     Butia.turn(TurnDirection.Left, 10, 0.5)
     Butia.moveForward(20, 0.5)
 })
-Butia.setMap(SimMap.Luz, Butia.J1, Butia.J2)
+Butia.setMap(SimMap.Luz)

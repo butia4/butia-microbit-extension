@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <g fill="none" stroke="#86BE27" stroke-linecap="round">
+    <!-- main ring -->
+    <circle cx="100" cy="100" r="63" stroke-width="18"/>
+
+    <!-- 4 corner accent arcs -->
+    <path d="M 177.96 139.72 A 87.5 87.5 0 0 1 139.72 177.96" stroke-width="9"/>
+    <path d="M 60.28 177.96 A 87.5 87.5 0 0 1 22.04 139.72" stroke-width="9"/>
+    <path d="M 22.04 60.28 A 87.5 87.5 0 0 1 60.28 22.04" stroke-width="9"/>
+    <path d="M 139.72 22.04 A 87.5 87.5 0 0 1 177.96 60.28" stroke-width="9"/>
+  </g>
+
+  <!-- center X -->
+  <g fill="#86BE27">
+    <rect x="53" y="91" width="94" height="18" rx="9" transform="rotate(45 100 100)"/>
+    <rect x="53" y="91" width="94" height="18" rx="9" transform="rotate(-45 100 100)"/>
+  </g>
+</svg>

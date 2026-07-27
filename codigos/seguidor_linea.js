@@ -10,5 +10,5 @@ Butia.onGray(Butia.J1, Comparison.GreaterOrEqual, 17, 2, function () {
 Butia.onGray(Butia.J2, Comparison.GreaterOrEqual, 17, 2, function () {
     Butia.turn(TurnDirection.Right, 10, 0.5)
 })
-Butia.setMap(SimMap.SeguidorDeLinea, Butia.J1, Butia.J2)
+Butia.setMap(SimMap.SeguidorDeLinea)
 

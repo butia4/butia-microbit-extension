@@ -1,17 +1,15 @@
-import { Vec2 } from "../../types/vec2"
+import { Vec2 } from "../../shared/types/vec2"
 import { WheelSpec } from "../../botSpecs/botSpec"
 import { defaultEntityShape, defaultBoxShape, defaultShapePhysics, defaultColorBrush, EntityShapeSpec } from "../entitySpec"
-import { FrictionJointHandle } from "../physics"
+import { FrictionJointHandle } from "../physics/physics"
 import { BotHandle } from "./botHandle"
 
-// Shared with Chassis.makeShapeSpec so chassis density can subtract the
-// wheels' contribution to the composite body's total mass — otherwise the
-// two fixture densities drift and the body ends up heavier than spec.mass.
+// shared with Chassis.makeShapeSpec so chassis density can subtract wheels' contribution
 export const WHEEL_DENSITY = 10
 
 export class Wheel {
     private currSpeed = 0
-    private localPos: import("../../types/vec2").Vec2Like
+    private localPos: import("../../shared/types/vec2").Vec2Like
     private frictionJoint: FrictionJointHandle | undefined
     private frictionJointStrength = { maxForce: 0, maxTorque: 0 }
     private wasHeld = false
@@ -45,10 +43,6 @@ export class Wheel {
     }
 
     public update(dtSecs: number): void {
-        // Keep the wheel-ground FrictionJoint's resistance in sync with the
-        // held state on every frame (including the grab/release transition
-        // frames), since it's a persistent constraint that keeps applying
-        // even while the early return below skips manual force application.
         if (this.bot.held !== this.wasHeld) {
             this.wasHeld = this.bot.held
             if (this.frictionJoint) {

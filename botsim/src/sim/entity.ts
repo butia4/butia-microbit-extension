@@ -1,6 +1,6 @@
-import { Vec2Like } from "../types/vec2"
-import { RenderObject } from "./renderer"
-import { PhysicsObject } from "./physics"
+import { Vec2Like } from "../shared/types/vec2"
+import { RenderObject } from "./rendering/renderer"
+import { PhysicsObject } from "./physics/physics"
 
 export class Entity {
     private _renderObj!: RenderObject

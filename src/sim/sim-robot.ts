@@ -32,7 +32,7 @@ function _butiaSimInit(getSensorTypes: () => { [connName: string]: string }): vo
             const msg = buildButiaStateMessage(SimState.motorLeft, SimState.motorRight, SimState.sensorTypeMap, SimState.runId);
             _butiaSimSend(msg);
             if (SimState.selectedMapId !== 0) {
-                _butiaSimSend(buildButiaMapSelectMessage(SimState.selectedMapId, SimState.selectedLeftPort, SimState.selectedRightPort));
+                _butiaSimSend(buildButiaMapSelectMessage(SimState.selectedMapId));
             }
             basic.pause(50);
         }
