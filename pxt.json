@@ -30,6 +30,7 @@
         "src/types/components.d.ts",
         "src/types/enums.d.ts",
         "src/types/robot.d.ts",
+        "tutorials/primeros-pasos.md",
         "README.md"
     ],
     "testFiles": [
