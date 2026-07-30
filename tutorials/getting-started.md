@@ -7,8 +7,7 @@ atrás, detenerlo y girar. ¡Vamos!
 
 ## Avanzar
 
-Agregá un bloque `||Butia:Avanzar a velocidad||` para que el robot avance.
-La velocidad va de 0 a 100.
+Agregá un bloque `||Butia:Avanzar a velocidad||` en `||basic:on start||` y elegí una velocidad de 0 a 100 para que el robot avance.
 
 ```blocks
 // @highlight
@@ -17,7 +16,8 @@ Butia.moveForward(60)
 
 ## Detener motores
 
-Esperá un segundo y usá `||Butia:Detener Motores||` para frenar el robot.
+A continuación, agregá el bloque `||basic:pause||` con 1 segundo y usá
+`||Butia:Detener Motores||` para frenar el robot.
 
 ```blocks
 Butia.moveForward(60)
@@ -28,8 +28,7 @@ Butia.motorStop()
 
 ## Retroceder
 
-Agregá un bloque `||Butia:Retroceder a velocidad||` para que el robot vaya
-hacia atrás.
+Agregá un bloque `||Butia:Retroceder a velocidad||` y elegí la velocidad para que el robot vaya hacia atrás.
 
 ```blocks
 Butia.moveForward(60)
@@ -76,5 +75,4 @@ Butia.turn(TurnDirection.Right, 40, 0.5)
 ## ¡A programar! @showdialog
 
 Ya sabés lo básico para mover a Butia: avanzar, retroceder, detenerse y
-girar. Probá combinar estos bloques para armar una coreografía o un
-recorrido propio. ¡Éxitos!
+girar. Probá combinar estos bloques para armar un recorrido propio. ¡Éxitos!
