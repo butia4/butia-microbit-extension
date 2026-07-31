@@ -9,6 +9,7 @@ namespace Butia {
         private _distances: {pin:AnalogPin | DigitalPin, sensor: IDistanceSensor}[];
         private _buttons: {pin:AnalogPin | DigitalPin, sensor: IButtonSensor}[];
         private _generics: {pin:AnalogPin | DigitalPin, sensor: IGenericSensor}[];
+        private _servos: {pin: AnalogPin | DigitalPin, servo: IServoDriver}[];
         private _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
@@ -26,6 +27,7 @@ namespace Butia {
             this._distances = [];
             this._buttons = [];
             this._generics = [];
+            this._servos = [];
             this._motorLeft = 0;
             this._motorRight = 0;
             this._pinUsage = [];
@@ -73,6 +75,7 @@ namespace Butia {
         protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor { return new DistanceSensor(pin); }
         protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor { return new ButtonSensor(pin as DigitalPin); }
         protected _newGenericSensor(name: number, pin: AnalogPin | DigitalPin): IGenericSensor { return new GenericSensor( pin,name); }
+        protected _newServoDriver(name: number, pin: AnalogPin | DigitalPin): IServoDriver { return new ServoDriver(pin, name); }
 
         private _getLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
             for (const entry of this._lights) {
@@ -122,6 +125,16 @@ namespace Butia {
             const sensor = this._newGenericSensor(name, pin);
             this._generics.push({ pin, sensor });
             return sensor;
+        }
+
+        private _getServoDriver(pin: AnalogPin | DigitalPin, name: number): IServoDriver {
+            for (const entry of this._servos) {
+                if (entry.pin === pin) return entry.servo;
+            }
+            this._claimPin(pin, "servo");
+            const servo = this._newServoDriver(name, pin);
+            this._servos.push({ pin, servo });
+            return servo;
         }
 
         private _setMotorSpeed(left: number, right: number): void {
@@ -191,6 +204,31 @@ namespace Butia {
         readGenericSensor(connector: IConnector, name: number): number {
             const s = this._getGenericSensor(this._resolvePin(connector),name);
             return s.read();
+        }
+
+        // --- Servos ---
+        servoSetAngle(connector: IConnector, name: number, degrees: number): void {
+            this._getServoDriver(this._resolvePin(connector), name).setAngle(degrees);
+        }
+
+        servoRun(connector: IConnector, name: number, speed: number): void {
+            this._getServoDriver(this._resolvePin(connector), name).run(speed);
+        }
+
+        servoStop(connector: IConnector, name: number): void {
+            this._getServoDriver(this._resolvePin(connector), name).stop();
+        }
+
+        servoSetPulse(connector: IConnector, name: number, micros: number): void {
+            this._getServoDriver(this._resolvePin(connector), name).setPulse(micros);
+        }
+
+        servoSetRange(connector: IConnector, name: number, minAngle: number, maxAngle: number): void {
+            this._getServoDriver(this._resolvePin(connector), name).setRange(minAngle, maxAngle);
+        }
+
+        servoSetStopOnNeutral(connector: IConnector, name: number, enabled: boolean): void {
+            this._getServoDriver(this._resolvePin(connector), name).setStopOnNeutral(enabled);
         }
 
         // --- Events ---
