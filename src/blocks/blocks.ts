@@ -1,66 +1,66 @@
 //% color="#84c324" icon="\uf057"
-//% groups="['Sensores', 'Motores', 'Simulador']"
+//% groups="['Sensors', 'Motors', 'Simulator']"
 namespace Butia {
 
 
     //% blockId="butia_imp_move_forward"
-    //% block="Avanzar a velocidad %speed || durante %duration segundos"
+    //% block="move forward at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
     //% duration.defl=0
     //% weight=100
-    //% group="Motores"
+    //% group="Motors"
     export function moveForward(speed: number, duration?: number): void {
         const ms = duration ? duration * 1000 : 0;
         Butia.RobotDriver.getCurrentRobot().moveForward(speed, ms);
     }
 
     //% blockId="butia_imp_move_backward"
-    //% block="Retroceder a velocidad %speed || durante %duration segundos"
+    //% block="move backward at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
     //% duration.defl=0
     //% weight=95
-    //% group="Motores"
+    //% group="Motors"
     export function moveBackward(speed: number, duration?: number): void {
         const ms = duration ? duration * 1000 : 0;
         Butia.RobotDriver.getCurrentRobot().moveBackward(speed, ms);
     }
 
     //% blockId="butia_imp_turn"
-    //% block="Girar hacia %direction a velocidad %speed || durante %duration segundos"
+    //% block="turn %direction at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=40
     //% duration.min=0
     //% duration.defl=0
     //% weight=90
-    //% group="Motores"
+    //% group="Motors"
     export function turn(direction: TurnDirection, speed: number, duration?: number): void {
         const ms = duration ? duration * 1000 : undefined;
         Butia.RobotDriver.getCurrentRobot().turn(direction, speed, ms);
     }
 
     //% blockId="butia_imp_motor_tank"
-    //% block="Motor Izquierdo %left Derecho %right"
+    //% block="motor left %left right %right"
     //% left.min=-100 left.max=100 left.defl=70
     //% right.min=-100 right.max=100 right.defl=70
     //% weight=85
-    //% group="Motores"
+    //% group="Motors"
     export function motorTank(left: number, right: number): void {
         Butia.RobotDriver.getCurrentRobot().motorTank(left, right);
     }
 
     //% blockId="butia_imp_stop"
-    //% block="Detener Motores"
+    //% block="stop motors"
     //% weight=80
-    //% group="Motores"
+    //% group="Motors"
     export function motorStop(): void {
         Butia.RobotDriver.getCurrentRobot().motorStop();
     }
 
     //% blockId="butia_imp_stop_single"
-    //% block="Detener Motor %motor"
+    //% block="stop motor %motor"
     //% weight=79
-    //% group="Motores"
+    //% group="Motors"
     export function motorStopSingle(motor: MotorSide): void {
         if (motor === MotorSide.Left) {
             Butia.RobotDriver.getCurrentRobot().motorTank(0, Butia.RobotDriver.getCurrentRobot().motorRight());
@@ -70,59 +70,59 @@ namespace Butia {
     }
 
     //% blockId="butia_imp_read_gray"
-    //% block="Sensor de grises en %connector"
+    //% block="gray sensor on %connector"
     //% weight=70
-    //% group="Sensores"
+    //% group="Sensors"
     export function readGraySensor(connector: Butia.Connector): number {
         return Butia.RobotDriver.getCurrentRobot().readGraySensor(connector);
     }
 
     //% blockId="butia_imp_read_light"
-    //% block="Sensor de luz en %connector"
+    //% block="light sensor on %connector"
     //% weight=69
-    //% group="Sensores"
+    //% group="Sensors"
     export function readLightSensor(connector: Butia.Connector): number {
         return Butia.RobotDriver.getCurrentRobot().readLightSensor(connector);
     }
 
     //% blockId="butia_imp_distance"
-    //% block="Sensor de distancia en %connector"
+    //% block="distance sensor on %connector"
     //% weight=69
-    //% group="Sensores"
+    //% group="Sensors"
     export function obstacleDistance(connector: Butia.Connector): number {
         return Butia.RobotDriver.getCurrentRobot().readDistanceSensor(connector);
     }
 
     //% blockId="butia_imp_read_button"
-    //% block="Botón en %connector presionado"
+    //% block="button on %connector pressed"
     //% weight=68
-    //% group="Sensores"
+    //% group="Sensors"
     export function readButton(connector: Butia.Connector): boolean {
         return Butia.RobotDriver.getCurrentRobot().readButton(connector);
     }
     //% shim=ENUM_GET
     //% blockId=sensor_enum_shim
     //% blockHidden=true
-    //% block="Sensor $arg"
+    //% block="sensor $arg"
     //% enumName="SensorName"
     //% enumMemberName="sensor"
-    //% enumPromptHint="Ej: Humedad"
-    //% enumInitialMembers="Humedad,presión,sonido"
-    //% group="Sensores Genericos"
+    //% enumPromptHint="eg: Humidity"
+    //% enumInitialMembers="Humidity,Pressure,Sound"
+    //% group="Generic Sensors"
     export function _sensorEnumShim(arg: number) {
         return arg;
     }
     //% blockId="butia_imp_read_generic"
-    //% block="Sensor de $sensorName en $connector"
+    //% block="$sensorName sensor on $connector"
     //% sensorName.shadow="sensor_enum_shim"
     //% weight=67
-    //% group="Sensores Genericos"
+    //% group="Generic Sensors"
     export function readGenericSensor(sensorName: number, connector: Butia.Connector): number {
         return Butia.RobotDriver.getCurrentRobot().readGenericSensor(connector, sensorName);
     }
     
     //% blockId="butia_evt_distance"
-    //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm con prioridad %priority"
+    //% block="when distance sensor on %connector is %op %threshold cm with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=65
@@ -138,7 +138,7 @@ namespace Butia {
     }
 
     //% blockId="butia_evt_light"
-    //% block="Cuando el sensor de luz en %connector sea %op %threshold con prioridad %priority"
+    //% block="when light sensor on %connector is %op %threshold with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=60
@@ -154,7 +154,7 @@ namespace Butia {
     }
 
     //% blockId="butia_evt_gray"
-    //% block="Cuando el sensor de grises en %connector sea %op %threshold con prioridad %priority"
+    //% block="when gray sensor on %connector is %op %threshold with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=55
@@ -170,13 +170,13 @@ namespace Butia {
     }
 
     //% blockId="butia_evt_button"
-    //% block="Cuando se %state el botón en %connector con prioridad %priority"
+    //% block="when button on %connector is %state with priority %priority"
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=70
     //% advanced=true
     export function onButton(
-        state: ButtonState,
         connector: Butia.Connector,
+        state: ButtonState,
         priority: number,
         handler: () => void
     ): void {
@@ -184,9 +184,9 @@ namespace Butia {
     }
 
     //% blockId="butia_sim_set_map"
-    //% block="usar mapa %map"
+    //% block="use map %map"
     //% weight=50
-    //% group="Simulador"
+    //% group="Simulator"
     export function setMap(map: SimMap): void {
         _butiaSimSelectMap(map);
     }
