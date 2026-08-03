@@ -20,6 +20,7 @@
         "src/hardware/gpio-motor-driver.ts",
         "src/hardware/gray-sensor-butia.ts",
         "src/hardware/light-sensor-butia.ts",
+        "src/hardware/servo-driver-butia.ts",
         "src/main.ts",
         "src/robotdriver.ts",
         "src/sim/sim-map.ts",
@@ -39,6 +40,7 @@
         "test/mock.test.ts",
         "test/robot.test.ts",
         "test/sensor.test.ts",
+        "test/servo.test.ts",
         "test/sim-bridge.test.ts"
     ],
     "targetVersions": {
