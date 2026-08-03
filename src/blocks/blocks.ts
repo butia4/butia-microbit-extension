@@ -1,5 +1,5 @@
 //% color="#84c324" icon="\uf057"
-//% groups="['Sensores', 'Motores', 'Simulador']"
+//% groups="['Sensores', 'Motores', 'Servos', 'Sensores Genericos', 'Simulador']"
 namespace Butia {
 
 
@@ -103,7 +103,7 @@ namespace Butia {
     //% shim=ENUM_GET
     //% blockId=sensor_enum_shim
     //% blockHidden=true
-    //% block="Sensor $arg"
+    //% block="$arg"
     //% enumName="SensorName"
     //% enumMemberName="sensor"
     //% enumPromptHint="Ej: Humedad"
@@ -121,6 +121,69 @@ namespace Butia {
         return Butia.RobotDriver.getCurrentRobot().readGenericSensor(connector, sensorName);
     }
     
+    //% shim=ENUM_GET
+    //% blockId=servo_enum_shim
+    //% blockHidden=true
+    //% block="$arg"
+    //% enumName="ServoName"
+    //% enumMemberName="servo"
+    //% enumPromptHint="Ej: Garra"
+    //% enumInitialMembers="Garra,Brazo,Cabeza"
+    //% group="Servos"
+    export function _servoEnumShim(arg: number): number {
+        return arg;
+    }
+
+    //% blockId="butia_servo_set_angle"
+    //% block="Servo $servoName en $connector fijar ángulo a $degrees °"
+    //% servoName.shadow="servo_enum_shim"
+    //% degrees.min=0 degrees.max=180 degrees.defl=90
+    //% weight=50
+    //% group="Servos"
+    export function servoSetAngle(servoName: number, connector: Butia.Connector, degrees: number): void {
+        Butia.RobotDriver.getCurrentRobot().servoSetAngle(connector, servoName, degrees);
+    }
+
+    //% blockId="butia_servo_run"
+    //% block="Servo continuo $servoName en $connector girar a velocidad $speed"
+    //% servoName.shadow="servo_enum_shim"
+    //% speed.min=-100 speed.max=100 speed.defl=50
+    //% weight=48
+    //% group="Servos"
+    export function servoRun(servoName: number, connector: Butia.Connector, speed: number): void {
+        Butia.RobotDriver.getCurrentRobot().servoRun(connector, servoName, speed);
+    }
+
+    //% blockId="butia_servo_stop"
+    //% block="Servo $servoName en $connector detener"
+    //% servoName.shadow="servo_enum_shim"
+    //% weight=46
+    //% group="Servos"
+    export function servoStop(servoName: number, connector: Butia.Connector): void {
+        Butia.RobotDriver.getCurrentRobot().servoStop(connector, servoName);
+    }
+
+    //% blockId="butia_servo_set_pulse"
+    //% block="Servo $servoName en $connector fijar pulso a $micros µs"
+    //% servoName.shadow="servo_enum_shim"
+    //% micros.min=500 micros.max=2500 micros.defl=1500
+    //% weight=44
+    //% group="Servos"
+    export function servoSetPulse(servoName: number, connector: Butia.Connector, micros: number): void {
+        Butia.RobotDriver.getCurrentRobot().servoSetPulse(connector, servoName, micros);
+    }
+
+
+    //% blockId="butia_servo_stop_on_neutral"
+    //% block="Servo $servoName en $connector detener en neutro $enabled"
+    //% servoName.shadow="servo_enum_shim"
+    //% enabled.defl=true
+    //% weight=40
+    //% group="Servos"
+    export function servoSetStopOnNeutral(servoName: number, connector: Butia.Connector, enabled: boolean): void {
+        Butia.RobotDriver.getCurrentRobot().servoSetStopOnNeutral(connector, servoName, enabled);
+    }
+
     //% blockId="butia_evt_distance"
     //% block="Cuando el sensor de distancia en %connector sea %op %threshold cm con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
