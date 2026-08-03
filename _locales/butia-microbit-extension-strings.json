@@ -6,7 +6,8 @@
   "Butia.J3|block": "J3",
   "Butia.J4|block": "J4",
   "Butia.J5|block": "J5",
-  "Butia._sensorEnumShim|block": "sensor $arg",
+  "Butia._sensorEnumShim|block": "$arg",
+  "Butia._servoEnumShim|block": "$arg",
   "Butia.motorStopSingle|block": "stop motor %motor",
   "Butia.motorStop|block": "stop motors",
   "Butia.motorTank|block": "motor left %left right %right",
@@ -21,6 +22,11 @@
   "Butia.readGenericSensor|block": "$sensorName sensor on $connector",
   "Butia.readGraySensor|block": "gray sensor on %connector",
   "Butia.readLightSensor|block": "light sensor on %connector",
+  "Butia.servoRun|block": "continuous servo $servoName on $connector run at speed $speed",
+  "Butia.servoSetAngle|block": "servo $servoName on $connector set angle to $degrees °",
+  "Butia.servoSetPulse|block": "servo $servoName on $connector set pulse to $micros µs",
+  "Butia.servoSetStopOnNeutral|block": "servo $servoName on $connector stop on neutral $enabled",
+  "Butia.servoStop|block": "servo $servoName on $connector stop",
   "Butia.setMap|block": "use map %map",
   "Butia.turn|block": "turn %direction at speed %speed || for %duration seconds",
   "ButtonState.Pressed|block": "pressed",
@@ -61,5 +67,6 @@
   "{id:group}Generic Sensors": "Generic Sensors",
   "{id:group}Motors": "Motors",
   "{id:group}Sensors": "Sensors",
+  "{id:group}Servos": "Servos",
   "{id:group}Simulator": "Simulator"
 }

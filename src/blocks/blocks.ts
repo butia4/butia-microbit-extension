@@ -127,15 +127,15 @@ namespace Butia {
     //% block="$arg"
     //% enumName="ServoName"
     //% enumMemberName="servo"
-    //% enumPromptHint="Ej: Garra"
-    //% enumInitialMembers="Garra,Brazo,Cabeza"
+    //% enumPromptHint="eg: Claw"
+    //% enumInitialMembers="Claw,Arm,Head"
     //% group="Servos"
     export function _servoEnumShim(arg: number): number {
         return arg;
     }
 
     //% blockId="butia_servo_set_angle"
-    //% block="Servo $servoName en $connector fijar ángulo a $degrees °"
+    //% block="servo $servoName on $connector set angle to $degrees °"
     //% servoName.shadow="servo_enum_shim"
     //% degrees.min=0 degrees.max=180 degrees.defl=90
     //% weight=50
@@ -145,7 +145,7 @@ namespace Butia {
     }
 
     //% blockId="butia_servo_run"
-    //% block="Servo continuo $servoName en $connector girar a velocidad $speed"
+    //% block="continuous servo $servoName on $connector run at speed $speed"
     //% servoName.shadow="servo_enum_shim"
     //% speed.min=-100 speed.max=100 speed.defl=50
     //% weight=48
@@ -155,7 +155,7 @@ namespace Butia {
     }
 
     //% blockId="butia_servo_stop"
-    //% block="Servo $servoName en $connector detener"
+    //% block="servo $servoName on $connector stop"
     //% servoName.shadow="servo_enum_shim"
     //% weight=46
     //% group="Servos"
@@ -164,7 +164,7 @@ namespace Butia {
     }
 
     //% blockId="butia_servo_set_pulse"
-    //% block="Servo $servoName en $connector fijar pulso a $micros µs"
+    //% block="servo $servoName on $connector set pulse to $micros µs"
     //% servoName.shadow="servo_enum_shim"
     //% micros.min=500 micros.max=2500 micros.defl=1500
     //% weight=44
@@ -175,7 +175,7 @@ namespace Butia {
 
 
     //% blockId="butia_servo_stop_on_neutral"
-    //% block="Servo $servoName en $connector detener en neutro $enabled"
+    //% block="servo $servoName on $connector stop on neutral $enabled"
     //% servoName.shadow="servo_enum_shim"
     //% enabled.defl=true
     //% weight=40
