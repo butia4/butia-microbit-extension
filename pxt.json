@@ -31,7 +31,8 @@
         "src/types/components.d.ts",
         "src/types/enums.d.ts",
         "src/types/robot.d.ts",
-        "README.md"
+        "README.md",
+        "_locales/es/butia-microbit-extension-strings.json"
     ],
     "testFiles": [
         "test/_mocks.ts",
