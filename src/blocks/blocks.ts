@@ -211,7 +211,7 @@ namespace Butia {
     //% weight=50
     //% group="Simulator"
     export function setMap(map: SimMap): void {
-        _butiaSimSelectMap(map);
+        _simSelectMap(map);
     }
 
 }

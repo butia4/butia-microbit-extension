@@ -21,7 +21,7 @@ namespace Butia {
     class ButiaRobot extends RobotBase {
         constructor() {
             super(
-                new GPIOMotorDriver(
+                new GpioMotorDriver(
                     [DigitalPin.P13, DigitalPin.P14],
                     [DigitalPin.P15, DigitalPin.P16]
                 ),

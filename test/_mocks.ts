@@ -2,7 +2,7 @@
 // files in npm run sync — guarantees class declarations are available
 // when the other test files are compiled.
 
-class MockMotorDriver implements IMotorDriver {
+class MockMotorDriver implements Butia.IMotorDriver {
     left: number;
     right: number;
     constructor() { this.left = 0; this.right = 0; }
@@ -13,7 +13,7 @@ class MockMotorDriver implements IMotorDriver {
 
 // Single mock sensor type for all four sensor flavors. Its value is
 // mutable so event tests can simulate threshold crossings.
-class MockSensor implements ILightSensor, IGraySensor, IDistanceSensor, IButtonSensor {
+class MockSensor implements Butia.ILightSensor, Butia.IGraySensor, Butia.IDistanceSensor, Butia.IButtonSensor {
     private _pin: AnalogPin | DigitalPin;
     private _value: number;
     constructor(pin: AnalogPin | DigitalPin, value: number) { this._pin = pin; this._value = value; }
@@ -23,7 +23,7 @@ class MockSensor implements ILightSensor, IGraySensor, IDistanceSensor, IButtonS
     setValue(v: number): void { this._value = v; }
 }
 
-class MockServoDriver implements IServoDriver {
+class MockServoDriver implements Butia.IServoDriver {
     angle: number;
     constructor() {
         this.angle = -1;
@@ -41,13 +41,13 @@ namespace Butia {
 }
 
 class MockRobot extends Butia.RobotBase {
-    private _lightMocks: {pin: AnalogPin | DigitalPin, sensor: ILightSensor}[];
-    private _grayMocks: {pin: AnalogPin | DigitalPin, sensor: IGraySensor}[];
-    private _distanceMocks: {pin: AnalogPin | DigitalPin, sensor: IDistanceSensor}[];
-    private _buttonMocks: {pin: AnalogPin | DigitalPin, sensor: IButtonSensor}[];
-    private _servoMocks: {pin: AnalogPin | DigitalPin, servo: IServoDriver}[];
+    private _lightMocks: {pin: AnalogPin | DigitalPin, sensor: Butia.ILightSensor}[];
+    private _grayMocks: {pin: AnalogPin | DigitalPin, sensor: Butia.IGraySensor}[];
+    private _distanceMocks: {pin: AnalogPin | DigitalPin, sensor: Butia.IDistanceSensor}[];
+    private _buttonMocks: {pin: AnalogPin | DigitalPin, sensor: Butia.IButtonSensor}[];
+    private _servoMocks: {pin: AnalogPin | DigitalPin, servo: Butia.IServoDriver}[];
 
-    constructor(motors: IMotorDriver, config: IConnectorPin[]) {
+    constructor(motors: Butia.IMotorDriver, config: Butia.IConnectorPin[]) {
         super(motors, config);
         this._lightMocks = [];
         this._grayMocks = [];
@@ -56,29 +56,29 @@ class MockRobot extends Butia.RobotBase {
         this._servoMocks = [];
     }
 
-    mockLight(pin: AnalogPin | DigitalPin, sensor: ILightSensor): void { this._lightMocks.push({ pin, sensor }); }
-    mockGray(pin: AnalogPin | DigitalPin, sensor: IGraySensor): void { this._grayMocks.push({ pin, sensor }); }
-    mockDistance(pin: AnalogPin | DigitalPin, sensor: IDistanceSensor): void { this._distanceMocks.push({ pin, sensor }); }
-    mockButton(pin: AnalogPin | DigitalPin, sensor: IButtonSensor): void { this._buttonMocks.push({ pin, sensor }); }
-    mockServo(pin: AnalogPin | DigitalPin, servo: IServoDriver): void { this._servoMocks.push({ pin, servo }); }
+    mockLight(pin: AnalogPin | DigitalPin, sensor: Butia.ILightSensor): void { this._lightMocks.push({ pin, sensor }); }
+    mockGray(pin: AnalogPin | DigitalPin, sensor: Butia.IGraySensor): void { this._grayMocks.push({ pin, sensor }); }
+    mockDistance(pin: AnalogPin | DigitalPin, sensor: Butia.IDistanceSensor): void { this._distanceMocks.push({ pin, sensor }); }
+    mockButton(pin: AnalogPin | DigitalPin, sensor: Butia.IButtonSensor): void { this._buttonMocks.push({ pin, sensor }); }
+    mockServo(pin: AnalogPin | DigitalPin, servo: Butia.IServoDriver): void { this._servoMocks.push({ pin, servo }); }
 
-    protected _newLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
+    protected _newLightSensor(pin: AnalogPin | DigitalPin): Butia.ILightSensor {
         for (const m of this._lightMocks) { if (m.pin === pin) return m.sensor; }
         return super._newLightSensor(pin);
     }
-    protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor {
+    protected _newGraySensor(pin: AnalogPin | DigitalPin): Butia.IGraySensor {
         for (const m of this._grayMocks) { if (m.pin === pin) return m.sensor; }
         return super._newGraySensor(pin);
     }
-    protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor {
+    protected _newDistanceSensor(pin: AnalogPin | DigitalPin): Butia.IDistanceSensor {
         for (const m of this._distanceMocks) { if (m.pin === pin) return m.sensor; }
         return super._newDistanceSensor(pin);
     }
-    protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor {
+    protected _newButtonSensor(pin: AnalogPin | DigitalPin): Butia.IButtonSensor {
         for (const m of this._buttonMocks) { if (m.pin === pin) return m.sensor; }
         return super._newButtonSensor(pin);
     }
-    protected _newServoDriver(name: number, pin: AnalogPin | DigitalPin): IServoDriver {
+    protected _newServoDriver(name: number, pin: AnalogPin | DigitalPin): Butia.IServoDriver {
         for (const m of this._servoMocks) { if (m.pin === pin) return m.servo; }
         return super._newServoDriver(name, pin);
     }

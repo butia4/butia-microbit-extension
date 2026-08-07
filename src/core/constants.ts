@@ -1,2 +1,4 @@
-// Motors must not exceed 90% to prevent hardware stress
-const MAX_MOTOR_SPEED = 90;
+namespace Butia {
+    // Motors must not exceed 90% to prevent hardware stress
+    export const maxMotorSpeed = 90;
+}

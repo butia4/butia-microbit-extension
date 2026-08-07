@@ -16,7 +16,7 @@ namespace Butia {
             if (RobotDriver._instance === instance) return;
             if (RobotDriver._instance) control.fail("Ya se inició otro robot");
             RobotDriver._instance = instance;
-            _registerButiaSimRobot(instance);
+            _registerSimRobot(instance);
             instance._robot.start();
         }
 
