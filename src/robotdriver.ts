@@ -26,7 +26,7 @@ namespace Butia {
             return RobotDriver._instance as RobotDriver;
         }
 
-        static getCurrentRobot(): IRobot {
+        static currentRobot(): IRobot {
             return RobotDriver.instance()._robot;
         }
     }

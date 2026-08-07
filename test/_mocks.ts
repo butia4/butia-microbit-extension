@@ -18,7 +18,7 @@ class MockSensor implements Butia.ILightSensor, Butia.IGraySensor, Butia.IDistan
     private _value: number;
     constructor(pin: AnalogPin | DigitalPin, value: number) { this._pin = pin; this._value = value; }
     init(): void {}
-    getPin(): number { return this._pin; }
+    pin(): number { return this._pin; }
     read(): number { return this._value; }
     setValue(v: number): void { this._value = v; }
 }

@@ -8,10 +8,10 @@ namespace Butia {
             this._pin = pin;
         }
 
-        getPin(): number { return this._pin as number; }
+        pin(): number { return this._pin as number; }
         init(): void {}
-        getConnName(): string { return this._connName; }
-        getSensorType(): string { return "distance"; }
+        connectorName(): string { return this._connName; }
+        sensorType(): string { return "distance"; }
 
         read(): number {
             const v = simState.sensorCache[this._connName];
@@ -28,10 +28,10 @@ namespace Butia {
             this._pin = pin;
         }
 
-        getPin(): number { return this._pin as number; }
+        pin(): number { return this._pin as number; }
         init(): void {}
-        getConnName(): string { return this._connName; }
-        getSensorType(): string { return "gray"; }
+        connectorName(): string { return this._connName; }
+        sensorType(): string { return "gray"; }
 
         read(): number {
             const v = simState.sensorCache[this._connName];
@@ -48,10 +48,10 @@ namespace Butia {
             this._pin = pin;
         }
 
-        getPin(): number { return this._pin as number; }
+        pin(): number { return this._pin as number; }
         init(): void {}
-        getConnName(): string { return this._connName; }
-        getSensorType(): string { return "light"; }
+        connectorName(): string { return this._connName; }
+        sensorType(): string { return "light"; }
 
         read(): number {
             const v = simState.sensorCache[this._connName];
@@ -69,10 +69,10 @@ namespace Butia {
             this._pin = pin;
         }
 
-        getPin(): number { return this._pin as number; }
+        pin(): number { return this._pin as number; }
         init(): void {}
-        getConnName(): string { return this._connName; }
-        getSensorType(): string { return "button"; }
+        connectorName(): string { return this._connName; }
+        sensorType(): string { return "button"; }
 
         read(): number {
             return simState.sensorCache[this._connName] === 1 ? 1 : 0;

@@ -19,10 +19,10 @@ namespace Butia {
     }
 
     export class SimMotorDriver implements IMotorDriver {
-        private _getSensorTypes: () => { [connName: string]: string };
+        private _sensorTypes: () => { [connName: string]: string };
 
-        constructor(getSensorTypes: () => { [connName: string]: string }) {
-            this._getSensorTypes = getSensorTypes;
+        constructor(sensorTypes: () => { [connName: string]: string }) {
+            this._sensorTypes = sensorTypes;
         }
 
         init(): void {}
@@ -30,7 +30,7 @@ namespace Butia {
         setSpeed(left: number, right: number): void {
             simState.motorLeft = left;
             simState.motorRight = right;
-            simState.sensorTypeMap = this._getSensorTypes();
+            simState.sensorTypeMap = this._sensorTypes();
             const msg = buildStateMessage(left, right, simState.sensorTypeMap, simState.runId);
             _simSend(msg);
         }

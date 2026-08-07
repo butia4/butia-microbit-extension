@@ -9,7 +9,7 @@ namespace Butia {
     // message handler. Using `any` for the data parameter avoids Buffer.toString()
     // type issues while still working correctly in the sim's JS runtime.
     //% shim=TD_NOOP
-    export function _simInit(getSensorTypes: () => { [connName: string]: string }): void {
+    export function _simInit(sensorTypes: () => { [connName: string]: string }): void {
         simState.reset();
         simState.runId = "" + Math.random();
         control.simmessages.onReceived("butia4/butia-microbit-extension", (data: Buffer) => {
@@ -29,7 +29,7 @@ namespace Butia {
         // a real value and the handler would never fire.
         control.inBackground(() => {
             while (true) {
-                simState.sensorTypeMap = getSensorTypes();
+                simState.sensorTypeMap = sensorTypes();
                 const msg = buildStateMessage(simState.motorLeft, simState.motorRight, simState.sensorTypeMap, simState.runId);
                 _simSend(msg);
                 if (simState.selectedMapId !== 0) {
@@ -77,30 +77,30 @@ namespace Butia {
 
         protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor {
             const s = new SimDistanceSensor(this._pinToConnName(pin), pin);
-            this._simSensors.push({ connName: s.getConnName(), type: s.getSensorType() });
+            this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
         protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor {
             const s = new SimGraySensor(this._pinToConnName(pin), pin);
-            this._simSensors.push({ connName: s.getConnName(), type: s.getSensorType() });
+            this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
         protected _newLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
             const s = new SimLightSensor(this._pinToConnName(pin), pin);
-            this._simSensors.push({ connName: s.getConnName(), type: s.getSensorType() });
+            this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
         protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor {
             const s = new SimButtonSensor(this._pinToConnName(pin), pin);
-            this._simSensors.push({ connName: s.getConnName(), type: s.getSensorType() });
+            this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
         private _pinToConnName(pin: AnalogPin | DigitalPin): string {
-            const cfg = this._getConnectorConfig();
+            const cfg = this._connectorConfig;
             for (const cp of cfg) {
                 if (cp.pin === pin) return cp.connector.name;
             }

@@ -17,7 +17,7 @@ declare namespace Butia {
     }
 
     export interface IPolledSensor extends ISensor {
-        getPin(): number
+        pin(): number
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type

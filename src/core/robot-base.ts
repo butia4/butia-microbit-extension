@@ -10,7 +10,7 @@ namespace Butia {
         private _buttons: {pin:AnalogPin | DigitalPin, sensor: IButtonSensor}[];
         private _generics: {pin:AnalogPin | DigitalPin, sensor: IGenericSensor}[];
         private _servos: {pin: AnalogPin | DigitalPin, servo: IServoDriver}[];
-        private _connectorConfig: IConnectorPin[];
+        protected _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
         private _pinUsage: { pin: AnalogPin | DigitalPin; type: string }[];
@@ -280,7 +280,6 @@ namespace Butia {
         // --- Getters ---
         motorLeft(): number { return this._motorLeft; }
         motorRight(): number { return this._motorRight; }
-        protected _getConnectorConfig(): IConnectorPin[] { return this._connectorConfig; }
 
         // --- Overridable stub ---
         start(): void {}

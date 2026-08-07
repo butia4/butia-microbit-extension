@@ -9,7 +9,7 @@ namespace Butia {
         }
 
         getName(): number { return this._name; }
-        getPin(): number { return this._pinTrigger; }
+        pin(): number { return this._pinTrigger; }
         init(): void {}
         read(): number {
             let raw = 1023 - pins.analogReadPin(this._pinTrigger);

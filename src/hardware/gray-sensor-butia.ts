@@ -6,7 +6,7 @@ namespace Butia {
             this._pinTrigger = pinTrigger;
         }
 
-        getPin(): number {
+        pin(): number {
             return this._pinTrigger;
         }
         init(): void {}
