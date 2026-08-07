@@ -43,9 +43,4 @@ interface IMotorDriver extends IActuator {
 
 interface IServoDriver extends IActuator {
     setAngle(degrees: number): void
-    run(speed: number): void
-    stop(): void
-    setPulse(micros: number): void
-    setRange(minAngle: number, maxAngle: number): void
-    setStopOnNeutral(enabled: boolean): void
 }

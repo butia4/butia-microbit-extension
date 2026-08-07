@@ -14,26 +14,6 @@ servoRobot1.mockServo(AnalogPin.P1, servo1);
 servoRobot1.servoSetAngle(Butia.J1, 0, 45);
 assertTest(servo1.angle === 45, "servoSetAngle delegates");
 
-// --- run delegation ---
-servoRobot1.servoRun(Butia.J1, 0, 75);
-assertTest(servo1.speed === 75, "servoRun delegates");
-
-// --- stop delegation ---
-servoRobot1.servoStop(Butia.J1, 0);
-assertTest(servo1.stopped === true, "servoStop delegates");
-
-// --- setPulse delegation ---
-servoRobot1.servoSetPulse(Butia.J1, 0, 1500);
-assertTest(servo1.pulse === 1500, "servoSetPulse delegates");
-
-// --- setRange delegation ---
-servoRobot1.servoSetRange(Butia.J1, 0, 10, 170);
-assertTest(servo1.minAngle === 10 && servo1.maxAngle === 170, "servoSetRange delegates");
-
-// --- setStopOnNeutral delegation ---
-servoRobot1.servoSetStopOnNeutral(Butia.J1, 0, true);
-assertTest(servo1.stopOnNeutral === true, "servoSetStopOnNeutral delegates");
-
 // --- Lazy-loading: second call reuses same servo ---
 servoRobot1.servoSetAngle(Butia.J1, 0, 120);
 assertTest(servo1.angle === 120, "servo reused on same connector");

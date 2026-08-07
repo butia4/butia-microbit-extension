@@ -26,9 +26,4 @@ interface IRobot {
     motorLeft(): number
     motorRight(): number
     servoSetAngle(connector: IConnector, name: number, degrees: number): void
-    servoRun(connector: IConnector, name: number, speed: number): void
-    servoStop(connector: IConnector, name: number): void
-    servoSetPulse(connector: IConnector, name: number, micros: number): void
-    servoSetRange(connector: IConnector, name: number, minAngle: number, maxAngle: number): void
-    servoSetStopOnNeutral(connector: IConnector, name: number, enabled: boolean): void
 }

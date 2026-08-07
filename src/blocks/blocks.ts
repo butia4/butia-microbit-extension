@@ -144,46 +144,6 @@ namespace Butia {
         Butia.RobotDriver.getCurrentRobot().servoSetAngle(connector, servoName, degrees);
     }
 
-    //% blockId="butia_servo_run"
-    //% block="continuous servo $servoName on $connector run at speed $speed"
-    //% servoName.shadow="servo_enum_shim"
-    //% speed.min=-100 speed.max=100 speed.defl=50
-    //% weight=48
-    //% group="Servos"
-    export function servoRun(servoName: number, connector: Butia.Connector, speed: number): void {
-        Butia.RobotDriver.getCurrentRobot().servoRun(connector, servoName, speed);
-    }
-
-    //% blockId="butia_servo_stop"
-    //% block="servo $servoName on $connector stop"
-    //% servoName.shadow="servo_enum_shim"
-    //% weight=46
-    //% group="Servos"
-    export function servoStop(servoName: number, connector: Butia.Connector): void {
-        Butia.RobotDriver.getCurrentRobot().servoStop(connector, servoName);
-    }
-
-    //% blockId="butia_servo_set_pulse"
-    //% block="servo $servoName on $connector set pulse to $micros µs"
-    //% servoName.shadow="servo_enum_shim"
-    //% micros.min=500 micros.max=2500 micros.defl=1500
-    //% weight=44
-    //% group="Servos"
-    export function servoSetPulse(servoName: number, connector: Butia.Connector, micros: number): void {
-        Butia.RobotDriver.getCurrentRobot().servoSetPulse(connector, servoName, micros);
-    }
-
-
-    //% blockId="butia_servo_stop_on_neutral"
-    //% block="servo $servoName on $connector stop on neutral $enabled"
-    //% servoName.shadow="servo_enum_shim"
-    //% enabled.defl=true
-    //% weight=40
-    //% group="Servos"
-    export function servoSetStopOnNeutral(servoName: number, connector: Butia.Connector, enabled: boolean): void {
-        Butia.RobotDriver.getCurrentRobot().servoSetStopOnNeutral(connector, servoName, enabled);
-    }
-
     //% blockId="butia_evt_distance"
     //% block="when distance sensor on %connector is %op %threshold cm with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
