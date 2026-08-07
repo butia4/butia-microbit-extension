@@ -76,25 +76,25 @@ namespace Butia {
         }
 
         protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor {
-            const s = new SimDistanceSensor(this._pinToConnName(pin), pin);
+            const s = new SimDistanceSensor(this._pinToConnName(pin));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
         protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor {
-            const s = new SimGraySensor(this._pinToConnName(pin), pin);
+            const s = new SimGraySensor(this._pinToConnName(pin));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
         protected _newLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
-            const s = new SimLightSensor(this._pinToConnName(pin), pin);
+            const s = new SimLightSensor(this._pinToConnName(pin));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
         protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor {
-            const s = new SimButtonSensor(this._pinToConnName(pin), pin);
+            const s = new SimButtonSensor(this._pinToConnName(pin));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }

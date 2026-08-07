@@ -16,24 +16,20 @@ declare namespace Butia {
         read(): number
     }
 
-    export interface IPolledSensor extends ISensor {
-        pin(): number
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    export interface IDistanceSensor extends ISensor {}
 
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IDistanceSensor extends IPolledSensor {}
+    export interface ILightSensor extends ISensor {}
 
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface ILightSensor extends IPolledSensor {}
+    export interface IGraySensor extends ISensor {}
 
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IGraySensor extends IPolledSensor {}
+    export interface IButtonSensor extends ISensor { }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IButtonSensor extends IPolledSensor { }
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IGenericSensor extends IPolledSensor {}
+    export interface IGenericSensor extends ISensor {}
 
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     export interface IActuator extends IRobotComponent {}

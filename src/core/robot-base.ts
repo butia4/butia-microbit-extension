@@ -216,7 +216,7 @@ namespace Butia {
         onDistance(connector: IConnector, op: ButiaComparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getDistanceSensor(pin);
-            const subId = computeSubId(SENSOR_TYPE_DISTANCE, pin as number, comparisonToDir(op));
+            const subId = computeSubId(sensorTypeDistance, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => {
@@ -233,7 +233,7 @@ namespace Butia {
         onLight(connector: IConnector, op: ButiaComparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getLightSensor(pin);
-            const subId = computeSubId(SENSOR_TYPE_LIGHT, pin as number, comparisonToDir(op));
+            const subId = computeSubId(sensorTypeLight, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
@@ -246,7 +246,7 @@ namespace Butia {
         onGray(connector: IConnector, op: ButiaComparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getGraySensor(pin);
-            const subId = computeSubId(SENSOR_TYPE_GRAY, pin as number, comparisonToDir(op));
+            const subId = computeSubId(sensorTypeGray, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
@@ -259,8 +259,8 @@ namespace Butia {
         onConnectorButton(connector: IConnector, state: ButiaButtonState, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getButtonSensor(pin);
-            const dir = state === ButiaButtonState.Pressed ? DIR_GREATER_OR_PRESSED : DIR_LESS_OR_RELEASED;
-            const subId = computeSubId(SENSOR_TYPE_BUTTON, pin as number, dir);
+            const dir = state === ButiaButtonState.Pressed ? dirGreaterOrPressed : dirLessOrReleased;
+            const subId = computeSubId(sensorTypeButton, pin as number, dir);
             const target = state === ButiaButtonState.Pressed ? 1 : 0;
             const monitor: IMonitor = {
                 subId: subId,

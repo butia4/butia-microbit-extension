@@ -1,14 +1,11 @@
 namespace Butia {
     export class SimDistanceSensor implements IDistanceSensor {
         private _connName: string;
-        private _pin: AnalogPin | DigitalPin;
 
-        constructor(connName: string, pin: AnalogPin | DigitalPin) {
+        constructor(connName: string) {
             this._connName = connName;
-            this._pin = pin;
         }
 
-        pin(): number { return this._pin as number; }
         init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "distance"; }
@@ -21,14 +18,11 @@ namespace Butia {
 
     export class SimGraySensor implements IGraySensor {
         private _connName: string;
-        private _pin: AnalogPin | DigitalPin;
 
-        constructor(connName: string, pin: AnalogPin | DigitalPin) {
+        constructor(connName: string) {
             this._connName = connName;
-            this._pin = pin;
         }
 
-        pin(): number { return this._pin as number; }
         init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "gray"; }
@@ -41,14 +35,11 @@ namespace Butia {
 
     export class SimLightSensor implements ILightSensor {
         private _connName: string;
-        private _pin: AnalogPin | DigitalPin;
 
-        constructor(connName: string, pin: AnalogPin | DigitalPin) {
+        constructor(connName: string) {
             this._connName = connName;
-            this._pin = pin;
         }
 
-        pin(): number { return this._pin as number; }
         init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "light"; }
@@ -62,14 +53,11 @@ namespace Butia {
     // read() returns 1 (pressed) or 0 (released) to satisfy IButtonSensor (read(): number).
     export class SimButtonSensor implements IButtonSensor {
         private _connName: string;
-        private _pin: AnalogPin | DigitalPin;
 
-        constructor(connName: string, pin: AnalogPin | DigitalPin) {
+        constructor(connName: string) {
             this._connName = connName;
-            this._pin = pin;
         }
 
-        pin(): number { return this._pin as number; }
         init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "button"; }

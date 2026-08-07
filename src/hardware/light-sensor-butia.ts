@@ -6,9 +6,6 @@ namespace Butia {
             this._pinTrigger = pinTrigger;
         }
 
-        pin(): number {
-            return this._pinTrigger;
-        }
         init(): void {}
         read(): number {
             let raw = 1023 - pins.analogReadPin(this._pinTrigger);

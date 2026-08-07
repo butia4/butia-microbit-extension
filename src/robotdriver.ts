@@ -22,7 +22,7 @@ namespace Butia {
 
         static instance(): RobotDriver {
             if (!RobotDriver._instance)
-                RobotDriver.start(Butia4_1_0);
+                RobotDriver.start(butiaV4);
             return RobotDriver._instance as RobotDriver;
         }
 

@@ -5,13 +5,10 @@ namespace Butia {
             this._pinTrigger = pinTrigger;
         }
 
-        pin(): number {
-            return this._pinTrigger;
-        }
         init(): void {}
         read(): number {
-            const adc_value = pins.analogReadPin(this._pinTrigger as number as AnalogPin);
-            return 9462 / (adc_value - 16);
+            const adcValue = pins.analogReadPin(this._pinTrigger as number as AnalogPin);
+            return 9462 / (adcValue - 16);
         }
     }
 }

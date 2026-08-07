@@ -14,11 +14,9 @@ class MockMotorDriver implements Butia.IMotorDriver {
 // Single mock sensor type for all four sensor flavors. Its value is
 // mutable so event tests can simulate threshold crossings.
 class MockSensor implements Butia.ILightSensor, Butia.IGraySensor, Butia.IDistanceSensor, Butia.IButtonSensor {
-    private _pin: AnalogPin | DigitalPin;
     private _value: number;
-    constructor(pin: AnalogPin | DigitalPin, value: number) { this._pin = pin; this._value = value; }
+    constructor(value: number) { this._value = value; }
     init(): void {}
-    pin(): number { return this._pin; }
     read(): number { return this._value; }
     setValue(v: number): void { this._value = v; }
 }

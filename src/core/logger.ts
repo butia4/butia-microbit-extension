@@ -7,11 +7,11 @@ namespace Butia {
         datalogger.includeTimestamp(FlashLogTimeStampFormat.Seconds);
     }
 
-    export function _log(evento: string, datos: string): void {
+    export function _log(event: string, data: string): void {
         if (!_logEnabled) return;
         datalogger.log(
-            datalogger.createCV("evento", evento),
-            datalogger.createCV("datos", datos)
+            datalogger.createCV("evento", event),
+            datalogger.createCV("datos", data)
         );
     }
 }

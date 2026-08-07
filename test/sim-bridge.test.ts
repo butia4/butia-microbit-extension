@@ -35,24 +35,24 @@ assertTest(Butia.simState.sensorTypeMap["J3"] === "light", "sim-motor-stable-typ
 
 // TASK-T05: SimDistanceSensor.read() returns -1 when cache absent (SC-05)
 Butia.simState.reset();
-const sensor05 = new Butia.SimDistanceSensor("J3", AnalogPin.P3);
+const sensor05 = new Butia.SimDistanceSensor("J3");
 assertTest(sensor05.read() === -1, "sim-distance-read-empty");
 
 // TASK-T06: SimDistanceSensor.read() returns cached value (SC-04)
 Butia.simState.sensorCache["J2"] = 45;
-const sensor06 = new Butia.SimDistanceSensor("J2", AnalogPin.P2);
+const sensor06 = new Butia.SimDistanceSensor("J2");
 assertTest(sensor06.read() === 45, "sim-distance-read-cached");
 
 // TASK-T07: SimGraySensor.read() empty and cached
 Butia.simState.reset();
-const sensor07a = new Butia.SimGraySensor("J5", AnalogPin.P10);
+const sensor07a = new Butia.SimGraySensor("J5");
 assertTest(sensor07a.read() === -1, "sim-gray-read-empty");
 Butia.simState.sensorCache["J5"] = 78;
 assertTest(sensor07a.read() === 78, "sim-gray-read-cached");
 
 // TASK-T08: SimLightSensor.read() empty and cached
 Butia.simState.reset();
-const sensor08 = new Butia.SimLightSensor("J1", AnalogPin.P1);
+const sensor08 = new Butia.SimLightSensor("J1");
 assertTest(sensor08.read() === -1, "sim-light-read-empty");
 Butia.simState.sensorCache["J1"] = 55;
 assertTest(sensor08.read() === 55, "sim-light-read-cached");
@@ -60,7 +60,7 @@ assertTest(sensor08.read() === 55, "sim-light-read-cached");
 // TASK-T09: SimButtonSensor.read() returns 1 when cache is 1 (SC-06)
 Butia.simState.reset();
 Butia.simState.sensorCache["J4"] = 1;
-const sensor09 = new Butia.SimButtonSensor("J4", DigitalPin.P4);
+const sensor09 = new Butia.SimButtonSensor("J4");
 assertTest(sensor09.read() === 1, "sim-button-pressed");
 
 // TASK-T10: SimButtonSensor.read() returns 0 when cache is 0 (SC-07)

@@ -34,13 +34,13 @@ const sensorConfig: Butia.ConnectorPin[] = [
     new Butia.ConnectorPin(Butia.J3, AnalogPin.P3),
 ];
 const sensorRobot = new MockRobot(new MockMotorDriver(), sensorConfig);
-sensorRobot.mockLight(AnalogPin.P1, new MockSensor(AnalogPin.P1, 750));
-sensorRobot.mockLight(AnalogPin.P2, new MockSensor(AnalogPin.P2, 200));
-sensorRobot.mockGray(AnalogPin.P2, new MockSensor(AnalogPin.P2, 300));
-sensorRobot.mockDistance(AnalogPin.P3, new MockSensor(AnalogPin.P3, 25));
+sensorRobot.mockLight(AnalogPin.P1, new MockSensor(750));
+sensorRobot.mockLight(AnalogPin.P2, new MockSensor(200));
+sensorRobot.mockGray(AnalogPin.P2, new MockSensor(300));
+sensorRobot.mockDistance(AnalogPin.P3, new MockSensor(25));
 
-sensorRobot.mockButton(AnalogPin.P1, new MockSensor(AnalogPin.P1, 1));
-sensorRobot.mockButton(AnalogPin.P2, new MockSensor(AnalogPin.P2, 0));
+sensorRobot.mockButton(AnalogPin.P1, new MockSensor(1));
+sensorRobot.mockButton(AnalogPin.P2, new MockSensor(0));
 
 assertTest(sensorRobot.readLightSensor(Butia.J1) === 750, "readLightSensor J1");
 assertTest(sensorRobot.readLightSensor(Butia.J2) === 200, "readLightSensor J2 (multi-sensor lookup)");
