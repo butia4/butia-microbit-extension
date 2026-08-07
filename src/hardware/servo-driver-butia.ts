@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     // Servo PWM: 20ms period, pulse 500-2500µs maps angle 0-180°.
     const SERVO_PERIOD_US = 20000;
     const SERVO_PULSE_MIN = 500;

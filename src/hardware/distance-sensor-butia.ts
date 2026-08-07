@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export class DistanceSensor implements IDistanceSensor {
         private _pinTrigger: DigitalPin|AnalogPin;
         constructor(pinTrigger: DigitalPin|AnalogPin) {

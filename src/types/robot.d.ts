@@ -1,4 +1,4 @@
-declare namespace Butia {
+declare namespace butia {
     export interface IConnector {
         readonly name: string;
     }

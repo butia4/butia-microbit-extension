@@ -7,7 +7,7 @@ interface Buffer {
     toString(): string;
 }
 
-declare namespace Butia {
+declare namespace butia {
     export interface IRobotComponent {
         init(): void
     }

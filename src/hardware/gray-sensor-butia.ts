@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export class GraySensor implements IGraySensor {
         private _pinTrigger: DigitalPin|AnalogPin;
 

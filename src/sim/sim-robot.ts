@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export interface SimSensorEntry {
         connName: string;
         type: string;

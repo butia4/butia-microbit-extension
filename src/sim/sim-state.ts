@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export namespace simState {
         export let runId: string = "";
         export let sensorCache: { [connName: string]: number } = {};

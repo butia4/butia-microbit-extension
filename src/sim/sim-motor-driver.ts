@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     // Sends a state message to the botsim via simmessages. TD_NOOP so the call
     // is a no-op on hardware — control.simmessages.send is simulator-only.
     //% shim=TD_NOOP

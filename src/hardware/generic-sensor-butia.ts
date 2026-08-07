@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export class GenericSensor implements IGenericSensor {
         private _pinTrigger: DigitalPin|AnalogPin;
 

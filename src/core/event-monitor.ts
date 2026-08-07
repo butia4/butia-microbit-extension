@@ -6,7 +6,7 @@
 // Rising-edge detection prevents repeated firing while the condition holds.
 // Step 2 evaluates level-triggered reactive motor rules via subsumption.
 
-namespace Butia {
+namespace butia {
     export const pollIntervalMs = 50;
 
     // Sensor type tags used to build deterministic event sub-IDs.

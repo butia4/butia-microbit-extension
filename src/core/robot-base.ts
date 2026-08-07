@@ -1,6 +1,6 @@
 // PXT does not support `abstract class` — this DI base class is the approved substitute.
 
-namespace Butia {
+namespace butia {
     export class RobotBase implements IRobot {
         // --- Fields ---
         private _motors: IMotorDriver;

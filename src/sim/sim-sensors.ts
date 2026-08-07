@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export class SimDistanceSensor implements IDistanceSensor {
         private _connName: string;
 

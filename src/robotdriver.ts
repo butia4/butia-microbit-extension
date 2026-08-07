@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     //% fixedInstances
     export class RobotDriver {
         private static _instance: RobotDriver | null = null;

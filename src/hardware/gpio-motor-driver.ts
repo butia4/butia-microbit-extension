@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export class GpioMotorDriver implements IMotorDriver {
 
         constructor(

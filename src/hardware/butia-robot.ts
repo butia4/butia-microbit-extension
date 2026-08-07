@@ -1,7 +1,7 @@
 // ButiaRobot wires the Butia v4 hardware components.
 // Pin assignments are placeholders — pending Butia v4 schematic confirmation.
 
-namespace Butia {
+namespace butia {
     //% fixedInstances
     export class ButiaV4Connector extends Connector {
         constructor(name: string) { super(name); }

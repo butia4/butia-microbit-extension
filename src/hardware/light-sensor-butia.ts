@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export class LightSensor implements ILightSensor {
         private _pinTrigger: DigitalPin | AnalogPin;
 

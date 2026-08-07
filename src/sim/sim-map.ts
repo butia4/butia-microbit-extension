@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     // Records the selected map for the run, once. TD_NOOP so the call is a
     // no-op on hardware. The actual mapselect message is sent (and resent) by
     // the background loop in _simInit — see sim-state.ts's selectedMapId

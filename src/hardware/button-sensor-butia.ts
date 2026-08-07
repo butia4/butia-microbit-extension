@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     export class ButtonSensor implements IButtonSensor {
         private _pin: DigitalPin;
 
