@@ -34,7 +34,7 @@ namespace Butia {
     //% duration.defl=0
     //% weight=90
     //% group="Motors"
-    export function turn(direction: TurnDirection, speed: number, duration?: number): void {
+    export function turn(direction: ButiaTurnDirection, speed: number, duration?: number): void {
         const ms = duration ? duration * 1000 : undefined;
         Butia.RobotDriver.getCurrentRobot().turn(direction, speed, ms);
     }
@@ -61,8 +61,8 @@ namespace Butia {
     //% block="stop motor %motor"
     //% weight=79
     //% group="Motors"
-    export function motorStopSingle(motor: MotorSide): void {
-        if (motor === MotorSide.Left) {
+    export function motorStopSingle(motor: ButiaMotorSide): void {
+        if (motor === ButiaMotorSide.Left) {
             Butia.RobotDriver.getCurrentRobot().motorTank(0, Butia.RobotDriver.getCurrentRobot().motorRight());
         } else {
             Butia.RobotDriver.getCurrentRobot().motorTank(Butia.RobotDriver.getCurrentRobot().motorLeft(), 0);
@@ -152,7 +152,7 @@ namespace Butia {
     //% advanced=true
     export function onDistance(
         connector: Butia.Connector,
-        op: Comparison,
+        op: ButiaComparison,
         threshold: number,
         priority: number,
         handler: () => void
@@ -168,7 +168,7 @@ namespace Butia {
     //% advanced=true
     export function onLight(
         connector: Butia.Connector,
-        op: Comparison,
+        op: ButiaComparison,
         threshold: number,
         priority: number,
         handler: () => void
@@ -184,7 +184,7 @@ namespace Butia {
     //% advanced=true
     export function onGray(
         connector: Butia.Connector,
-        op: Comparison,
+        op: ButiaComparison,
         threshold: number,
         priority: number,
         handler: () => void
@@ -199,7 +199,7 @@ namespace Butia {
     //% advanced=true
     export function onButton(
         connector: Butia.Connector,
-        state: ButtonState,
+        state: ButiaButtonState,
         priority: number,
         handler: () => void
     ): void {
@@ -210,7 +210,7 @@ namespace Butia {
     //% block="use map %map"
     //% weight=50
     //% group="Simulator"
-    export function setMap(map: SimMap): void {
+    export function setMap(map: ButiaSimMap): void {
         _simSelectMap(map);
     }
 

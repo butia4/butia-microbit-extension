@@ -12,7 +12,7 @@ declare namespace Butia {
         start(): void
         moveForward(speed: number, duration?: number): void
         moveBackward(speed: number, duration?: number): void
-        turn(direction: TurnDirection, speed: number, duration?: number): void
+        turn(direction: ButiaTurnDirection, speed: number, duration?: number): void
         motorTank(left: number, right: number): void
         motorStop(): void
         readDistanceSensor(connector: IConnector): number
@@ -20,10 +20,10 @@ declare namespace Butia {
         readLightSensor(connector: IConnector): number
         readGenericSensor(connector: IConnector, name: number): number
         readButton(connector: IConnector): boolean
-        onDistance(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
-        onLight(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
-        onGray(connector: IConnector, op: Comparison, threshold: number, priority:number,handler: () => void): void
-        onConnectorButton(connector: IConnector, state: ButtonState, priority:number,handler: () => void): void
+        onDistance(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
+        onLight(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
+        onGray(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
+        onConnectorButton(connector: IConnector, state: ButiaButtonState, priority:number,handler: () => void): void
         motorLeft(): number
         motorRight(): number
         servoSetAngle(connector: IConnector, name: number, degrees: number): void

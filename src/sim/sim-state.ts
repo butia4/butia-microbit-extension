@@ -6,7 +6,7 @@ namespace Butia {
         export let motorLeft: number = 0;
         export let motorRight: number = 0;
         export let mapSelected: boolean = false;
-        // 0 = unset sentinel, matches SimMap's wire protocol. Kept resent every
+        // 0 = unset sentinel, matches ButiaSimMap's wire protocol. Kept resent every
         // tick by the background loop in _simInit (see sim-robot.ts) instead
         // of being sent once, since a one-shot send can race the botsim iframe's
         // mount and get silently dropped by postMessage (no queue/replay).

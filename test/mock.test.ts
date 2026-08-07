@@ -12,10 +12,10 @@ assertTest(motors.left === 60 && motors.right === 60, "moveForward speed");
 //motorRobot.moveBackward(50);
 assertTest(motors.left === -50 && motors.right === -50, "moveBackward speed");
 
-motorRobot.turn(TurnDirection.Left, 40);
+motorRobot.turn(ButiaTurnDirection.Left, 40);
 assertTest(motors.left === -40 && motors.right === 40, "turn left");
 
-motorRobot.turn(TurnDirection.Right, 40);
+motorRobot.turn(ButiaTurnDirection.Right, 40);
 assertTest(motors.left === 40 && motors.right === -40, "turn right");
 
 motorRobot.motorTank(50, -30);

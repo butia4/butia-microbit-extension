@@ -26,17 +26,17 @@ namespace Butia {
     export const DIR_GREATER_OR_EQUAL = 2;
     export const DIR_LESS_OR_EQUAL = 3;
 
-    export function comparisonToDir(op: Comparison): number {
-        if (op === Comparison.Greater) return DIR_GREATER_OR_PRESSED;
-        if (op === Comparison.Less) return DIR_LESS_OR_RELEASED;
-        if (op === Comparison.GreaterOrEqual) return DIR_GREATER_OR_EQUAL;
+    export function comparisonToDir(op: ButiaComparison): number {
+        if (op === ButiaComparison.Greater) return DIR_GREATER_OR_PRESSED;
+        if (op === ButiaComparison.Less) return DIR_LESS_OR_RELEASED;
+        if (op === ButiaComparison.GreaterOrEqual) return DIR_GREATER_OR_EQUAL;
         return DIR_LESS_OR_EQUAL;
     }
 
-    export function evalComparison(op: Comparison, value: number, threshold: number): boolean {
-        if (op === Comparison.Greater) return value > threshold;
-        if (op === Comparison.Less) return value < threshold;
-        if (op === Comparison.GreaterOrEqual) return value >= threshold;
+    export function evalComparison(op: ButiaComparison, value: number, threshold: number): boolean {
+        if (op === ButiaComparison.Greater) return value > threshold;
+        if (op === ButiaComparison.Less) return value < threshold;
+        if (op === ButiaComparison.GreaterOrEqual) return value >= threshold;
         return value <= threshold;
     }
 
