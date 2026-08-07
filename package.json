@@ -26,6 +26,7 @@
     "build:dev": "sed -i 's/_logEnabled = false/_logEnabled = true/' src/core/logger.ts && pxt build; sed -i 's/_logEnabled = true/_logEnabled = false/' src/core/logger.ts",
     "test": "pxt test",
     "deploy": "pxt deploy",
+    "loc": "pxt gendocs --locs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "sync": "npx tsx scripts/sync-pxt.ts",
