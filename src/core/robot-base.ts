@@ -43,7 +43,7 @@ namespace butia {
             for (const cp of this._connectorConfig) {
                 if (cp.connector.name === connector.name) return cp.pin;
             }
-            control.fail("Conector " + connector.name + " no encontrado.");
+            control.fail("Connector " + connector.name + " not found.");
             return 0 as AnalogPin;
         }
 
@@ -56,12 +56,12 @@ namespace butia {
                 }
             }
             if (!valid) {
-                control.fail("Pin " + pin + " no pertenece a ningún conector configurado.");
+                control.fail("Pin " + pin + " is not on any configured connector.");
             }
             for (const entry of this._pinUsage) {
                 if (entry.pin === pin) {
                     if (entry.type !== type) {
-                        control.fail("Pin " + pin + " ya está en uso como " + entry.type);
+                        control.fail("Pin " + pin + " is already in use as " + entry.type);
                     }
                     return;
                 }

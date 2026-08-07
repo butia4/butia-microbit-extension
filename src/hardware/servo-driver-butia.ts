@@ -1,12 +1,12 @@
 namespace butia {
     // Servo PWM: 20ms period, pulse 500-2500µs maps angle 0-180°.
-    const SERVO_PERIOD_US = 20000;
-    const SERVO_PULSE_MIN = 500;
-    const SERVO_PULSE_MAX = 2500;
+    const servoPeriodMicros = 20000;
+    const servoPulseMin = 500;
+    const servoPulseMax = 2500;
 
     function angleToPwm(angle: number): number {
-        const pulse = SERVO_PULSE_MIN + angle * (SERVO_PULSE_MAX - SERVO_PULSE_MIN) / 180;
-        return Math.round(pulse * 1023 / SERVO_PERIOD_US);
+        const pulse = servoPulseMin + angle * (servoPulseMax - servoPulseMin) / 180;
+        return Math.round(pulse * 1023 / servoPeriodMicros);
     }
 
     export class ServoDriver implements IServoDriver {
@@ -23,7 +23,7 @@ namespace butia {
 
         private _ensurePeriod(): void {
             if (!this._started) {
-                pins.analogSetPeriod(this._pin, SERVO_PERIOD_US);
+                pins.analogSetPeriod(this._pin, servoPeriodMicros);
                 this._started = true;
             }
         }

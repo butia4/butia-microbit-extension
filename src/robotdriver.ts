@@ -14,7 +14,7 @@ namespace butia {
 
         static start(instance: RobotDriver): void {
             if (RobotDriver._instance === instance) return;
-            if (RobotDriver._instance) control.fail("Ya se inició otro robot");
+            if (RobotDriver._instance) control.fail("Another robot was already started.");
             RobotDriver._instance = instance;
             _registerSimRobot(instance);
             instance._robot.start();

@@ -10,7 +10,7 @@ namespace butia {
 
         setSpeed(left: number, right: number): void {
             if (this.leftPins.length === 0 || this.rightPins.length === 0)
-                control.fail("Pines de motores no configurados.");
+                control.fail("Motor pins not configured.");
             this._setMotor(this.leftPins, left);
             this._setMotor(this.rightPins, -right);
         }
