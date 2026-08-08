@@ -211,26 +211,6 @@ namespace Butia {
             this._getServoDriver(this._resolvePin(connector), name).setAngle(degrees);
         }
 
-        servoRun(connector: IConnector, name: number, speed: number): void {
-            this._getServoDriver(this._resolvePin(connector), name).run(speed);
-        }
-
-        servoStop(connector: IConnector, name: number): void {
-            this._getServoDriver(this._resolvePin(connector), name).stop();
-        }
-
-        servoSetPulse(connector: IConnector, name: number, micros: number): void {
-            this._getServoDriver(this._resolvePin(connector), name).setPulse(micros);
-        }
-
-        servoSetRange(connector: IConnector, name: number, minAngle: number, maxAngle: number): void {
-            this._getServoDriver(this._resolvePin(connector), name).setRange(minAngle, maxAngle);
-        }
-
-        servoSetStopOnNeutral(connector: IConnector, name: number, enabled: boolean): void {
-            this._getServoDriver(this._resolvePin(connector), name).setStopOnNeutral(enabled);
-        }
-
         // --- Events ---
         
         onDistance(connector: IConnector, op: Comparison, threshold: number, priority: number, handler: () => void): void {

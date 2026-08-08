@@ -25,28 +25,11 @@ class MockSensor implements ILightSensor, IGraySensor, IDistanceSensor, IButtonS
 
 class MockServoDriver implements IServoDriver {
     angle: number;
-    speed: number;
-    stopped: boolean;
-    pulse: number;
-    minAngle: number;
-    maxAngle: number;
-    stopOnNeutral: boolean;
     constructor() {
         this.angle = -1;
-        this.speed = 0;
-        this.stopped = false;
-        this.pulse = 0;
-        this.minAngle = 0;
-        this.maxAngle = 180;
-        this.stopOnNeutral = false;
     }
     init(): void {}
-    setAngle(degrees: number): void { this.angle = degrees; this.stopped = false; }
-    run(speed: number): void { this.speed = speed; this.stopped = false; }
-    stop(): void { this.stopped = true; }
-    setPulse(micros: number): void { this.pulse = micros; }
-    setRange(minAngle: number, maxAngle: number): void { this.minAngle = minAngle; this.maxAngle = maxAngle; }
-    setStopOnNeutral(enabled: boolean): void { this.stopOnNeutral = enabled; }
+    setAngle(degrees: number): void { this.angle = degrees; }
 }
 
 namespace Butia {
