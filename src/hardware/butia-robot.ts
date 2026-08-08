@@ -1,7 +1,7 @@
 // ButiaRobot wires the Butia v4 hardware components.
 // Pin assignments are placeholders — pending Butia v4 schematic confirmation.
 
-namespace Butia {
+namespace butia {
     //% fixedInstances
     export class ButiaV4Connector extends Connector {
         constructor(name: string) { super(name); }
@@ -21,7 +21,7 @@ namespace Butia {
     class ButiaRobot extends RobotBase {
         constructor() {
             super(
-                new GPIOMotorDriver(
+                new GpioMotorDriver(
                     [DigitalPin.P13, DigitalPin.P14],
                     [DigitalPin.P15, DigitalPin.P16]
                 ),
@@ -39,5 +39,5 @@ namespace Butia {
     }
 
     //% fixedInstance block="Butia v4"
-    export const Butia4_1_0 = new RobotDriver(new ButiaRobot());
+    export const butiaV4 = new RobotDriver(new ButiaRobot());
 }

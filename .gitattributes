@@ -2,6 +2,7 @@
 *.ts text eol=crlf
 *.js text eol=crlf
 *.json text eol=crlf
+_locales/**/*.json text eol=lf
 *.env text eol=crlf
 *.bat text eol=crlf
 *.hex binary

@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     //% fixedInstances
     export class RobotDriver {
         private static _instance: RobotDriver | null = null;
@@ -14,19 +14,19 @@ namespace Butia {
 
         static start(instance: RobotDriver): void {
             if (RobotDriver._instance === instance) return;
-            if (RobotDriver._instance) control.fail("Ya se inició otro robot");
+            if (RobotDriver._instance) control.fail("Another robot was already started.");
             RobotDriver._instance = instance;
-            _registerButiaSimRobot(instance);
+            _registerSimRobot(instance);
             instance._robot.start();
         }
 
         static instance(): RobotDriver {
             if (!RobotDriver._instance)
-                RobotDriver.start(Butia4_1_0);
+                RobotDriver.start(butiaV4);
             return RobotDriver._instance as RobotDriver;
         }
 
-        static getCurrentRobot(): IRobot {
+        static currentRobot(): IRobot {
             return RobotDriver.instance()._robot;
         }
     }

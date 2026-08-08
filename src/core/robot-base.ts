@@ -1,6 +1,6 @@
 // PXT does not support `abstract class` — this DI base class is the approved substitute.
 
-namespace Butia {
+namespace butia {
     export class RobotBase implements IRobot {
         // --- Fields ---
         private _motors: IMotorDriver;
@@ -10,7 +10,7 @@ namespace Butia {
         private _buttons: {pin:AnalogPin | DigitalPin, sensor: IButtonSensor}[];
         private _generics: {pin:AnalogPin | DigitalPin, sensor: IGenericSensor}[];
         private _servos: {pin: AnalogPin | DigitalPin, servo: IServoDriver}[];
-        private _connectorConfig: IConnectorPin[];
+        protected _connectorConfig: IConnectorPin[];
         private _motorLeft: number;
         private _motorRight: number;
         private _pinUsage: { pin: AnalogPin | DigitalPin; type: string }[];
@@ -43,7 +43,7 @@ namespace Butia {
             for (const cp of this._connectorConfig) {
                 if (cp.connector.name === connector.name) return cp.pin;
             }
-            control.fail("Conector " + connector.name + " no encontrado.");
+            control.fail("Connector " + connector.name + " not found.");
             return 0 as AnalogPin;
         }
 
@@ -56,12 +56,12 @@ namespace Butia {
                 }
             }
             if (!valid) {
-                control.fail("Pin " + pin + " no pertenece a ningún conector configurado.");
+                control.fail("Pin " + pin + " is not on any configured connector.");
             }
             for (const entry of this._pinUsage) {
                 if (entry.pin === pin) {
                     if (entry.type !== type) {
-                        control.fail("Pin " + pin + " ya está en uso como " + entry.type);
+                        control.fail("Pin " + pin + " is already in use as " + entry.type);
                     }
                     return;
                 }
@@ -160,8 +160,8 @@ namespace Butia {
             }
         }
 
-        turn(direction: TurnDirection, speed: number = 60, duration?: number): void {
-            if (direction === TurnDirection.Left) {
+        turn(direction: ButiaTurnDirection, speed: number = 60, duration?: number): void {
+            if (direction === ButiaTurnDirection.Left) {
                 this._setMotorSpeed(-speed, speed);
             } else {
                 this._setMotorSpeed(speed, -speed);
@@ -213,10 +213,10 @@ namespace Butia {
 
         // --- Events ---
         
-        onDistance(connector: IConnector, op: Comparison, threshold: number, priority: number, handler: () => void): void {
+        onDistance(connector: IConnector, op: ButiaComparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getDistanceSensor(pin);
-            const subId = computeSubId(SENSOR_TYPE_DISTANCE, pin as number, comparisonToDir(op));
+            const subId = computeSubId(sensorTypeDistance, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => {
@@ -230,10 +230,10 @@ namespace Butia {
             this._eventMonitor.register(monitor);
         }
 
-        onLight(connector: IConnector, op: Comparison, threshold: number, priority: number, handler: () => void): void {
+        onLight(connector: IConnector, op: ButiaComparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getLightSensor(pin);
-            const subId = computeSubId(SENSOR_TYPE_LIGHT, pin as number, comparisonToDir(op));
+            const subId = computeSubId(sensorTypeLight, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
@@ -243,10 +243,10 @@ namespace Butia {
             this._eventMonitor.register(monitor);
         }
 
-        onGray(connector: IConnector, op: Comparison, threshold: number, priority: number, handler: () => void): void {
+        onGray(connector: IConnector, op: ButiaComparison, threshold: number, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getGraySensor(pin);
-            const subId = computeSubId(SENSOR_TYPE_GRAY, pin as number, comparisonToDir(op));
+            const subId = computeSubId(sensorTypeGray, pin as number, comparisonToDir(op));
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => evalComparison(op, sensor.read(), threshold),
@@ -256,12 +256,12 @@ namespace Butia {
             this._eventMonitor.register(monitor);
         }
 
-        onConnectorButton(connector: IConnector, state: ButtonState, priority: number, handler: () => void): void {
+        onConnectorButton(connector: IConnector, state: ButiaButtonState, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getButtonSensor(pin);
-            const dir = state === ButtonState.Pressed ? DIR_GREATER_OR_PRESSED : DIR_LESS_OR_RELEASED;
-            const subId = computeSubId(SENSOR_TYPE_BUTTON, pin as number, dir);
-            const target = state === ButtonState.Pressed ? 1 : 0;
+            const dir = state === ButiaButtonState.Pressed ? dirGreaterOrPressed : dirLessOrReleased;
+            const subId = computeSubId(sensorTypeButton, pin as number, dir);
+            const target = state === ButiaButtonState.Pressed ? 1 : 0;
             const monitor: IMonitor = {
                 subId: subId,
                 evaluate: () => sensor.read() === target,
@@ -280,7 +280,6 @@ namespace Butia {
         // --- Getters ---
         motorLeft(): number { return this._motorLeft; }
         motorRight(): number { return this._motorRight; }
-        protected _getConnectorConfig(): IConnectorPin[] { return this._connectorConfig; }
 
         // --- Overridable stub ---
         start(): void {}

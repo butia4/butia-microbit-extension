@@ -1,6 +1,6 @@
-//% color="#84c324" icon="\uf057"
+//% color="#84c324" icon="\uf057" block="Butia"
 //% groups="['Motors', 'Sensors', 'Generic Sensors', 'Servos', 'Simulator']"
-namespace Butia {
+namespace butia {
 
 
     //% blockId="butia_imp_move_forward"
@@ -12,7 +12,7 @@ namespace Butia {
     //% group="Motors"
     export function moveForward(speed: number, duration?: number): void {
         const ms = duration ? duration * 1000 : 0;
-        Butia.RobotDriver.getCurrentRobot().moveForward(speed, ms);
+        butia.RobotDriver.currentRobot().moveForward(speed, ms);
     }
 
     //% blockId="butia_imp_move_backward"
@@ -24,7 +24,7 @@ namespace Butia {
     //% group="Motors"
     export function moveBackward(speed: number, duration?: number): void {
         const ms = duration ? duration * 1000 : 0;
-        Butia.RobotDriver.getCurrentRobot().moveBackward(speed, ms);
+        butia.RobotDriver.currentRobot().moveBackward(speed, ms);
     }
 
     //% blockId="butia_imp_turn"
@@ -34,9 +34,9 @@ namespace Butia {
     //% duration.defl=0
     //% weight=90
     //% group="Motors"
-    export function turn(direction: TurnDirection, speed: number, duration?: number): void {
+    export function turn(direction: ButiaTurnDirection, speed: number, duration?: number): void {
         const ms = duration ? duration * 1000 : undefined;
-        Butia.RobotDriver.getCurrentRobot().turn(direction, speed, ms);
+        butia.RobotDriver.currentRobot().turn(direction, speed, ms);
     }
 
     //% blockId="butia_imp_motor_tank"
@@ -46,7 +46,7 @@ namespace Butia {
     //% weight=85
     //% group="Motors"
     export function motorTank(left: number, right: number): void {
-        Butia.RobotDriver.getCurrentRobot().motorTank(left, right);
+        butia.RobotDriver.currentRobot().motorTank(left, right);
     }
 
     //% blockId="butia_imp_stop"
@@ -54,18 +54,18 @@ namespace Butia {
     //% weight=80
     //% group="Motors"
     export function motorStop(): void {
-        Butia.RobotDriver.getCurrentRobot().motorStop();
+        butia.RobotDriver.currentRobot().motorStop();
     }
 
     //% blockId="butia_imp_stop_single"
     //% block="stop motor %motor"
     //% weight=79
     //% group="Motors"
-    export function motorStopSingle(motor: MotorSide): void {
-        if (motor === MotorSide.Left) {
-            Butia.RobotDriver.getCurrentRobot().motorTank(0, Butia.RobotDriver.getCurrentRobot().motorRight());
+    export function motorStopSingle(motor: ButiaMotorSide): void {
+        if (motor === ButiaMotorSide.Left) {
+            butia.RobotDriver.currentRobot().motorTank(0, butia.RobotDriver.currentRobot().motorRight());
         } else {
-            Butia.RobotDriver.getCurrentRobot().motorTank(Butia.RobotDriver.getCurrentRobot().motorLeft(), 0);
+            butia.RobotDriver.currentRobot().motorTank(butia.RobotDriver.currentRobot().motorLeft(), 0);
         }
     }
 
@@ -73,32 +73,32 @@ namespace Butia {
     //% block="gray sensor on %connector"
     //% weight=70
     //% group="Sensors"
-    export function readGraySensor(connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readGraySensor(connector);
+    export function readGraySensor(connector: butia.Connector): number {
+        return butia.RobotDriver.currentRobot().readGraySensor(connector);
     }
 
     //% blockId="butia_imp_read_light"
     //% block="light sensor on %connector"
     //% weight=69
     //% group="Sensors"
-    export function readLightSensor(connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readLightSensor(connector);
+    export function readLightSensor(connector: butia.Connector): number {
+        return butia.RobotDriver.currentRobot().readLightSensor(connector);
     }
 
     //% blockId="butia_imp_distance"
     //% block="distance sensor on %connector"
     //% weight=69
     //% group="Sensors"
-    export function obstacleDistance(connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readDistanceSensor(connector);
+    export function obstacleDistance(connector: butia.Connector): number {
+        return butia.RobotDriver.currentRobot().readDistanceSensor(connector);
     }
 
     //% blockId="butia_imp_read_button"
     //% block="button on %connector pressed"
     //% weight=68
     //% group="Sensors"
-    export function readButton(connector: Butia.Connector): boolean {
-        return Butia.RobotDriver.getCurrentRobot().readButton(connector);
+    export function readButton(connector: butia.Connector): boolean {
+        return butia.RobotDriver.currentRobot().readButton(connector);
     }
     //% shim=ENUM_GET
     //% blockId=sensor_enum_shim
@@ -117,8 +117,8 @@ namespace Butia {
     //% sensorName.shadow="sensor_enum_shim"
     //% weight=67
     //% group="Generic Sensors"
-    export function readGenericSensor(sensorName: number, connector: Butia.Connector): number {
-        return Butia.RobotDriver.getCurrentRobot().readGenericSensor(connector, sensorName);
+    export function readGenericSensor(sensorName: number, connector: butia.Connector): number {
+        return butia.RobotDriver.currentRobot().readGenericSensor(connector, sensorName);
     }
     
     //% shim=ENUM_GET
@@ -140,8 +140,8 @@ namespace Butia {
     //% degrees.min=0 degrees.max=180 degrees.defl=90
     //% weight=50
     //% group="Servos"
-    export function servoSetAngle(servoName: number, connector: Butia.Connector, degrees: number): void {
-        Butia.RobotDriver.getCurrentRobot().servoSetAngle(connector, servoName, degrees);
+    export function servoSetAngle(servoName: number, connector: butia.Connector, degrees: number): void {
+        butia.RobotDriver.currentRobot().servoSetAngle(connector, servoName, degrees);
     }
 
     //% blockId="butia_evt_distance"
@@ -151,13 +151,13 @@ namespace Butia {
     //% weight=65
     //% advanced=true
     export function onDistance(
-        connector: Butia.Connector,
-        op: Comparison,
+        connector: butia.Connector,
+        op: ButiaComparison,
         threshold: number,
         priority: number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onDistance(connector, op, threshold, priority, handler);
+        butia.RobotDriver.currentRobot().onDistance(connector, op, threshold, priority, handler);
     }
 
     //% blockId="butia_evt_light"
@@ -167,13 +167,13 @@ namespace Butia {
     //% weight=60
     //% advanced=true
     export function onLight(
-        connector: Butia.Connector,
-        op: Comparison,
+        connector: butia.Connector,
+        op: ButiaComparison,
         threshold: number,
         priority: number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onLight(connector, op, threshold, priority, handler);
+        butia.RobotDriver.currentRobot().onLight(connector, op, threshold, priority, handler);
     }
 
     //% blockId="butia_evt_gray"
@@ -183,13 +183,13 @@ namespace Butia {
     //% weight=55
     //% advanced=true
     export function onGray(
-        connector: Butia.Connector,
-        op: Comparison,
+        connector: butia.Connector,
+        op: ButiaComparison,
         threshold: number,
         priority: number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onGray(connector, op, threshold, priority, handler);
+        butia.RobotDriver.currentRobot().onGray(connector, op, threshold, priority, handler);
     }
 
     //% blockId="butia_evt_button"
@@ -198,20 +198,20 @@ namespace Butia {
     //% weight=70
     //% advanced=true
     export function onButton(
-        connector: Butia.Connector,
-        state: ButtonState,
+        connector: butia.Connector,
+        state: ButiaButtonState,
         priority: number,
         handler: () => void
     ): void {
-        Butia.RobotDriver.getCurrentRobot().onConnectorButton(connector, state, priority, handler);
+        butia.RobotDriver.currentRobot().onConnectorButton(connector, state, priority, handler);
     }
 
     //% blockId="butia_sim_set_map"
     //% block="use map %map"
     //% weight=50
     //% group="Simulator"
-    export function setMap(map: SimMap): void {
-        _butiaSimSelectMap(map);
+    export function setMap(map: ButiaSimMap): void {
+        _simSelectMap(map);
     }
 
 }

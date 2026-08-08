@@ -6,37 +6,36 @@
 // Rising-edge detection prevents repeated firing while the condition holds.
 // Step 2 evaluates level-triggered reactive motor rules via subsumption.
 
-namespace Butia {
-    export const BUTIA_EVENT_ID = 6500;
-    export const POLL_INTERVAL_MS = 50;
+namespace butia {
+    export const pollIntervalMs = 50;
 
     // Sensor type tags used to build deterministic event sub-IDs.
-    export const SENSOR_TYPE_LIGHT = 1;
-    export const SENSOR_TYPE_GRAY = 2;
-    export const SENSOR_TYPE_DISTANCE = 3;
-    export const SENSOR_TYPE_BUTTON = 4;
+    export const sensorTypeLight = 1;
+    export const sensorTypeGray = 2;
+    export const sensorTypeDistance = 3;
+    export const sensorTypeButton = 4;
 
     // Direction tags inside the sub-ID.
     //  0 = Greater         (or button Pressed)
     //  1 = Less            (or button Released)
     //  2 = GreaterOrEqual
     //  3 = LessOrEqual
-    export const DIR_GREATER_OR_PRESSED = 0;
-    export const DIR_LESS_OR_RELEASED = 1;
-    export const DIR_GREATER_OR_EQUAL = 2;
-    export const DIR_LESS_OR_EQUAL = 3;
+    export const dirGreaterOrPressed = 0;
+    export const dirLessOrReleased = 1;
+    export const dirGreaterOrEqual = 2;
+    export const dirLessOrEqual = 3;
 
-    export function comparisonToDir(op: Comparison): number {
-        if (op === Comparison.Greater) return DIR_GREATER_OR_PRESSED;
-        if (op === Comparison.Less) return DIR_LESS_OR_RELEASED;
-        if (op === Comparison.GreaterOrEqual) return DIR_GREATER_OR_EQUAL;
-        return DIR_LESS_OR_EQUAL;
+    export function comparisonToDir(op: ButiaComparison): number {
+        if (op === ButiaComparison.Greater) return dirGreaterOrPressed;
+        if (op === ButiaComparison.Less) return dirLessOrReleased;
+        if (op === ButiaComparison.GreaterOrEqual) return dirGreaterOrEqual;
+        return dirLessOrEqual;
     }
 
-    export function evalComparison(op: Comparison, value: number, threshold: number): boolean {
-        if (op === Comparison.Greater) return value > threshold;
-        if (op === Comparison.Less) return value < threshold;
-        if (op === Comparison.GreaterOrEqual) return value >= threshold;
+    export function evalComparison(op: ButiaComparison, value: number, threshold: number): boolean {
+        if (op === ButiaComparison.Greater) return value > threshold;
+        if (op === ButiaComparison.Less) return value < threshold;
+        if (op === ButiaComparison.GreaterOrEqual) return value >= threshold;
         return value <= threshold;
     }
 
@@ -107,7 +106,7 @@ namespace Butia {
             control.inBackground(() => {
                 while (true) {
                     this.pollOnce();
-                    basic.pause(POLL_INTERVAL_MS);
+                    basic.pause(pollIntervalMs);
                 }
             });
         }

@@ -1,4 +1,4 @@
-namespace Butia {
+namespace butia {
     //% fixedInstances
     export class Connector implements IConnector {
         constructor(public readonly name: string) {}

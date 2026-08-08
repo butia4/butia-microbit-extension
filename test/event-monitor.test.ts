@@ -3,9 +3,9 @@
 // assertions don't depend on the PXT event scheduler.
 // Mocks come from test/_mocks.ts.
 
-const eCfg: Butia.ConnectorPin[] = [
-    new Butia.ConnectorPin(Butia.J1, AnalogPin.P1),
-    new Butia.ConnectorPin(Butia.J2, AnalogPin.P2),
+const eCfg: butia.ConnectorPin[] = [
+    new butia.ConnectorPin(butia.J1, AnalogPin.P1),
+    new butia.ConnectorPin(butia.J2, AnalogPin.P2),
 ];
 
 let s: number;
@@ -14,19 +14,19 @@ let sSecond: number;
 
 // --- computeSubId determinism ---
 
-const sA = Butia.computeSubId(Butia.SENSOR_TYPE_LIGHT, AnalogPin.P1, Butia.DIR_GREATER_OR_PRESSED);
-const sB = Butia.computeSubId(Butia.SENSOR_TYPE_LIGHT, AnalogPin.P1, Butia.DIR_GREATER_OR_PRESSED);
+const sA = butia.computeSubId(butia.sensorTypeLight, AnalogPin.P1, butia.dirGreaterOrPressed);
+const sB = butia.computeSubId(butia.sensorTypeLight, AnalogPin.P1, butia.dirGreaterOrPressed);
 assertTest(sA === sB, "computeSubId deterministic");
-assertTest(sA !== Butia.computeSubId(Butia.SENSOR_TYPE_LIGHT, AnalogPin.P1, Butia.DIR_LESS_OR_RELEASED), "subId by direction");
-assertTest(sA !== Butia.computeSubId(Butia.SENSOR_TYPE_GRAY, AnalogPin.P1, Butia.DIR_GREATER_OR_PRESSED), "subId by sensor type");
-assertTest(sA !== Butia.computeSubId(Butia.SENSOR_TYPE_LIGHT, AnalogPin.P2, Butia.DIR_GREATER_OR_PRESSED), "subId by pin");
+assertTest(sA !== butia.computeSubId(butia.sensorTypeLight, AnalogPin.P1, butia.dirLessOrReleased), "subId by direction");
+assertTest(sA !== butia.computeSubId(butia.sensorTypeGray, AnalogPin.P1, butia.dirGreaterOrPressed), "subId by sensor type");
+assertTest(sA !== butia.computeSubId(butia.sensorTypeLight, AnalogPin.P2, butia.dirGreaterOrPressed), "subId by pin");
 
 // --- onDistance Less: rising-edge + invalid-reading guard ---
 
 const rD = new MockRobot(new MockMotorDriver(), eCfg);
-const sD = new MockSensor(AnalogPin.P1, 50);
+const sD = new MockSensor(50);
 rD.mockDistance(AnalogPin.P1, sD);
-rD.onDistance(Butia.J1, Comparison.Less, 20, 1, () => { });
+rD.onDistance(butia.J1, ButiaComparison.Less, 20, 1, () => { });
 
 s = rD._stepEventMonitor();
 assertTest(s === 0, "onDistance Less: above threshold no-fire");
@@ -50,12 +50,12 @@ assertTest(s === 0, "onDistance Less: negative reading ignored");
 // --- onLight: Greater and Less ---
 
 const rL = new MockRobot(new MockMotorDriver(), eCfg);
-const sL1 = new MockSensor(AnalogPin.P1, 30);
-const sL2 = new MockSensor(AnalogPin.P2, 80);
+const sL1 = new MockSensor(30);
+const sL2 = new MockSensor(80);
 rL.mockLight(AnalogPin.P1, sL1);
 rL.mockLight(AnalogPin.P2, sL2);
-rL.onLight(Butia.J1, Comparison.Greater, 70, 1, () => { });
-rL.onLight(Butia.J2, Comparison.Less, 30, 1, () => { });
+rL.onLight(butia.J1, ButiaComparison.Greater, 70, 1, () => { });
+rL.onLight(butia.J2, ButiaComparison.Less, 30, 1, () => { });
 
 s = rL._stepEventMonitor();
 assertTest(s === 0, "onLight: neither fires initially");
@@ -67,9 +67,9 @@ assertTest(sFirst !== 0 && sSecond !== 0, "onLight: both Greater and Less fire (
 // --- onGray Greater ---
 
 const rG = new MockRobot(new MockMotorDriver(), eCfg);
-const sG = new MockSensor(AnalogPin.P1, 20);
+const sG = new MockSensor(20);
 rG.mockGray(AnalogPin.P1, sG);
-rG.onGray(Butia.J1, Comparison.Greater, 50, 1, () => { });
+rG.onGray(butia.J1, ButiaComparison.Greater, 50, 1, () => { });
 s = rG._stepEventMonitor();
 assertTest(s === 0, "onGray Greater: below no-fire");
 sG.setValue(75);
@@ -79,20 +79,20 @@ assertTest(s !== 0, "onGray Greater: fires");
 // --- evalComparison: >= and <= fire at boundary equality ---
 
 assertTest(
-    Butia.evalComparison(Comparison.GreaterOrEqual, 70, 70) &&
-    Butia.evalComparison(Comparison.LessOrEqual, 30, 30),
+    butia.evalComparison(ButiaComparison.GreaterOrEqual, 70, 70) &&
+    butia.evalComparison(ButiaComparison.LessOrEqual, 30, 30),
     "GE/LE boundary"
 );
 
 // --- onConnectorButton: Pressed and Released ---
 
 const rB = new MockRobot(new MockMotorDriver(), eCfg);
-const sB1 = new MockSensor(AnalogPin.P1, 0);
-const sB2 = new MockSensor(AnalogPin.P2, 1);
+const sB1 = new MockSensor(0);
+const sB2 = new MockSensor(1);
 rB.mockButton(AnalogPin.P1, sB1);
 rB.mockButton(AnalogPin.P2, sB2);
-rB.onConnectorButton(Butia.J1, ButtonState.Pressed, 1, () => { });
-rB.onConnectorButton(Butia.J2, ButtonState.Released, 1, () => { });
+rB.onConnectorButton(butia.J1, ButiaButtonState.Pressed, 1, () => { });
+rB.onConnectorButton(butia.J2, ButiaButtonState.Released, 1, () => { });
 
 s = rB._stepEventMonitor();
 assertTest(s === 0, "onConnectorButton: initial no-fire");
@@ -106,9 +106,9 @@ assertTest(s === 0, "onConnectorButton: sustained no-refire");
 // --- handler exception resets _eventRaising ---
 
 const rE = new MockRobot(new MockMotorDriver(), eCfg);
-const sE = new MockSensor(AnalogPin.P1, 50);
+const sE = new MockSensor(50);
 rE.mockDistance(AnalogPin.P1, sE);
-rE.onDistance(Butia.J1, Comparison.Less, 20, 1, () => { throw "handler-exception"; });
+rE.onDistance(butia.J1, ButiaComparison.Less, 20, 1, () => { throw "handler-exception"; });
 
 sE.setValue(10);
 let threw = false;
