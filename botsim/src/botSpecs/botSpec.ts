@@ -66,7 +66,7 @@ export type BotSpec = {
     logoAsset?: string
     wheels: WheelSpec[]
     sensorMounts: Record<MountSide, MountSpec>
-    // Connectors physically available on this hardware model (v4: J1-J5, v3: J1-J3).
+    // Connectors physically available on this hardware model (v4: J1-J5, v2: J1-J3).
     connectorSlots: readonly string[]
 }
 

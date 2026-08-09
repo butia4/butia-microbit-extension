@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import { ALL_MOUNT_SIDES, MountSide, SquareChassisSpec } from "../../../botSpecs/botSpec"
-import { BUTIA_BOT_SPEC, BUTIA_V3_BOT_SPEC } from "../../../botSpecs/butiaBotSpec"
+import { BUTIA_BOT_SPEC, BUTIA_V2_BOT_SPEC } from "../../../botSpecs/butiaBotSpec"
 import { PinSettingsFormValues } from "../model/pinSettingsForm.model"
 import { MOUNT_ORDER } from "../constants"
 import { chassisCornerRadiusPct, coneWedgePoints, mountPreviewPos } from "../utils/geometry"
@@ -17,7 +17,7 @@ type ChassisIllustrationProps = {
 
 export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
     const model = useSelector((state: RootState) => state.robotModel.current)
-    const spec = model === "butiaV3" ? BUTIA_V3_BOT_SPEC : BUTIA_BOT_SPEC
+    const spec = model === "butiaV2" ? BUTIA_V2_BOT_SPEC : BUTIA_BOT_SPEC
     const chassisColors = spec.chassisColors ?? { fill: "#C3E8A8", border: "#555555" }
     const logoAsset = spec.logoAsset ?? "assets/logo.svg"
 

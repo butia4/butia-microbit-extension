@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Simulation } from "../sim"
 import { BotSpec } from "../botSpecs/botSpec"
-import { BUTIA_BOT_SPEC, BUTIA_V3_BOT_SPEC } from "../botSpecs/butiaBotSpec"
+import { BUTIA_BOT_SPEC, BUTIA_V2_BOT_SPEC } from "../botSpecs/butiaBotSpec"
 import { init as initMakeCode, sendSensors } from "./makecodeService"
 import { ButiaStateMsg, ButiaMapSelectMsg, ButiaErrorMsg } from "./protocol"
 import { resolveMap } from "../maps/registry"
@@ -15,7 +15,7 @@ let currRunId: string | undefined
 // Absent/unrecognized model id defaults to v4, so older PXT builds (or
 // messages with no model field) keep working unchanged.
 function resolveBotSpec(model?: string): BotSpec {
-    if (model === "butiaV3") return BUTIA_V3_BOT_SPEC
+    if (model === "butiaV2") return BUTIA_V2_BOT_SPEC
     return BUTIA_BOT_SPEC
 }
 

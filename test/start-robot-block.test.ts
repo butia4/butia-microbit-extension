@@ -1,19 +1,19 @@
-// "start robot %robot" block: explicit v3/v4 selection, and the
+// "start robot %robot use map %map" block: explicit v2/v4 selection, and the
 // required-block error when no selection was made.
 // _resetForTests() clears the singleton between scenarios since
 // RobotDriver.start() refuses to swap an already-started instance.
 
 // --- explicit v4 selection ---
 butia.RobotDriver._resetForTests();
-butia.startRobot(butia.butiaV4);
+butia.startRobot(butia.butiaV4, ButiaSimMap.LineFollower);
 assertTest(butia.RobotDriver.instance() === butia.butiaV4, "start robot butiaV4 selects the v4 instance");
 assertTest(butia.RobotDriver.currentRobot().modelId() === "butiaV4", "active robot after explicit v4 select has modelId butiaV4");
 
-// --- explicit v3 selection ---
+// --- explicit v2 selection ---
 butia.RobotDriver._resetForTests();
-butia.startRobot(butia.butiaV3);
-assertTest(butia.RobotDriver.instance() === butia.butiaV3, "start robot butiaV3 selects the v3 instance");
-assertTest(butia.RobotDriver.currentRobot().modelId() === "butiaV3", "active robot after explicit v3 select has modelId butiaV3");
+butia.startRobot(butia.butiaV2, ButiaSimMap.LineFollower);
+assertTest(butia.RobotDriver.instance() === butia.butiaV2, "start robot butiaV2 selects the v2 instance");
+assertTest(butia.RobotDriver.currentRobot().modelId() === "butiaV2", "active robot after explicit v2 select has modelId butiaV2");
 
 // --- no selection block: instance() must fail, not silently default ---
 butia.RobotDriver._resetForTests();

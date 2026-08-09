@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-export type RobotModelId = "butiaV4" | "butiaV3"
+export type RobotModelId = "butiaV4" | "butiaV2"
 
 export type RobotModelState = { current: RobotModelId }
 
@@ -13,7 +13,7 @@ export const robotModelSlice = createSlice({
         // Absent/unrecognized model id defaults to v4, mirroring resolveBotSpec's
         // fallback so older PXT builds (or messages with no model field) keep working.
         setRobotModel: (state, action: PayloadAction<string | undefined>) => {
-            state.current = action.payload === "butiaV3" ? "butiaV3" : "butiaV4"
+            state.current = action.payload === "butiaV2" ? "butiaV2" : "butiaV4"
         },
     },
 })

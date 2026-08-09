@@ -12,7 +12,7 @@
         "src/core/event-monitor.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
-        "src/hardware/butia3-robot.ts",
+        "src/hardware/butia2-robot.ts",
         "src/hardware/button-sensor-butia.ts",
         "src/hardware/distance-sensor-butia.ts",
         "src/hardware/generic-sensor-butia.ts",
@@ -37,7 +37,7 @@
     ],
     "testFiles": [
         "test/_mocks.ts",
-        "test/butia3-robot.test.ts",
+        "test/butia2-robot.test.ts",
         "test/event-monitor.test.ts",
         "test/mock.test.ts",
         "test/robot-base.test.ts",

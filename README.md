@@ -23,21 +23,21 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 2. Go to ⚙ → **Extensions**.
 3. Search for or paste `https://github.com/butia4/butia-microbit-extension` and click **Import**.
 
-The Butia blocks appear in the toolbox immediately, under a **Butia** category with the groups **Motors**, **Sensors**, **Generic Sensors**, **Servos** and **Simulator**.
+The Butia blocks appear in the toolbox immediately, under a **Butia** category with the groups **Motors**, **Sensors**, **Generic Sensors** and **Servos**.
 
 ## Block API Reference
 
 English is the base language of the blocks; Spanish is shipped as a locale (`_locales/es/`) and is what students see when the editor is set to Spanish. The reference below uses the English text.
 
-`%connector` is a Butia connector picker. Available connectors depend on the active robot model — **J1–J5** on Butia v4, **J1–J3** on Butia v3.
+`%connector` is a Butia connector picker. Available connectors depend on the active robot model — **J1–J5** on Butia v4, **J1–J3** on Butia v2.
 
 ### Robot Model
 
-The extension supports both the **Butia v4** and **Butia v3** kits. If your program has no `start robot` block, it defaults to Butia v4 — existing v4-only projects keep working unchanged.
+The extension supports both the **Butia v4** and **Butia v2** kits. If your program has no `start robot` block, it defaults to Butia v4 — existing v4-only projects keep working unchanged.
 
 | Block | Description | Parameters |
 |---|---|---|
-| `start robot %robot` | Selects which Butia hardware model is active. Call once at the start of your program, before any motor/sensor block. | `robot`: `Butia v3` / `Butia v4` |
+| `start robot %robot use map %map` | Selects which Butia hardware model is active and which botsim map to run against. Place it at the beginning of your `on start` block, before any other motor/sensor block — MakeCode does not insert it there automatically. | `robot`: `Butia v2` / `Butia v4` · `map`: `line follower` / `table` / `light` |
 
 ### Motors
 
@@ -83,12 +83,6 @@ The monitor polls every 50 ms and runs handlers **synchronously**, so a handler 
 | `when light sensor on %connector is %op %threshold with priority %priority` | Light reading compares against `threshold` |
 | `when gray sensor on %connector is %op %threshold with priority %priority` | Gray reading compares against `threshold` |
 | `when button on %connector is %state with priority %priority` | Button is `pressed`/`released` |
-
-### Simulator
-
-| Block | Description |
-|---|---|
-| `use map %map` | Selects the botsim map (`line follower`, `table`, `light`) used when the project runs in the MakeCode simulator. No effect on real hardware. |
 
 ## Development
 

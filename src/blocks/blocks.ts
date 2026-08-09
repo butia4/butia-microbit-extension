@@ -4,24 +4,16 @@ namespace butia {
 
 
     /**
-     * Selects which Butia hardware model is active. Call once at the start of
-     * your program, before any motor/sensor block runs.
+     * Selects which Butia hardware model is active and which botsim map to
+     * run against. Place this block at the beginning of your "on start"
+     * block, before any other motor/sensor block — MakeCode does not insert
+     * it there automatically.
      */
     //% blockId="butia_start_robot"
-    //% block="start robot %robot"
+    //% block="start robot %robot use map %map"
     //% weight=111
-    export function startRobot(robot: butia.RobotDriver): void {
+    export function startRobot(robot: butia.RobotDriver, map: ButiaSimMap): void {
         butia.RobotDriver.start(robot);
-    }
-
-    /**
-     * Selects the botsim simulator map to run against.
-     */
-    //% blockId="butia_sim_set_map"
-    //% block="use map %map"
-    //% weight=110
-    export function setMap(map: ButiaSimMap): void {
-        butia.RobotDriver.instance();
         _simSelectMap(map);
     }
 

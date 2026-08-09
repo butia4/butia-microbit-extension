@@ -16,7 +16,6 @@
   "butia.readGraySensor": "Reads the analog gray/line sensor on the given connector (0-100, higher = darker).",
   "butia.readLightSensor": "Reads the light sensor on the given connector (0-100).",
   "butia.servoSetAngle": "Sets a servo's angle on the given connector.",
-  "butia.setMap": "Selects the botsim simulator map to run against.",
-  "butia.startRobot": "Selects which Butia hardware model is active. Call once at the start of\r\nyour program, before any motor/sensor block runs.",
+  "butia.startRobot": "Selects which Butia hardware model is active and which botsim map to\r\nrun against. Place this block at the beginning of your \"on start\"\r\nblock, before any other motor/sensor block — MakeCode does not insert\r\nit there automatically.",
   "butia.turn": "Turns in place toward the given direction."
 }

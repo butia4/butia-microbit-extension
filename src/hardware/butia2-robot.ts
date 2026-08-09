@@ -1,12 +1,12 @@
-// Butia3Robot wires the Butia v3 hardware components.
-// v3 reuses the existing J1/J2/J3 connector fixedInstances (defined in
+// Butia2Robot wires the Butia v2 hardware components.
+// v2 reuses the existing J1/J2/J3 connector fixedInstances (defined in
 // butia-robot.ts) mapped to different pins — _resolvePin matches by
 // connector name against each robot instance's own _connectorConfig, so no
 // new connector fixedInstances are needed and blocks stay identical across
 // models.
 
 namespace butia {
-    export class Butia3Robot extends RobotBase {
+    export class Butia2Robot extends RobotBase {
         constructor() {
             super(
                 new GpioMotorDriver(
@@ -18,13 +18,13 @@ namespace butia {
                     new ConnectorPin(J2, AnalogPin.P1),
                     new ConnectorPin(J3, AnalogPin.P2),
                 ],
-                "butiaV3");
+                "butiaV2");
         }
         start(): void {
             super.start();
         }
     }
 
-    //% fixedInstance block="Butia v3"
-    export const butiaV3 = new RobotDriver(new Butia3Robot());
+    //% fixedInstance block="Butia v2"
+    export const butiaV2 = new RobotDriver(new Butia2Robot());
 }
