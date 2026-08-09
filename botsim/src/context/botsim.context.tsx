@@ -3,6 +3,7 @@ import { useSimulatorLifecycle } from "../simulatorBridge/useSimulatorLifecycle"
 
 interface BotSimContextType {
   armed: boolean;
+  robotNotStarted: boolean;
   rearmOnSettingsClose: () => void;
   settingsOpen: boolean;
   setSettingsOpen: (open: boolean) => void;
@@ -16,11 +17,11 @@ interface Props {
 }
 
 export const BotSimContextProvider = ({ children }: Props): React.ReactNode => {
-  const { armed, rearmOnSettingsClose } = useSimulatorLifecycle()
+  const { armed, robotNotStarted, rearmOnSettingsClose } = useSimulatorLifecycle()
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   return (
-    <BotSimContext.Provider value={{ armed, rearmOnSettingsClose, settingsOpen, setSettingsOpen }}>
+    <BotSimContext.Provider value={{ armed, robotNotStarted, rearmOnSettingsClose, settingsOpen, setSettingsOpen }}>
       {children}
     </BotSimContext.Provider>
   );

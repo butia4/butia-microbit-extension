@@ -5,7 +5,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 [![MakeCode](https://img.shields.io/badge/MakeCode-micro%3Abit-blue)](https://makecode.microbit.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
-> Developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República, Uruguay. The block API may evolve during active development.
+> Developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República, Uruguay.
 
 ## Table of Contents
 
@@ -29,7 +29,15 @@ The Butia blocks appear in the toolbox immediately, under a **Butia** category w
 
 English is the base language of the blocks; Spanish is shipped as a locale (`_locales/es/`) and is what students see when the editor is set to Spanish. The reference below uses the English text.
 
-`%connector` is a Butia connector picker: **J1–J5**.
+`%connector` is a Butia connector picker. Available connectors depend on the active robot model — **J1–J5** on Butia v4, **J1–J3** on Butia v3.
+
+### Robot Model
+
+The extension supports both the **Butia v4** and **Butia v3** kits. If your program has no `start robot` block, it defaults to Butia v4 — existing v4-only projects keep working unchanged.
+
+| Block | Description | Parameters |
+|---|---|---|
+| `start robot %robot` | Selects which Butia hardware model is active. Call once at the start of your program, before any motor/sensor block. | `robot`: `Butia v3` / `Butia v4` |
 
 ### Motors
 

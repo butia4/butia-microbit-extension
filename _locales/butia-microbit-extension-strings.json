@@ -20,6 +20,7 @@
   "butia.J5|block": "J5",
   "butia._sensorEnumShim|block": "$arg",
   "butia._servoEnumShim|block": "$arg",
+  "butia.butiaV3|block": "Butia v3",
   "butia.butiaV4|block": "Butia v4",
   "butia.motorStopSingle|block": "stop motor %motor",
   "butia.motorStop|block": "stop motors",
@@ -37,12 +38,13 @@
   "butia.readLightSensor|block": "light sensor on %connector",
   "butia.servoSetAngle|block": "servo $servoName on $connector set angle to $degrees °",
   "butia.setMap|block": "use map %map",
+  "butia.startRobot|block": "start robot %robot",
   "butia.turn|block": "turn %direction at speed %speed || for %duration seconds",
+  "butia|block": "Butia",
   "{id:category}Buffer": "Buffer",
   "{id:category}Butia": "Butia",
   "{id:group}Generic Sensors": "Generic Sensors",
   "{id:group}Motors": "Motors",
   "{id:group}Sensors": "Sensors",
-  "{id:group}Servos": "Servos",
-  "{id:group}Simulator": "Simulator"
+  "{id:group}Servos": "Servos"
 }

@@ -11,6 +11,10 @@ namespace butia {
         // of being sent once, since a one-shot send can race the botsim iframe's
         // mount and get silently dropped by postMessage (no queue/replay).
         export let selectedMapId: number = 0;
+        // "" = unset sentinel. Set once when the sim robot starts and, like
+        // selectedMapId, resent every tick by the background loop instead of
+        // once, to avoid the same postMessage mount race.
+        export let robotModelId: string = "";
 
         export function reset(): void {
             runId = "";
@@ -20,6 +24,7 @@ namespace butia {
             motorRight = 0;
             mapSelected = false;
             selectedMapId = 0;
+            robotModelId = "";
         }
     }
 

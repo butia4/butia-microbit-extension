@@ -6,10 +6,10 @@
 const motors = new MockMotorDriver();
 const motorRobot = new butia.RobotBase(motors, []);
 
-//motorRobot.moveForward(60);
+motorRobot.moveForward(60, 0);
 assertTest(motors.left === 60 && motors.right === 60, "moveForward speed");
 
-//motorRobot.moveBackward(50);
+motorRobot.moveBackward(50, 0);
 assertTest(motors.left === -50 && motors.right === -50, "moveBackward speed");
 
 motorRobot.turn(ButiaTurnDirection.Left, 40);

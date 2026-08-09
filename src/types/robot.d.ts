@@ -27,5 +27,7 @@ declare namespace butia {
         motorLeft(): number
         motorRight(): number
         servoSetAngle(connector: IConnector, name: number, degrees: number): void
+        modelId(): string
+        connectorConfig(): IConnectorPin[]
     }
 }

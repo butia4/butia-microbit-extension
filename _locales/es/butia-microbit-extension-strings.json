@@ -1,5 +1,6 @@
 {
   "Buffer|block": "Buffer",
+  "butia.butiaV3|block": "Butia v3",
   "butia.butiaV4|block": "Butia v4",
   "butia.J1|block": "J1",
   "butia.J2|block": "J2",
@@ -24,7 +25,9 @@
   "butia.readLightSensor|block": "sensor de luz en %connector",
   "butia.servoSetAngle|block": "servo $servoName en $connector fijar ángulo a $degrees °",
   "butia.setMap|block": "usar mapa %map",
+  "butia.startRobot|block": "iniciar robot %robot",
   "butia.turn|block": "girar hacia %direction a velocidad %speed || durante %duration segundos",
+  "butia|block": "Butia",
   "ButiaButtonState.Pressed|block": "presione",
   "ButiaButtonState.Released|block": "suelte",
   "ButiaComparison.GreaterOrEqual|block": "mayor o igual que",
@@ -41,6 +44,5 @@
   "{id:group}Generic Sensors": "Sensores Genéricos",
   "{id:group}Motors": "Motores",
   "{id:group}Sensors": "Sensores",
-  "{id:group}Servos": "Servos",
-  "{id:group}Simulator": "Simulador"
+  "{id:group}Servos": "Servos"
 }

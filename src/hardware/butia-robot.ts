@@ -31,7 +31,8 @@ namespace butia {
                     new ConnectorPin(J3, AnalogPin.P3),
                     new ConnectorPin(J4, AnalogPin.P4),
                     new ConnectorPin(J5, AnalogPin.P10),
-                ]);
+                ],
+                "butiaV4");
         }
         start(): void {
             super.start();

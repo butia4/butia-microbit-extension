@@ -1,4 +1,22 @@
 {
   "Buffer.fromUTF8": "Create a new buffer from an UTF8-encoded string",
-  "Buffer.toString": "Convert a buffer to string assuming UTF8 encoding"
+  "Buffer.toString": "Convert a buffer to string assuming UTF8 encoding",
+  "butia.motorStop": "Stops both motors.",
+  "butia.motorStopSingle": "Stops a single motor, leaving the other running.",
+  "butia.motorTank": "Sets each motor's speed independently (tank drive).",
+  "butia.moveBackward": "Drives both motors backward. Runs indefinitely, or for the given duration if set.",
+  "butia.moveForward": "Drives both motors forward. Runs indefinitely, or for the given duration if set.",
+  "butia.obstacleDistance": "Reads the distance sensor on the given connector, in cm.",
+  "butia.onButton": "Runs the handler when the button on the given connector reaches the given state, at the given priority.",
+  "butia.onDistance": "Runs the handler when the distance sensor on the given connector matches the comparison, at the given priority.",
+  "butia.onGray": "Runs the handler when the gray sensor on the given connector matches the comparison, at the given priority.",
+  "butia.onLight": "Runs the handler when the light sensor on the given connector matches the comparison, at the given priority.",
+  "butia.readButton": "Whether the button on the given connector is currently pressed.",
+  "butia.readGenericSensor": "Reads a generic analog sensor. Pick an existing name or create one from the dropdown.",
+  "butia.readGraySensor": "Reads the analog gray/line sensor on the given connector (0-100, higher = darker).",
+  "butia.readLightSensor": "Reads the light sensor on the given connector (0-100).",
+  "butia.servoSetAngle": "Sets a servo's angle on the given connector.",
+  "butia.setMap": "Selects the botsim simulator map to run against.",
+  "butia.startRobot": "Selects which Butia hardware model is active. Call once at the start of\r\nyour program, before any motor/sensor block runs.",
+  "butia.turn": "Turns in place toward the given direction."
 }

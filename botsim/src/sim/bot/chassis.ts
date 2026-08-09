@@ -13,9 +13,10 @@ export class Chassis {
 
     public static makeShapeSpec(spec: BotSpec): EntityShapeSpec {
         const chassisMass = Math.max(MIN_CHASSIS_MASS, spec.mass - Chassis.totalWheelMass(spec))
+        const chassisColors = spec.chassisColors ?? BUTIA_CHASSIS_COLORS
         const colorBrush: BrushSpec = {
             ...defaultColorBrush(),
-            fillColor: BUTIA_CHASSIS_COLORS.fill, borderColor: BUTIA_CHASSIS_COLORS.border, borderWidth: 0.3, zIndex: 2,
+            fillColor: chassisColors.fill, borderColor: chassisColors.border, borderWidth: 0.3, zIndex: 2,
         }
         const textureBrush: BrushSpec = {
             ...defaultTextureBrush(),

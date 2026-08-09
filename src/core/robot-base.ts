@@ -15,10 +15,12 @@ namespace butia {
         private _motorRight: number;
         private _pinUsage: { pin: AnalogPin | DigitalPin; type: string }[];
         private _eventMonitor: EventMonitor;
+        private _modelId: string;
         // --- Constructor ---
         constructor(
             motors: IMotorDriver,
-            connectorConfig: IConnectorPin[]
+            connectorConfig: IConnectorPin[],
+            modelId?: string
         ) {
             this._motors = motors;
             this._connectorConfig = connectorConfig;
@@ -32,6 +34,9 @@ namespace butia {
             this._motorRight = 0;
             this._pinUsage = [];
             this._eventMonitor = this._newEventMonitor();
+            // PXT only allows numeric/null/boolean literal default params, so
+            // the "unknown" fallback goes here instead of in the signature.
+            this._modelId = modelId ? modelId : "unknown";
         }
 
         // Overridable factory — tests use this to inject a monitor that
@@ -280,6 +285,11 @@ namespace butia {
         // --- Getters ---
         motorLeft(): number { return this._motorLeft; }
         motorRight(): number { return this._motorRight; }
+        // Exposes the active model's identity/wiring so RobotDriver and sim
+        // code can branch on it instead of hardcoding one robot's layout.
+        modelId(): string { return this._modelId; }
+        connectorConfig(): IConnectorPin[] { return this._connectorConfig; }
+        motors(): IMotorDriver { return this._motors; }
 
         // --- Overridable stub ---
         start(): void {}

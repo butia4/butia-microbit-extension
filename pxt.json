@@ -12,6 +12,7 @@
         "src/core/event-monitor.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
+        "src/hardware/butia3-robot.ts",
         "src/hardware/button-sensor-butia.ts",
         "src/hardware/distance-sensor-butia.ts",
         "src/hardware/generic-sensor-butia.ts",
@@ -21,6 +22,7 @@
         "src/hardware/servo-driver-butia.ts",
         "src/main.ts",
         "src/robotdriver.ts",
+        "src/sim/sim-error.ts",
         "src/sim/sim-map.ts",
         "src/sim/sim-motor-driver.ts",
         "src/sim/sim-robot.ts",
@@ -30,16 +32,19 @@
         "src/types/enums.d.ts",
         "src/types/robot.d.ts",
         "README.md",
-        "_locales/es/butia-microbit-extension-strings.json"
+        "_locales/es/butia-microbit-extension-strings.json",
+        "_locales/es/butia-microbit-extension-jsdoc-strings.json"
     ],
     "testFiles": [
         "test/_mocks.ts",
+        "test/butia3-robot.test.ts",
         "test/event-monitor.test.ts",
         "test/mock.test.ts",
+        "test/robot-base.test.ts",
         "test/robot.test.ts",
-        "test/sensor.test.ts",
         "test/servo.test.ts",
-        "test/sim-bridge.test.ts"
+        "test/sim-bridge.test.ts",
+        "test/start-robot-block.test.ts"
     ],
     "targetVersions": {
         "target": "8.0.21",

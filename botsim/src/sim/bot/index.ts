@@ -63,7 +63,7 @@ export class Bot {
         }
         this.entity = sim.createEntity(entitySpec)
 
-        const logoSprite = Pixi.Sprite.from("assets/logo.png")
+        const logoSprite = Pixi.Sprite.from(spec.logoAsset ?? "assets/logo.svg")
         logoSprite.anchor.set(0.5)
         const targetWidthCm = Chassis.footprintWidth(spec) * 0.65
         const targetWidthPx = toRenderScale(targetWidthCm)

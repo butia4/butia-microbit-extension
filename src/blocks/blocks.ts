@@ -1,8 +1,33 @@
 //% color="#84c324" icon="\uf057" block="Butia"
-//% groups="['Motors', 'Sensors', 'Generic Sensors', 'Servos', 'Simulator']"
+//% groups="['Motors', 'Sensors', 'Generic Sensors', 'Servos']"
 namespace butia {
 
 
+    /**
+     * Selects which Butia hardware model is active. Call once at the start of
+     * your program, before any motor/sensor block runs.
+     */
+    //% blockId="butia_start_robot"
+    //% block="start robot %robot"
+    //% weight=111
+    export function startRobot(robot: butia.RobotDriver): void {
+        butia.RobotDriver.start(robot);
+    }
+
+    /**
+     * Selects the botsim simulator map to run against.
+     */
+    //% blockId="butia_sim_set_map"
+    //% block="use map %map"
+    //% weight=110
+    export function setMap(map: ButiaSimMap): void {
+        butia.RobotDriver.instance();
+        _simSelectMap(map);
+    }
+
+    /**
+     * Drives both motors forward. Runs indefinitely, or for the given duration if set.
+     */
     //% blockId="butia_imp_move_forward"
     //% block="move forward at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=50
@@ -15,6 +40,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().moveForward(speed, ms);
     }
 
+    /**
+     * Drives both motors backward. Runs indefinitely, or for the given duration if set.
+     */
     //% blockId="butia_imp_move_backward"
     //% block="move backward at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=50
@@ -27,6 +55,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().moveBackward(speed, ms);
     }
 
+    /**
+     * Turns in place toward the given direction.
+     */
     //% blockId="butia_imp_turn"
     //% block="turn %direction at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=40
@@ -39,6 +70,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().turn(direction, speed, ms);
     }
 
+    /**
+     * Sets each motor's speed independently (tank drive).
+     */
     //% blockId="butia_imp_motor_tank"
     //% block="motor left %left right %right"
     //% left.min=-100 left.max=100 left.defl=70
@@ -49,6 +83,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().motorTank(left, right);
     }
 
+    /**
+     * Stops both motors.
+     */
     //% blockId="butia_imp_stop"
     //% block="stop motors"
     //% weight=80
@@ -57,6 +94,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().motorStop();
     }
 
+    /**
+     * Stops a single motor, leaving the other running.
+     */
     //% blockId="butia_imp_stop_single"
     //% block="stop motor %motor"
     //% weight=79
@@ -69,6 +109,9 @@ namespace butia {
         }
     }
 
+    /**
+     * Reads the analog gray/line sensor on the given connector (0-100, higher = darker).
+     */
     //% blockId="butia_imp_read_gray"
     //% block="gray sensor on %connector"
     //% weight=70
@@ -77,6 +120,9 @@ namespace butia {
         return butia.RobotDriver.currentRobot().readGraySensor(connector);
     }
 
+    /**
+     * Reads the light sensor on the given connector (0-100).
+     */
     //% blockId="butia_imp_read_light"
     //% block="light sensor on %connector"
     //% weight=69
@@ -85,6 +131,9 @@ namespace butia {
         return butia.RobotDriver.currentRobot().readLightSensor(connector);
     }
 
+    /**
+     * Reads the distance sensor on the given connector, in cm.
+     */
     //% blockId="butia_imp_distance"
     //% block="distance sensor on %connector"
     //% weight=69
@@ -93,6 +142,9 @@ namespace butia {
         return butia.RobotDriver.currentRobot().readDistanceSensor(connector);
     }
 
+    /**
+     * Whether the button on the given connector is currently pressed.
+     */
     //% blockId="butia_imp_read_button"
     //% block="button on %connector pressed"
     //% weight=68
@@ -112,6 +164,9 @@ namespace butia {
     export function _sensorEnumShim(arg: number): number {
         return arg;
     }
+    /**
+     * Reads a generic analog sensor. Pick an existing name or create one from the dropdown.
+     */
     //% blockId="butia_imp_read_generic"
     //% block="$sensorName sensor on $connector"
     //% sensorName.shadow="sensor_enum_shim"
@@ -120,7 +175,7 @@ namespace butia {
     export function readGenericSensor(sensorName: number, connector: butia.Connector): number {
         return butia.RobotDriver.currentRobot().readGenericSensor(connector, sensorName);
     }
-    
+
     //% shim=ENUM_GET
     //% blockId=servo_enum_shim
     //% blockHidden=true
@@ -134,6 +189,9 @@ namespace butia {
         return arg;
     }
 
+    /**
+     * Sets a servo's angle on the given connector.
+     */
     //% blockId="butia_servo_set_angle"
     //% block="servo $servoName on $connector set angle to $degrees °"
     //% servoName.shadow="servo_enum_shim"
@@ -144,6 +202,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().servoSetAngle(connector, servoName, degrees);
     }
 
+    /**
+     * Runs the handler when the distance sensor on the given connector matches the comparison, at the given priority.
+     */
     //% blockId="butia_evt_distance"
     //% block="when distance sensor on %connector is %op %threshold cm with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
@@ -160,6 +221,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().onDistance(connector, op, threshold, priority, handler);
     }
 
+    /**
+     * Runs the handler when the light sensor on the given connector matches the comparison, at the given priority.
+     */
     //% blockId="butia_evt_light"
     //% block="when light sensor on %connector is %op %threshold with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
@@ -176,6 +240,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().onLight(connector, op, threshold, priority, handler);
     }
 
+    /**
+     * Runs the handler when the gray sensor on the given connector matches the comparison, at the given priority.
+     */
     //% blockId="butia_evt_gray"
     //% block="when gray sensor on %connector is %op %threshold with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
@@ -192,6 +259,9 @@ namespace butia {
         butia.RobotDriver.currentRobot().onGray(connector, op, threshold, priority, handler);
     }
 
+    /**
+     * Runs the handler when the button on the given connector reaches the given state, at the given priority.
+     */
     //% blockId="butia_evt_button"
     //% block="when button on %connector is %state with priority %priority"
     //% priority.defl=1 priority.min=1 priority.max=5
@@ -204,14 +274,6 @@ namespace butia {
         handler: () => void
     ): void {
         butia.RobotDriver.currentRobot().onConnectorButton(connector, state, priority, handler);
-    }
-
-    //% blockId="butia_sim_set_map"
-    //% block="use map %map"
-    //% weight=50
-    //% group="Simulator"
-    export function setMap(map: ButiaSimMap): void {
-        _simSelectMap(map);
     }
 
 }
