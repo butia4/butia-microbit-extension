@@ -6,7 +6,8 @@
         "core": "*"
     },
     "files": [
-        "src/blocks/blocks.ts",
+        "src/blocks/blocks-v2.ts",
+        "src/blocks/blocks-v4.ts",
         "src/core/connector.ts",
         "src/core/constants.ts",
         "src/core/event-monitor.ts",
@@ -22,7 +23,6 @@
         "src/hardware/servo-driver-butia.ts",
         "src/main.ts",
         "src/robotdriver.ts",
-        "src/sim/sim-error.ts",
         "src/sim/sim-map.ts",
         "src/sim/sim-motor-driver.ts",
         "src/sim/sim-robot.ts",
@@ -42,9 +42,9 @@
         "test/mock.test.ts",
         "test/robot-base.test.ts",
         "test/robot.test.ts",
+        "test/select-map-block.test.ts",
         "test/servo.test.ts",
-        "test/sim-bridge.test.ts",
-        "test/start-robot-block.test.ts"
+        "test/sim-bridge.test.ts"
     ],
     "targetVersions": {
         "target": "8.0.21",

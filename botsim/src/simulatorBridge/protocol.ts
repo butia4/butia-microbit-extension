@@ -21,18 +21,12 @@ export interface ButiaMapSelectMsg {
     id: number
 }
 
-export interface ButiaErrorMsg {
-    type: "error"
-    code: string
-}
-
-export function decodePacket(data: unknown): ButiaStateMsg | ButiaMapSelectMsg | ButiaErrorMsg | null {
+export function decodePacket(data: unknown): ButiaStateMsg | ButiaMapSelectMsg | null {
     try {
         const json = new TextDecoder().decode(new Uint8Array(data as ArrayBuffer))
         const msg = JSON.parse(json)
         if (msg?.type === "state") return msg as ButiaStateMsg
         if (msg?.type === "mapselect") return msg as ButiaMapSelectMsg
-        if (msg?.type === "error") return msg as ButiaErrorMsg
         return null
     } catch {
         return null

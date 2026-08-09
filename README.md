@@ -23,7 +23,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 2. Go to ⚙ → **Extensions**.
 3. Search for or paste `https://github.com/butia4/butia-microbit-extension` and click **Import**.
 
-The Butia blocks appear in the toolbox immediately, under a **Butia** category with the groups **Motors**, **Sensors**, **Generic Sensors** and **Servos**.
+The Butia blocks appear in the toolbox immediately, under two separate categories — **Butia v2** and **Butia v4** — each with the groups **Motors**, **Sensors**, **Generic Sensors** and **Servos**. Pick blocks from only one category per program; mixing v2 and v4 blocks in the same program is not supported.
 
 ## Block API Reference
 
@@ -33,11 +33,12 @@ English is the base language of the blocks; Spanish is shipped as a locale (`_lo
 
 ### Robot Model
 
-The extension supports both the **Butia v4** and **Butia v2** kits. If your program has no `start robot` block, it defaults to Butia v4 — existing v4-only projects keep working unchanged.
+The extension supports both the **Butia v4** and **Butia v2** kits, each with its own toolbox category and its own full set of blocks. The active model is determined by which category's blocks you use — there is no separate robot-selector or "start" block; the robot starts automatically the first time any block from its category runs.
 
 | Block | Description | Parameters |
 |---|---|---|
-| `start robot %robot use map %map` | Selects which Butia hardware model is active and which botsim map to run against. Place it at the beginning of your `on start` block, before any other motor/sensor block — MakeCode does not insert it there automatically. | `robot`: `Butia v2` / `Butia v4` · `map`: `line follower` / `table` / `light` |
+| `Butia v2 use map %map` | Selects which botsim map to run against for a Butia v2 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line follower` / `table` / `light` |
+| `Butia v4 use map %map` | Selects which botsim map to run against for a Butia v4 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line follower` / `table` / `light` |
 
 ### Motors
 

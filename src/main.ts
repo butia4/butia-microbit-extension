@@ -1,4 +1,4 @@
 // Entry point for the Butia MakeCode extension.
-// Block definitions are in src/blocks/imperative.ts and src/blocks/events.ts.
-// Intentionally does not auto-start a robot: the "start robot" block must be
-// used explicitly, otherwise RobotDriver.instance() fails (see robotdriver.ts).
+// Block definitions are in src/blocks/blocks-v2.ts and src/blocks/blocks-v4.ts.
+// No explicit "start" block: RobotDriver auto-starts the matching model the
+// first time any Butia v2/v4 block runs (see robotdriver.ts).

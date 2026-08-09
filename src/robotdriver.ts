@@ -1,5 +1,4 @@
 namespace butia {
-    //% fixedInstances
     export class RobotDriver {
         private static _instance: RobotDriver | null = null;
         private _robot: IRobot;
@@ -38,13 +37,6 @@ namespace butia {
         }
 
         static instance(): RobotDriver {
-            if (!RobotDriver._instance) {
-                // Notifies botsim (no-op on hardware) before halting, so the
-                // simulator can show a dedicated error screen instead of the
-                // generic "no map selected" placeholder.
-                _simSend(buildErrorMessage("robot_not_started"));
-                control.fail("Add the \"start robot\" block before using any other Butia block.");
-            }
             return RobotDriver._instance as RobotDriver;
         }
 

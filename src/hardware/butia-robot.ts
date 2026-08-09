@@ -39,6 +39,5 @@ namespace butia {
         }
     }
 
-    //% fixedInstance block="Butia v4"
     export const butiaV4 = new RobotDriver(new ButiaRobot());
 }

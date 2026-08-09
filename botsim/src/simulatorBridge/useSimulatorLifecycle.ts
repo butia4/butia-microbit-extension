@@ -3,7 +3,7 @@ import { Simulation } from "../sim"
 import { BotSpec } from "../botSpecs/botSpec"
 import { BUTIA_BOT_SPEC, BUTIA_V2_BOT_SPEC } from "../botSpecs/butiaBotSpec"
 import { init as initMakeCode, sendSensors } from "./makecodeService"
-import { ButiaStateMsg, ButiaMapSelectMsg, ButiaErrorMsg } from "./protocol"
+import { ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
 import { resolveMap } from "../maps/registry"
 import { MapSpec } from "../maps/mapSpec"
 import store from "../redux/store"
@@ -39,14 +39,12 @@ function handleState(msg: ButiaStateMsg): void {
 
 export type UseSimulatorLifecycleResult = {
     armed: boolean
-    robotNotStarted: boolean
     rearmOnSettingsClose: () => void
 }
 
 export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
     const armedRef = useRef(false)
     const [armed, setArmed] = useState(false)
-    const [robotNotStarted, setRobotNotStarted] = useState(false)
     const currentRunIdRef = useRef<string | undefined>(undefined)
     const lastArmedMapSpecRef = useRef<MapSpec | null>(null)
     const rearmOnSettingsCloseRef = useRef<() => void>(() => {})
@@ -64,13 +62,7 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
             sim.clear()
         }
 
-        const handleError = (msg: ButiaErrorMsg): void => {
-            if (msg.code !== "robot_not_started") return
-            setRobotNotStarted(true)
-        }
-
         const handleMapSelect = async (msg: ButiaMapSelectMsg): Promise<void> => {
-            setRobotNotStarted(false)
             if (armedRef.current) return
             const mapSpec = resolveMap(msg.id)
             if (!mapSpec) return
@@ -112,13 +104,11 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
                     disarm()
                 }
                 currentRunIdRef.current = msg.id
-                setRobotNotStarted(false)
 
                 if (!armedRef.current) return
                 handleState(msg)
             },
             onMapSelect: handleMapSelect,
-            onError: handleError,
             onStop: () => disarm(),
             onPause: () => sim.pause(),
             onResume: () => sim.resume(),
@@ -133,7 +123,6 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
 
     return {
         armed,
-        robotNotStarted,
         rearmOnSettingsClose: () => rearmOnSettingsCloseRef.current(),
     }
 }

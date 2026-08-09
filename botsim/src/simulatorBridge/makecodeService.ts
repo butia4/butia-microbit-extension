@@ -1,9 +1,8 @@
-import { ButiaSensorsMsg, decodePacket, encodePacket, ButiaStateMsg, ButiaMapSelectMsg, ButiaErrorMsg } from "./protocol"
+import { ButiaSensorsMsg, decodePacket, encodePacket, ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
 
 type ServiceOptions = {
     onState: (msg: ButiaStateMsg) => void
     onMapSelect?: (msg: ButiaMapSelectMsg) => void
-    onError?: (msg: ButiaErrorMsg) => void
     onStop?: () => void
     onResume?: () => void
     onPause?: () => void
@@ -45,9 +44,6 @@ function handlePacket(data: unknown, opts: ServiceOptions): void {
             break
         case "mapselect":
             opts.onMapSelect?.(msg)
-            break
-        case "error":
-            opts.onError?.(msg)
             break
     }
 }
