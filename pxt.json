@@ -33,7 +33,9 @@
         "src/types/robot.d.ts",
         "README.md",
         "_locales/es/butia-microbit-extension-strings.json",
-        "_locales/es/butia-microbit-extension-jsdoc-strings.json"
+        "_locales/es/butia-microbit-extension-jsdoc-strings.json",
+        "tutorials/start.md",
+        "tutorials/line.md"
     ],
     "testFiles": [
         "test/_mocks.ts",
