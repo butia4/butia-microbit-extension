@@ -5,7 +5,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 [![MakeCode](https://img.shields.io/badge/MakeCode-micro%3Abit-blue)](https://makecode.microbit.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
-> Developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República, Uruguay.
+> Developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República, Uruguay. See the [Butia project page](https://www.fing.edu.uy/inco/proyectos/butia/).
 
 ## Table of Contents
 
