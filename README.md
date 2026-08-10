@@ -11,6 +11,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 
 - [Using the Extension](#using-the-extension)
 - [Block API Reference](#block-api-reference)
+- [Examples](#examples)
 - [Development](#development)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -84,6 +85,37 @@ The monitor polls every 50 ms and runs handlers **synchronously**, so a handler 
 | `when light sensor on %connector is %op %threshold with priority %priority` | Light reading compares against `threshold` |
 | `when gray sensor on %connector is %op %threshold with priority %priority` | Gray reading compares against `threshold` |
 | `when button on %connector is %state with priority %priority` | Button is `pressed`/`released` |
+
+## Examples
+
+The blocks translate directly to TypeScript — the code below is what dragging blocks into the editor actually generates, so it doubles as the "what does this program do" reference for anyone reading it outside MakeCode.
+
+**Line follower**, using the two gray sensors on `J1`/`J2` to keep the robot centered on a dark line (higher reading = darker):
+
+```ts
+// Below the line: keep driving straight.
+butiaV4.onGray(butia.J1, ButiaComparison.Less, 17, 1, function () {
+    butiaV4.moveForward(20)
+})
+butiaV4.onGray(butia.J2, ButiaComparison.Less, 17, 1, function () {
+    butiaV4.moveForward(20)
+})
+// Left sensor sees the line: correct by turning left.
+butiaV4.onGray(butia.J1, ButiaComparison.GreaterOrEqual, 17, 2, function () {
+    butiaV4.turn(ButiaTurnDirection.Left, 10, 0.5)
+})
+// Right sensor sees the line: correct by turning right.
+butiaV4.onGray(butia.J2, ButiaComparison.GreaterOrEqual, 17, 2, function () {
+    butiaV4.turn(ButiaTurnDirection.Right, 10, 0.5)
+})
+
+// Run this program against the "line follower" botsim map.
+butiaV4.selectMap(ButiaSimMap.LineFollower)
+```
+
+Handlers are checked in priority order (higher number wins) — the correction handlers use priority `2` so they override the "keep going straight" handlers at priority `1` whenever a line is detected.
+
+More ready-to-run programs — obstacle avoidance on the "table" map, light-seeking on the "light" map — live in [`codigos/`](codigos/) as exported `.js` files. They predate the Butia v2/v4 split and use the older single-namespace API (`butia.moveForward(...)` instead of `butiaV4.moveForward(...)`); adjust the namespace prefix before pasting them into a v4 program. They're meant to be imported into the MakeCode JavaScript editor to inspect or run against botsim, not copy-pasted as-is for teaching.
 
 ## Development
 
