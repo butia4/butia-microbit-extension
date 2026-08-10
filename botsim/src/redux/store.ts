@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit"
 import currentMapReducer from "./currentMap.slice"
+import robotModelReducer from "./robotModel.slice"
 import pinAssignmentReducer, { PinAssignmentState } from "../pages/PinSettings/state/pinAssignment.slice"
 import sensorSettingsReducer, { SensorSettingsState } from "../pages/PinSettings/state/sensorSettings.slice"
 import { DEFAULT_MAP } from "../maps/defaultMap"
@@ -33,6 +34,7 @@ function loadPreloadedState() {
 const store = configureStore({
     reducer: {
         currentMap: currentMapReducer,
+        robotModel: robotModelReducer,
         pinAssignment: pinAssignmentReducer,
         sensorSettings: sensorSettingsReducer,
     },

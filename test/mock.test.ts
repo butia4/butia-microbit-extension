@@ -6,10 +6,10 @@
 const motors = new MockMotorDriver();
 const motorRobot = new butia.RobotBase(motors, []);
 
-//motorRobot.moveForward(60);
+motorRobot.moveForward(60, 0);
 assertTest(motors.left === 60 && motors.right === 60, "moveForward speed");
 
-//motorRobot.moveBackward(50);
+motorRobot.moveBackward(50, 0);
 assertTest(motors.left === -50 && motors.right === -50, "moveBackward speed");
 
 motorRobot.turn(ButiaTurnDirection.Left, 40);
@@ -23,6 +23,16 @@ assertTest(motors.left === 50 && motors.right === -30, "motorTank");
 
 motorRobot.motorStop();
 assertTest(motors.left === 0 && motors.right === 0, "motorStop");
+
+// duration > 0 branch: basic.pause then auto-stop (not just fire-and-forget)
+motorRobot.moveForward(60, 10);
+assertTest(motors.left === 0 && motors.right === 0, "moveForward auto-stops after duration");
+
+motorRobot.moveBackward(50, 10);
+assertTest(motors.left === 0 && motors.right === 0, "moveBackward auto-stops after duration");
+
+motorRobot.turn(ButiaTurnDirection.Left, 40, 10);
+assertTest(motors.left === 0 && motors.right === 0, "turn auto-stops after duration");
 
 basic.showString("ALL PASS motors");
 
@@ -41,6 +51,7 @@ sensorRobot.mockDistance(AnalogPin.P3, new MockSensor(25));
 
 sensorRobot.mockButton(AnalogPin.P1, new MockSensor(1));
 sensorRobot.mockButton(AnalogPin.P2, new MockSensor(0));
+sensorRobot.mockGeneric(AnalogPin.P3, new MockSensor(88));
 
 assertTest(sensorRobot.readLightSensor(butia.J1) === 750, "readLightSensor J1");
 assertTest(sensorRobot.readLightSensor(butia.J2) === 200, "readLightSensor J2 (multi-sensor lookup)");
@@ -48,5 +59,6 @@ assertTest(sensorRobot.readGraySensor(butia.J2) === 300, "readGraySensor");
 assertTest(sensorRobot.readDistanceSensor(butia.J3) === 25, "readDistanceSensor");
 assertTest(sensorRobot.readButton(butia.J1) === true, "readButton pressed");
 assertTest(sensorRobot.readButton(butia.J2) === false, "readButton released");
+assertTest(sensorRobot.readGenericSensor(butia.J3, 0) === 88, "readGenericSensor");
 
 basic.showString("ALL PASS sensors");

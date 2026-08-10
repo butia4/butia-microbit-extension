@@ -1,4 +1,4 @@
-export function Placeholder() {
+export function MapNotSelected() {
     return (
         <div
             className="butia-screen-transition flex items-center justify-center text-center bg-(--butia-green-25)"

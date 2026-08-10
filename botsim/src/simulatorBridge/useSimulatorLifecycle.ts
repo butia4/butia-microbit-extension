@@ -1,21 +1,32 @@
 import { useEffect, useRef, useState } from "react"
 import { Simulation } from "../sim"
-import { BUTIA_BOT_SPEC } from "../botSpecs/butiaBotSpec"
+import { BotSpec } from "../botSpecs/botSpec"
+import { BUTIA_BOT_SPEC, BUTIA_V2_BOT_SPEC } from "../botSpecs/butiaBotSpec"
 import { init as initMakeCode, sendSensors } from "./makecodeService"
 import { ButiaStateMsg, ButiaMapSelectMsg } from "./protocol"
 import { resolveMap } from "../maps/registry"
 import { MapSpec } from "../maps/mapSpec"
 import store from "../redux/store"
 import { hydrateMapSettings } from "../redux/mapSettingsHydration"
+import { setRobotModel } from "../redux/robotModel.slice"
 
 let currRunId: string | undefined
+
+// Absent/unrecognized model id defaults to v4, so older PXT builds (or
+// messages with no model field) keep working unchanged.
+function resolveBotSpec(model?: string): BotSpec {
+    if (model === "butiaV2") return BUTIA_V2_BOT_SPEC
+    return BUTIA_BOT_SPEC
+}
 
 function handleState(msg: ButiaStateMsg): void {
     const sim = Simulation.instance
 
+    store.dispatch(setRobotModel(msg.model))
+
     if (currRunId !== msg.id) {
         currRunId = msg.id
-        sim.reset(BUTIA_BOT_SPEC)
+        sim.reset(resolveBotSpec(msg.model))
     }
 
     if (!sim.bot) return
@@ -67,7 +78,7 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
             armedRef.current = true
             lastArmedMapSpecRef.current = mapSpec
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports, settings)
+            sim.spawnBot(resolveBotSpec(store.getState().robotModel.current), undefined, ports, settings)
             sim.start()
             setArmed(true)
         }
@@ -82,7 +93,7 @@ export function useSimulatorLifecycle(): UseSimulatorLifecycleResult {
             sim.stop()
             sim.clear()
             sim.loadMap(mapSpec)
-            sim.spawnBot(BUTIA_BOT_SPEC, undefined, ports, settings)
+            sim.spawnBot(resolveBotSpec(store.getState().robotModel.current), undefined, ports, settings)
             sim.start()
         }
         rearmOnSettingsCloseRef.current = rearmOnSettingsClose

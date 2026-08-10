@@ -19,6 +19,11 @@ namespace butia {
             this.setSpeed(0, 0);
         }
 
+        // Test-only accessors — expose the wired pins so tests can verify
+        // per-model wiring without invoking real hardware pin I/O.
+        _leftPins(): DigitalPin[] { return this.leftPins; }
+        _rightPins(): DigitalPin[] { return this.rightPins; }
+
         private _setMotor(motorPins: DigitalPin[], speed: number): void {
             const value = Math.min(maxMotorSpeed, Math.max(-maxMotorSpeed, speed));
             const pwm = Math.floor(Math.abs(value) * 1023 / 100);

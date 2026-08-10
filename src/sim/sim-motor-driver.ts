@@ -8,13 +8,17 @@ namespace butia {
 
     // Builds the JSON state message sent from PXT to the botsim.
     // Exposed as a pure function so tests can verify message structure directly.
-    export function buildStateMessage(left: number, right: number, sensors: { [k: string]: string }, runId: string): string {
+    // `model` is optional and additive: omitted/absent JSON keys let older
+    // botsim builds keep defaulting to the v4 layout (see design's
+    // Migration/Rollout note).
+    export function buildStateMessage(left: number, right: number, sensors: { [k: string]: string }, runId: string, model?: string): string {
         return JSON.stringify({
             type: "state",
             id: runId,
             motorLeft: left,
             motorRight: right,
-            sensors: sensors
+            sensors: sensors,
+            model: model
         });
     }
 
@@ -31,7 +35,7 @@ namespace butia {
             simState.motorLeft = left;
             simState.motorRight = right;
             simState.sensorTypeMap = this._sensorTypes();
-            const msg = buildStateMessage(left, right, simState.sensorTypeMap, simState.runId);
+            const msg = buildStateMessage(left, right, simState.sensorTypeMap, simState.runId, simState.robotModelId);
             _simSend(msg);
         }
 

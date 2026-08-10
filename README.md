@@ -5,12 +5,13 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 [![MakeCode](https://img.shields.io/badge/MakeCode-micro%3Abit-blue)](https://makecode.microbit.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
-> Developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República, Uruguay. The block API may evolve during active development.
+> Developed as part of a Computer Engineering thesis at the Faculty of Engineering, Universidad de la República, Uruguay. See the [Butia project page](https://www.fing.edu.uy/inco/proyectos/butia/).
 
 ## Table of Contents
 
 - [Using the Extension](#using-the-extension)
 - [Block API Reference](#block-api-reference)
+- [Examples](#examples)
 - [Development](#development)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -23,13 +24,22 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 2. Go to ⚙ → **Extensions**.
 3. Search for or paste `https://github.com/butia4/butia-microbit-extension` and click **Import**.
 
-The Butia blocks appear in the toolbox immediately, under a **Butia** category with the groups **Motors**, **Sensors**, **Generic Sensors**, **Servos** and **Simulator**.
+The Butia blocks appear in the toolbox immediately, under two separate categories — **Butia v2** and **Butia v4** — each with the groups **Motors**, **Sensors**, **Generic Sensors** and **Servos**. Pick blocks from only one category per program; mixing v2 and v4 blocks in the same program is not supported.
 
 ## Block API Reference
 
 English is the base language of the blocks; Spanish is shipped as a locale (`_locales/es/`) and is what students see when the editor is set to Spanish. The reference below uses the English text.
 
-`%connector` is a Butia connector picker: **J1–J5**.
+`%connector` is a Butia connector picker. Available connectors depend on the active robot model — **J1–J5** on Butia v4, **J1–J3** on Butia v2.
+
+### Robot Model
+
+The extension supports both the **Butia v4** and **Butia v2** kits, each with its own toolbox category and its own full set of blocks. The active model is determined by which category's blocks you use — there is no separate robot-selector or "start" block; the robot starts automatically the first time any block from its category runs.
+
+| Block | Description | Parameters |
+|---|---|---|
+| `Butia v2 use map %map` | Selects which botsim map to run against for a Butia v2 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line follower` / `table` / `light` |
+| `Butia v4 use map %map` | Selects which botsim map to run against for a Butia v4 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line follower` / `table` / `light` |
 
 ### Motors
 
@@ -76,11 +86,36 @@ The monitor polls every 50 ms and runs handlers **synchronously**, so a handler 
 | `when gray sensor on %connector is %op %threshold with priority %priority` | Gray reading compares against `threshold` |
 | `when button on %connector is %state with priority %priority` | Button is `pressed`/`released` |
 
-### Simulator
+## Examples
 
-| Block | Description |
-|---|---|
-| `use map %map` | Selects the botsim map (`line follower`, `table`, `light`) used when the project runs in the MakeCode simulator. No effect on real hardware. |
+The blocks translate directly to TypeScript — the code below is what dragging blocks into the editor actually generates, so it doubles as the "what does this program do" reference for anyone reading it outside MakeCode.
+
+**Line follower**, using the two gray sensors on `J1`/`J2` to keep the robot centered on a dark line (higher reading = darker):
+
+```ts
+// Below the line: keep driving straight.
+butiaV4.onGray(butia.J1, ButiaComparison.Less, 17, 1, function () {
+    butiaV4.moveForward(20)
+})
+butiaV4.onGray(butia.J2, ButiaComparison.Less, 17, 1, function () {
+    butiaV4.moveForward(20)
+})
+// Left sensor sees the line: correct by turning left.
+butiaV4.onGray(butia.J1, ButiaComparison.GreaterOrEqual, 17, 2, function () {
+    butiaV4.turn(ButiaTurnDirection.Left, 10, 0.5)
+})
+// Right sensor sees the line: correct by turning right.
+butiaV4.onGray(butia.J2, ButiaComparison.GreaterOrEqual, 17, 2, function () {
+    butiaV4.turn(ButiaTurnDirection.Right, 10, 0.5)
+})
+
+// Run this program against the "line follower" botsim map.
+butiaV4.selectMap(ButiaSimMap.LineFollower)
+```
+
+Handlers are checked in priority order (higher number wins) — the correction handlers use priority `2` so they override the "keep going straight" handlers at priority `1` whenever a line is detected.
+
+More ready-to-run programs — obstacle avoidance on the "table" map, light-seeking on the "light" map — live in [`codigos/`](codigos/) as exported `.js` files. They predate the Butia v2/v4 split and use the older single-namespace API (`butia.moveForward(...)` instead of `butiaV4.moveForward(...)`); adjust the namespace prefix before pasting them into a v4 program. They're meant to be imported into the MakeCode JavaScript editor to inspect or run against botsim, not copy-pasted as-is for teaching.
 
 ## Development
 

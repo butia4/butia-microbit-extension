@@ -30,7 +30,7 @@ namespace butia {
         control.inBackground(() => {
             while (true) {
                 simState.sensorTypeMap = sensorTypes();
-                const msg = buildStateMessage(simState.motorLeft, simState.motorRight, simState.sensorTypeMap, simState.runId);
+                const msg = buildStateMessage(simState.motorLeft, simState.motorRight, simState.sensorTypeMap, simState.runId, simState.robotModelId);
                 _simSend(msg);
                 if (simState.selectedMapId !== 0) {
                     _simSend(buildMapSelectMessage(simState.selectedMapId));
@@ -44,13 +44,28 @@ namespace butia {
     // TD_NOOP ensures this is a no-op on physical hardware.
     //% shim=TD_NOOP
     export function _registerSimRobot(driver: RobotDriver): void {
-        driver._setSimRobot(new ButiaSimRobot());
+        driver._setSimRobot(new ButiaSimRobot(driver._connectorConfig(), driver._modelId()));
+    }
+
+    // v4's connector layout — used as ButiaSimRobot's default so pre-existing
+    // callers that construct it with no arguments (tests, mainly) keep working.
+    function _defaultSimConnectorConfig(): IConnectorPin[] {
+        return [
+            new ConnectorPin(J1, AnalogPin.P1),
+            new ConnectorPin(J2, AnalogPin.P2),
+            new ConnectorPin(J3, AnalogPin.P3),
+            new ConnectorPin(J4, AnalogPin.P4),
+            new ConnectorPin(J5, AnalogPin.P10),
+        ];
     }
 
     export class ButiaSimRobot extends RobotBase {
         private _simSensors: SimSensorEntry[];
 
-        constructor() {
+        // connectorConfig/modelId are optional (defaulting to v4) rather than
+        // using default-value syntax, because PXT's compiler (TS9212) only
+        // supports numeric/null/true/false literal defaults — see robot-base.ts.
+        constructor(connectorConfig?: IConnectorPin[], modelId?: string) {
             const selfRef: ButiaSimRobot[] = [];
             const driver = new SimMotorDriver(() => {
                 if (selfRef.length > 0) return selfRef[0]._buildSensorTypeMap();
@@ -58,13 +73,8 @@ namespace butia {
             });
             super(
                 driver,
-                [
-                    new ConnectorPin(J1, AnalogPin.P1),
-                    new ConnectorPin(J2, AnalogPin.P2),
-                    new ConnectorPin(J3, AnalogPin.P3),
-                    new ConnectorPin(J4, AnalogPin.P4),
-                    new ConnectorPin(J5, AnalogPin.P10),
-                ]
+                connectorConfig ? connectorConfig : _defaultSimConnectorConfig(),
+                modelId ? modelId : "butiaV4"
             );
             selfRef[0] = this;
             this._simSensors = [];
@@ -72,6 +82,7 @@ namespace butia {
 
         start(): void {
             _simInit(() => this._buildSensorTypeMap());
+            simState.robotModelId = this.modelId();
             super.start();
         }
 

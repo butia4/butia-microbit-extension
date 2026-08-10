@@ -202,7 +202,7 @@ export default class Renderer {
         this.pixi.stage.sortableChildren = true
         this.pixiRenderer = this.pixi.renderer as Pixi.Renderer
         this.color("#86BE27", 0.2)
-        await Pixi.Assets.load("assets/logo.png")
+        await Pixi.Assets.load(["assets/logo.svg", "assets/logo-v2.svg"])
     }
 
     public resize(widthCm: number, heightCm: number): void {

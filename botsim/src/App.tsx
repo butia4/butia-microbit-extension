@@ -1,6 +1,6 @@
 import { Layout } from "./layout/Layout"
 import { SimContainer } from "./pages/SimContainer"
-import { Placeholder } from "./pages/Placeholder"
+import { MapNotSelected } from "./pages/MapNotSelected"
 import { PinSettings } from "./pages/PinSettings"
 import { useBotSimContext } from "./context/botsim.context"
 
@@ -20,7 +20,7 @@ export function App() {
             ) : armed ? (
                 <SimContainer key="sim" />
             ) : (
-                <Placeholder key="placeholder" />
+                <MapNotSelected key="map-not-selected" />
             )}
         </Layout>
     )

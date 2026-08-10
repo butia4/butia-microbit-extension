@@ -38,6 +38,11 @@ export type SquareChassisSpec = {
 
 export type ChassisSpec = CircleChassisSpec | BoxChassisSpec | SquareChassisSpec
 
+export type ChassisColorSpec = {
+    fill: string
+    border: string
+}
+
 export type WheelSpec = {
     name: "left" | "right"
     maxSpeed: number
@@ -52,8 +57,17 @@ export type BotSpec = {
     name: string
     mass: number
     chassis: ChassisSpec
+    // Overrides the default chassis fill/border colors (e.g. per-model color differences).
+    chassisColors?: ChassisColorSpec
+    // Path (under public/) to this model's logo asset. Pixi tint can't recolor
+    // logo.png's green to blue (multiplicative tint can only darken existing
+    // channels, not add a missing hue), so each model ships its own pre-colored
+    // SVG instead. Defaults to "assets/logo.svg" when unset.
+    logoAsset?: string
     wheels: WheelSpec[]
     sensorMounts: Record<MountSide, MountSpec>
+    // Connectors physically available on this hardware model (v4: J1-J5, v2: J1-J3).
+    connectorSlots: readonly string[]
 }
 
 export type RangeSensorSpec = MountSensorSpec & {

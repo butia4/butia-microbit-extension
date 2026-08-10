@@ -1,0 +1,21 @@
+{
+  "Buffer.fromUTF8": "Create a new buffer from an UTF8-encoded string",
+  "Buffer.toString": "Convert a buffer to string assuming UTF8 encoding",
+  "butia.motorStop": "Detiene ambos motores.",
+  "butia.motorStopSingle": "Detiene un solo motor, dejando el otro en funcionamiento.",
+  "butia.motorTank": "Fija la velocidad de cada motor de forma independiente (tracción diferencial).",
+  "butia.moveBackward": "Hace retroceder ambos motores. Se ejecuta indefinidamente, o durante la duración indicada si se especifica.",
+  "butia.moveForward": "Hace avanzar ambos motores. Se ejecuta indefinidamente, o durante la duración indicada si se especifica.",
+  "butia.obstacleDistance": "Lee el sensor de distancia en el conector indicado, en cm.",
+  "butia.onButton": "Ejecuta el manejador cuando el botón en el conector indicado alcanza el estado indicado, con la prioridad indicada.",
+  "butia.onDistance": "Ejecuta el manejador cuando el sensor de distancia en el conector indicado cumple la comparación, con la prioridad indicada.",
+  "butia.onGray": "Ejecuta el manejador cuando el sensor de grises en el conector indicado cumple la comparación, con la prioridad indicada.",
+  "butia.onLight": "Ejecuta el manejador cuando el sensor de luz en el conector indicado cumple la comparación, con la prioridad indicada.",
+  "butia.readButton": "Indica si el botón en el conector indicado está actualmente presionado.",
+  "butia.readGenericSensor": "Lee un sensor analógico genérico. Elegí un nombre existente o creá uno desde la lista desplegable.",
+  "butia.readGraySensor": "Lee el sensor analógico de grises/línea en el conector indicado (0-100, mayor = más oscuro).",
+  "butia.readLightSensor": "Lee el sensor de luz en el conector indicado (0-100).",
+  "butia.servoSetAngle": "Fija el ángulo de un servo en el conector indicado.",
+  "butia.startRobot": "Selecciona qué modelo de hardware Butia está activo y qué mapa de botsim\r\nusar. Colocá este bloque al principio de tu bloque \"on start\", antes de\r\ncualquier otro bloque de motores/sensores — MakeCode no lo inserta ahí\r\nautomáticamente.",
+  "butia.turn": "Gira en el lugar hacia la dirección indicada."
+}

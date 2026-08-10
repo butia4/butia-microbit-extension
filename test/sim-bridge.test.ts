@@ -124,4 +124,27 @@ butia._simSelectMap(2);
 const msg18 = JSON.parse(butia.buildMapSelectMessage(butia.simState.selectedMapId));
 assertTest(msg18.id === 2, "sim-mapselect-resend-id");
 
+butia.simState.robotModelId = "butiaV2";
+butia.simState.reset();
+assertTest(butia.simState.robotModelId === "", "sim-state-reset-robotmodelid");
+
+const msg20 = JSON.parse(butia.buildStateMessage(0, 0, {}, "r5", "butiaV2"));
+assertTest(msg20.model === "butiaV2", "sim-motor-msg-model-present");
+const msg21 = JSON.parse(butia.buildStateMessage(0, 0, {}, "r5"));
+assertTest(msg21.model === undefined, "sim-motor-msg-model-omitted-when-absent");
+
+// ButiaSimRobot accepts a connectorConfig + modelId (v2 layout), instead of
+// always hardcoding the v4 J1-J5 layout.
+butia.simState.reset();
+const v2SimConfig: butia.ConnectorPin[] = [
+    new butia.ConnectorPin(butia.J1, AnalogPin.P0),
+    new butia.ConnectorPin(butia.J2, AnalogPin.P1),
+    new butia.ConnectorPin(butia.J3, AnalogPin.P2),
+];
+const simRobotV2 = new butia.ButiaSimRobot(v2SimConfig, "butiaV2");
+assertTest(simRobotV2.modelId() === "butiaV2", "sim-robot-v2-modelid");
+simRobotV2.readGraySensor(butia.J1);
+const typeMapV2 = simRobotV2._buildSensorTypeMap();
+assertTest(typeMapV2["J1"] === "gray", "sim-robot-v2-sensor-typemap");
+
 basic.showString("ALL PASS sim-bridge");

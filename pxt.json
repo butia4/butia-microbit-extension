@@ -6,12 +6,14 @@
         "core": "*"
     },
     "files": [
-        "src/blocks/blocks.ts",
+        "src/blocks/blocks-v2.ts",
+        "src/blocks/blocks-v4.ts",
         "src/core/connector.ts",
         "src/core/constants.ts",
         "src/core/event-monitor.ts",
         "src/core/robot-base.ts",
         "src/hardware/butia-robot.ts",
+        "src/hardware/butia2-robot.ts",
         "src/hardware/button-sensor-butia.ts",
         "src/hardware/distance-sensor-butia.ts",
         "src/hardware/generic-sensor-butia.ts",
@@ -30,14 +32,19 @@
         "src/types/enums.d.ts",
         "src/types/robot.d.ts",
         "README.md",
-        "_locales/es/butia-microbit-extension-strings.json"
+        "_locales/es/butia-microbit-extension-strings.json",
+        "_locales/es/butia-microbit-extension-jsdoc-strings.json"
     ],
     "testFiles": [
         "test/_mocks.ts",
+        "test/block-wrapper-delegation.test.ts",
+        "test/butia2-robot.test.ts",
         "test/event-monitor.test.ts",
         "test/mock.test.ts",
+        "test/motor-stop-single.test.ts",
+        "test/robot-base.test.ts",
         "test/robot.test.ts",
-        "test/sensor.test.ts",
+        "test/select-map-block.test.ts",
         "test/servo.test.ts",
         "test/sim-bridge.test.ts"
     ],

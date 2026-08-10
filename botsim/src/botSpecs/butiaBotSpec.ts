@@ -1,6 +1,7 @@
-import { BotSpec, toWheels } from "./botSpec"
+import { BotSpec, toWheels, ALL_CONNECTOR_SLOTS } from "./botSpec"
 
 export const BUTIA_CHASSIS_COLORS = { fill: "#C3E8A8", border: "#555555" } as const
+export const BUTIA_V2_CHASSIS_COLORS = { fill: "#A8D8E8", border: "#555555" } as const
 
 // Placeholder dimensions; geometry is scaled 0.8x from the original 10cm-side chassis.
 export const BUTIA_BOT_SPEC: BotSpec = {
@@ -27,4 +28,16 @@ export const BUTIA_BOT_SPEC: BotSpec = {
         rearLeft:   { pos: { x: -2.4, y:  4   }, facingDeg: 180 },
         rearRight:  { pos: { x:  2.4, y:  4   }, facingDeg: 180 },
     },
+    connectorSlots: ALL_CONNECTOR_SLOTS,
+    chassisColors: BUTIA_CHASSIS_COLORS,
+}
+
+// Butia v2: same chassis shape/wheels/sensorMounts as v4 — the available
+// connectors differ (J1-J3 vs v4's J1-J5), and the chassis is rendered in a
+// distinct light blue so the model is visually identifiable in the sim.
+export const BUTIA_V2_BOT_SPEC: BotSpec = {
+    ...BUTIA_BOT_SPEC,
+    connectorSlots: ["J1", "J2", "J3"],
+    chassisColors: BUTIA_V2_CHASSIS_COLORS,
+    logoAsset: "assets/logo-v2.svg",
 }

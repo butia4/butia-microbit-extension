@@ -6,6 +6,8 @@ export interface ButiaStateMsg {
     motorLeft: number   // -100..100
     motorRight: number  // -100..100
     sensors: Record<string, SensorType>
+    // Active hardware model ("butiaV2"/"butiaV4"); absent/unknown defaults to v4.
+    model?: string
 }
 
 export interface ButiaSensorsMsg {
