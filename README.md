@@ -12,6 +12,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 - [Using the Extension](#using-the-extension)
 - [Block API Reference](#block-api-reference)
 - [Examples](#examples)
+- [Tutorials](#tutorials)
 - [Development](#development)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -116,6 +117,11 @@ butiaV4.selectMap(ButiaSimMap.LineFollower)
 Handlers are checked in priority order (higher number wins) — the correction handlers use priority `2` so they override the "keep going straight" handlers at priority `1` whenever a line is detected.
 
 More ready-to-run programs — obstacle avoidance on the "table" map, light-seeking on the "light" map — live in [`codigos/`](codigos/) as exported `.js` files. They predate the Butia v2/v4 split and use the older single-namespace API (`butia.moveForward(...)` instead of `butiaV4.moveForward(...)`); adjust the namespace prefix before pasting them into a v4 program. They're meant to be imported into the MakeCode JavaScript editor to inspect or run against botsim, not copy-pasted as-is for teaching.
+
+## Tutorials
+
+-   [Primeros pasos](https://makecode.microbit.org/#tutorial:github:butia4/butia-microbit-extension/tutorials/start)
+-   [Seguidor de línea](https://makecode.microbit.org/#tutorial:github:butia4/butia-microbit-extension/tutorials/line)
 
 ## Development
 
