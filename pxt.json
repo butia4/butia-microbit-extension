@@ -37,9 +37,11 @@
     ],
     "testFiles": [
         "test/_mocks.ts",
+        "test/block-wrapper-delegation.test.ts",
         "test/butia2-robot.test.ts",
         "test/event-monitor.test.ts",
         "test/mock.test.ts",
+        "test/motor-stop-single.test.ts",
         "test/robot-base.test.ts",
         "test/robot.test.ts",
         "test/select-map-block.test.ts",
