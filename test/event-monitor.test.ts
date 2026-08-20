@@ -84,6 +84,44 @@ assertTest(
     "GE/LE boundary"
 );
 
+// --- onSensorInRange: distance (with invalid-reading guard) ---
+
+const rR = new MockRobot(new MockMotorDriver(), eCfg);
+const sR = new MockSensor(50);
+rR.mockDistance(AnalogPin.P1, sR);
+rR.onSensorInRange(ButiaSensorType.Distance, butia.J1, 10, 30, 1, () => { });
+
+s = rR._stepEventMonitor();
+assertTest(s === 0, "onSensorInRange distance: outside range no-fire");
+sR.setValue(20);
+s = rR._stepEventMonitor();
+assertTest(s !== 0, "onSensorInRange distance: inside range fires");
+sR.setValue(0);
+s = rR._stepEventMonitor();
+assertTest(s === 0, "onSensorInRange distance: zero reading ignored");
+
+// --- onSensorInRange: light, boundary inclusivity ---
+
+const rRL = new MockRobot(new MockMotorDriver(), eCfg);
+const sRL = new MockSensor(10);
+rRL.mockLight(AnalogPin.P1, sRL);
+rRL.onSensorInRange(ButiaSensorType.Light, butia.J1, 10, 30, 1, () => { });
+
+s = rRL._stepEventMonitor();
+assertTest(s !== 0, "onSensorInRange light: min boundary fires");
+sRL.setValue(30);
+s = rRL._stepEventMonitor();
+assertTest(s !== 0, "onSensorInRange light: max boundary fires");
+sRL.setValue(31);
+s = rRL._stepEventMonitor();
+assertTest(s === 0, "onSensorInRange light: just above max no-fire");
+
+// --- onSensorInRange: gray, distinct subId per sensor type ---
+
+const sRangeDistance = butia.computeSubId(butia.sensorTypeDistance, AnalogPin.P1, butia.dirInRange);
+const sRangeGray = butia.computeSubId(butia.sensorTypeGray, AnalogPin.P1, butia.dirInRange);
+assertTest(sRangeDistance !== sRangeGray, "onSensorInRange subId distinct per sensor type");
+
 // --- onConnectorButton: Pressed and Released ---
 
 const rB = new MockRobot(new MockMotorDriver(), eCfg);

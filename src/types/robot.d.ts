@@ -23,6 +23,7 @@ declare namespace butia {
         onDistance(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
         onLight(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
         onGray(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
+        onSensorInRange(sensorType: ButiaSensorType, connector: IConnector, min: number, max: number, priority: number, handler: () => void): void
         onConnectorButton(connector: IConnector, state: ButiaButtonState, priority:number,handler: () => void): void
         motorLeft(): number
         motorRight(): number

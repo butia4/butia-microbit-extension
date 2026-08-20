@@ -24,6 +24,7 @@ namespace butia {
     export const dirLessOrReleased = 1;
     export const dirGreaterOrEqual = 2;
     export const dirLessOrEqual = 3;
+    export const dirInRange = 4;
 
     export function comparisonToDir(op: ButiaComparison): number {
         if (op === ButiaComparison.Greater) return dirGreaterOrPressed;
@@ -37,6 +38,10 @@ namespace butia {
         if (op === ButiaComparison.Less) return value < threshold;
         if (op === ButiaComparison.GreaterOrEqual) return value >= threshold;
         return value <= threshold;
+    }
+
+    export function evalRange(value: number, min: number, max: number): boolean {
+        return value >= min && value <= max;
     }
 
     export interface IMonitor {

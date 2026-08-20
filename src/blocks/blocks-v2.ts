@@ -267,6 +267,27 @@ namespace butiaV2 {
     }
 
     /**
+     * Runs the handler when the given sensor on the connector reads a value inside [min, max], at the given priority.
+     */
+    //% blockId="butia_v2_evt_sensor_range"
+    //% block="when %sensorType sensor on %connector is between %min and %max with priority %priority"
+    //% min.defl=20 max.defl=60
+    //% priority.defl=1 priority.min=1 priority.max=5
+    //% weight=63
+    //% advanced=true
+    export function onSensorInRange(
+        sensorType: ButiaSensorType,
+        connector: butia.Connector,
+        min: number,
+        max: number,
+        priority: number,
+        handler: () => void
+    ): void {
+        butia.RobotDriver.start(butia.butiaV2);
+        butia.RobotDriver.currentRobot().onSensorInRange(sensorType, connector, min, max, priority, handler);
+    }
+
+    /**
      * Runs the handler when the button on the given connector reaches the given state, at the given priority.
      */
     //% blockId="butia_v2_evt_button"

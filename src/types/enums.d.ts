@@ -19,6 +19,15 @@ declare const enum ButiaComparison {
     LessOrEqual = 3,
 }
 
+declare const enum ButiaSensorType {
+    //% block="distance"
+    Distance = 0,
+    //% block="light"
+    Light = 1,
+    //% block="gray"
+    Gray = 2,
+}
+
 declare const enum ButiaButtonState {
     //% block="pressed"
     Pressed = 0,

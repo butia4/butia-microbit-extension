@@ -261,6 +261,38 @@ namespace butia {
             this._eventMonitor.register(monitor);
         }
 
+        onSensorInRange(sensorType: ButiaSensorType, connector: IConnector, min: number, max: number, priority: number, handler: () => void): void {
+            const pin = this._resolvePin(connector);
+            let sensor: ISensor;
+            let typeTag: number;
+            let guardInvalidReading: boolean;
+            if (sensorType === ButiaSensorType.Distance) {
+                sensor = this._getDistanceSensor(pin);
+                typeTag = sensorTypeDistance;
+                guardInvalidReading = true;
+            } else if (sensorType === ButiaSensorType.Light) {
+                sensor = this._getLightSensor(pin);
+                typeTag = sensorTypeLight;
+                guardInvalidReading = false;
+            } else {
+                sensor = this._getGraySensor(pin);
+                typeTag = sensorTypeGray;
+                guardInvalidReading = false;
+            }
+            const subId = computeSubId(typeTag, pin as number, dirInRange);
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => {
+                    const v = sensor.read();
+                    if (guardInvalidReading && v <= 0) return false;
+                    return evalRange(v, min, max);
+                },
+                priority,
+                handler,
+            };
+            this._eventMonitor.register(monitor);
+        }
+
         onConnectorButton(connector: IConnector, state: ButiaButtonState, priority: number, handler: () => void): void {
             const pin = this._resolvePin(connector);
             const sensor = this._getButtonSensor(pin);
