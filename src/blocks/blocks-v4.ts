@@ -112,7 +112,7 @@ namespace butiaV4 {
     //% block="gray sensor on %connector"
     //% weight=70
     //% group="Sensors"
-    export function readGraySensor(connector: butia.Connector): number {
+    export function readGraySensor(connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readGraySensor(connector);
     }
@@ -124,7 +124,7 @@ namespace butiaV4 {
     //% block="light sensor on %connector"
     //% weight=69
     //% group="Sensors"
-    export function readLightSensor(connector: butia.Connector): number {
+    export function readLightSensor(connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readLightSensor(connector);
     }
@@ -136,7 +136,7 @@ namespace butiaV4 {
     //% block="distance sensor on %connector"
     //% weight=69
     //% group="Sensors"
-    export function obstacleDistance(connector: butia.Connector): number {
+    export function obstacleDistance(connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readDistanceSensor(connector);
     }
@@ -148,7 +148,7 @@ namespace butiaV4 {
     //% block="button on %connector pressed"
     //% weight=68
     //% group="Sensors"
-    export function readButton(connector: butia.Connector): boolean {
+    export function readButton(connector: butia.v4.ButiaV4Connector): boolean {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readButton(connector);
     }
@@ -174,7 +174,7 @@ namespace butiaV4 {
     //% sensorName.shadow="sensor_enum_shim_v4"
     //% weight=67
     //% group="Generic Sensors"
-    export function readGenericSensor(sensorName: number, connector: butia.Connector): number {
+    export function readGenericSensor(sensorName: number, connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readGenericSensor(connector, sensorName);
     }
@@ -201,7 +201,7 @@ namespace butiaV4 {
     //% degrees.min=0 degrees.max=180 degrees.defl=90
     //% weight=50
     //% group="Servos"
-    export function servoSetAngle(servoName: number, connector: butia.Connector, degrees: number): void {
+    export function servoSetAngle(servoName: number, connector: butia.v4.ButiaV4Connector, degrees: number): void {
         butia.RobotDriver.start(butia.butiaV4);
         butia.RobotDriver.currentRobot().servoSetAngle(connector, servoName, degrees);
     }
@@ -216,7 +216,7 @@ namespace butiaV4 {
     //% weight=65
     //% advanced=true
     export function onDistance(
-        connector: butia.Connector,
+        connector: butia.v4.ButiaV4Connector,
         op: ButiaComparison,
         threshold: number,
         priority: number,
@@ -236,7 +236,7 @@ namespace butiaV4 {
     //% weight=60
     //% advanced=true
     export function onLight(
-        connector: butia.Connector,
+        connector: butia.v4.ButiaV4Connector,
         op: ButiaComparison,
         threshold: number,
         priority: number,
@@ -256,7 +256,7 @@ namespace butiaV4 {
     //% weight=55
     //% advanced=true
     export function onGray(
-        connector: butia.Connector,
+        connector: butia.v4.ButiaV4Connector,
         op: ButiaComparison,
         threshold: number,
         priority: number,
@@ -275,7 +275,7 @@ namespace butiaV4 {
     //% weight=70
     //% advanced=true
     export function onButton(
-        connector: butia.Connector,
+        connector: butia.v4.ButiaV4Connector,
         state: ButiaButtonState,
         priority: number,
         handler: () => void

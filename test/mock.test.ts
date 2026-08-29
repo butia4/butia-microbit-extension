@@ -39,9 +39,9 @@ basic.showString("ALL PASS motors");
 // --- Sensor read tests ---
 
 const sensorConfig: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.J1, AnalogPin.P1),
-    new butia.ConnectorPin(butia.J2, AnalogPin.P2),
-    new butia.ConnectorPin(butia.J3, AnalogPin.P3),
+    new butia.ConnectorPin(butia.v2.J1, AnalogPin.P1),
+    new butia.ConnectorPin(butia.v2.J2, AnalogPin.P2),
+    new butia.ConnectorPin(butia.v2.J3, AnalogPin.P3),
 ];
 const sensorRobot = new MockRobot(new MockMotorDriver(), sensorConfig);
 sensorRobot.mockLight(AnalogPin.P1, new MockSensor(750));
@@ -53,12 +53,12 @@ sensorRobot.mockButton(AnalogPin.P1, new MockSensor(1));
 sensorRobot.mockButton(AnalogPin.P2, new MockSensor(0));
 sensorRobot.mockGeneric(AnalogPin.P3, new MockSensor(88));
 
-assertTest(sensorRobot.readLightSensor(butia.J1) === 750, "readLightSensor J1");
-assertTest(sensorRobot.readLightSensor(butia.J2) === 200, "readLightSensor J2 (multi-sensor lookup)");
-assertTest(sensorRobot.readGraySensor(butia.J2) === 300, "readGraySensor");
-assertTest(sensorRobot.readDistanceSensor(butia.J3) === 25, "readDistanceSensor");
-assertTest(sensorRobot.readButton(butia.J1) === true, "readButton pressed");
-assertTest(sensorRobot.readButton(butia.J2) === false, "readButton released");
-assertTest(sensorRobot.readGenericSensor(butia.J3, 0) === 88, "readGenericSensor");
+assertTest(sensorRobot.readLightSensor(butia.v2.J1) === 750, "readLightSensor J1");
+assertTest(sensorRobot.readLightSensor(butia.v2.J2) === 200, "readLightSensor J2 (multi-sensor lookup)");
+assertTest(sensorRobot.readGraySensor(butia.v2.J2) === 300, "readGraySensor");
+assertTest(sensorRobot.readDistanceSensor(butia.v2.J3) === 25, "readDistanceSensor");
+assertTest(sensorRobot.readButton(butia.v2.J1) === true, "readButton pressed");
+assertTest(sensorRobot.readButton(butia.v2.J2) === false, "readButton released");
+assertTest(sensorRobot.readGenericSensor(butia.v2.J3, 0) === 88, "readGenericSensor");
 
 basic.showString("ALL PASS sensors");

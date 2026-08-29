@@ -47,15 +47,15 @@ namespace butia {
         driver._setSimRobot(new ButiaSimRobot(driver._connectorConfig(), driver._modelId()));
     }
 
-    // v4's connector layout — used as ButiaSimRobot's default so pre-existing
+    // v2's connector layout — used as ButiaSimRobot's default so pre-existing
     // callers that construct it with no arguments (tests, mainly) keep working.
     function _defaultSimConnectorConfig(): IConnectorPin[] {
         return [
-            new ConnectorPin(J1, AnalogPin.P1),
-            new ConnectorPin(J2, AnalogPin.P2),
-            new ConnectorPin(J3, AnalogPin.P3),
-            new ConnectorPin(J4, AnalogPin.P4),
-            new ConnectorPin(J5, AnalogPin.P10),
+            new ConnectorPin(v2.J1, AnalogPin.P1),
+            new ConnectorPin(v2.J2, AnalogPin.P2),
+            new ConnectorPin(v2.J3, AnalogPin.P3),
+            new ConnectorPin(v2.J4, AnalogPin.P4),
+            new ConnectorPin(v2.J5, AnalogPin.P10),
         ];
     }
 
@@ -74,7 +74,7 @@ namespace butia {
             super(
                 driver,
                 connectorConfig ? connectorConfig : _defaultSimConnectorConfig(),
-                modelId ? modelId : "butiaV4"
+                modelId ? modelId : "butiaV2"
             );
             selfRef[0] = this;
             this._simSensors = [];

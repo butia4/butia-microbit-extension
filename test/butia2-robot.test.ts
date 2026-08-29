@@ -1,42 +1,40 @@
-// Butia2Robot (Butia v2) wiring: connectors J1-J3 resolve to P0-P2, motors
-// resolve to P8/P9 (left) and P11/P12 (right), J4/J5 are unresolvable.
+// Butia2Robot (Butia v4) wiring: connectors J1-J3 resolve to P0-P2, motors
+// resolve to P8/P9 (left) and P11/P12 (right), J4-J6 are unresolvable (pins
+// not yet determined).
 
-const v2Config = butia.butiaV2._connectorConfig();
+const v4Config = butia.butiaV4._connectorConfig();
 
-function pinForV2(name: string): AnalogPin | DigitalPin | undefined {
-    for (const cp of v2Config) {
+function pinForV4(name: string): AnalogPin | DigitalPin | undefined {
+    for (const cp of v4Config) {
         if (cp.connector.name === name) return cp.pin;
     }
     return undefined;
 }
 
-assertTest(pinForV2("J1") === AnalogPin.P0, "v2 J1 resolves to P0");
-assertTest(pinForV2("J2") === AnalogPin.P1, "v2 J2 resolves to P1");
-assertTest(pinForV2("J3") === AnalogPin.P2, "v2 J3 resolves to P2");
-assertTest(pinForV2("J4") === undefined, "v2 has no J4 connector");
-assertTest(pinForV2("J5") === undefined, "v2 has no J5 connector");
+assertTest(pinForV4("J1") === AnalogPin.P0, "v4 J1 resolves to P0");
+assertTest(pinForV4("J2") === AnalogPin.P1, "v4 J2 resolves to P1");
+assertTest(pinForV4("J3") === AnalogPin.P2, "v4 J3 resolves to P2");
+assertTest(pinForV4("J4") === undefined, "v4 has no J4 connector wired yet");
+assertTest(pinForV4("J5") === undefined, "v4 has no J5 connector wired yet");
 
-assertTest(butia.butiaV2._modelId() === "butiaV2", "v2 modelId is butiaV2");
+assertTest(butia.butiaV4._modelId() === "butiaV4", "v4 modelId is butiaV4");
 
-// --- motor wiring: left=[P8,P9], right=[P11,P12], no polarity inversion vs v4 ---
-const v2Motors = new butia.Butia2Robot().motors() as butia.GpioMotorDriver;
-assertTest(
-    v2Motors._leftPins()[0] === DigitalPin.P8 && v2Motors._leftPins()[1] === DigitalPin.P9,
-    "v2 left motor pins are P8,P9"
-);
-assertTest(
-    v2Motors._rightPins()[0] === DigitalPin.P11 && v2Motors._rightPins()[1] === DigitalPin.P12,
-    "v2 right motor pins are P11,P12"
-);
+// --- motor wiring: TB6612FNG, STBY=P13, motor1 dir/pwm=P14/P15, motor2 dir/pwm=P16/P8 ---
+const v4Motors = new butia.Butia2Robot().motors() as butia.Tb6612MotorDriver;
+assertTest(v4Motors._stbyPin() === DigitalPin.P13, "v4 motor STBY pin is P13");
+assertTest(v4Motors._dir1Pin() === DigitalPin.P14, "v4 motor1 dir pin is P14");
+assertTest(v4Motors._pwm1Pin() === DigitalPin.P15, "v4 motor1 pwm pin is P15");
+assertTest(v4Motors._dir2Pin() === DigitalPin.P16, "v4 motor2 dir pin is P16");
+assertTest(v4Motors._pwm2Pin() === DigitalPin.P8, "v4 motor2 pwm pin is P8");
 
 // --- resolving an unwired connector fails (mirrors RobotBase's "not found" behavior) ---
-const freshV2 = new butia.Butia2Robot();
+const freshV4 = new butia.Butia2Robot();
 let threwOnJ4 = false;
 try {
-    freshV2.readDistanceSensor(butia.J4);
+    freshV4.readDistanceSensor(butia.v4.J4);
 } catch (e) {
     threwOnJ4 = true;
 }
-assertTest(threwOnJ4, "v2 fails to resolve J4 (not wired on this model)");
+assertTest(threwOnJ4, "v4 fails to resolve J4 (not wired on this model yet)");
 
 basic.showString("ALL PASS butia2-robot");

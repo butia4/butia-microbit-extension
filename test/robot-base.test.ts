@@ -2,7 +2,7 @@
 // and RobotDriver's delegation to the active robot.
 
 const cfgRB: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.J1, AnalogPin.P1),
+    new butia.ConnectorPin(butia.v2.J1, AnalogPin.P1),
 ];
 const motorsRB = new MockMotorDriver();
 

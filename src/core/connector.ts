@@ -7,7 +7,7 @@ namespace butia {
     export class ConnectorPin implements IConnectorPin {
         constructor(
             public readonly connector: IConnector,
-            public readonly pin: AnalogPin
+            public readonly pin: AnalogPin/*|DigitalPin | i2c? or extend*/
         ) {}
     }
 }

@@ -21,6 +21,7 @@
         "src/hardware/gray-sensor-butia.ts",
         "src/hardware/light-sensor-butia.ts",
         "src/hardware/servo-driver-butia.ts",
+        "src/hardware/tb6612-motor-driver.ts",
         "src/main.ts",
         "src/robotdriver.ts",
         "src/sim/sim-map.ts",
