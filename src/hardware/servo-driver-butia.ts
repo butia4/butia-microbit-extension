@@ -14,8 +14,8 @@ namespace butia {
         private _started: boolean;
 
         // name is part of the shared servo-driver factory signature but unused here.
-        constructor(pin: AnalogPin | DigitalPin, name: number) {
-            this._pin = pin as AnalogPin;
+        constructor(pin: AnalogPin, name: number) {
+            this._pin = pin;
             this._started = false;
         }
 

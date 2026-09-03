@@ -1,9 +1,9 @@
 namespace butia {
     export class GenericSensor implements IGenericSensor {
-        private _pinTrigger: DigitalPin|AnalogPin;
+        private _pinTrigger: AnalogPin;
 
         // name is part of the shared sensor factory signature but unused here.
-        constructor(pinTrigger: DigitalPin|AnalogPin, name: number) {
+        constructor(pinTrigger: AnalogPin, name: number) {
             this._pinTrigger = pinTrigger;
         }
 
