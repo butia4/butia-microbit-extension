@@ -13,7 +13,7 @@ namespace butia {
 
         // Delegates to the active robot so sim-side code (see sim-robot.ts) can
         // build model-aware behavior instead of hardcoding one robot's layout.
-        _connectorConfig(): IConnectorPin[] {
+        _connectorConfig(): IConnectorChannels[] {
             return this._robot.connectorConfig();
         }
 

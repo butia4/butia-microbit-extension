@@ -30,13 +30,14 @@ namespace butia {
                     pwm2: DigitalPin.P8
                 }),
                 [
-                    new ConnectorPin(v4.J1, AnalogPin.P0),
-                    new ConnectorPin(v4.J2, AnalogPin.P1),
-                    new ConnectorPin(v4.J3, AnalogPin.P2),
-                    //TODO: new ConnectorPin(v4.J4, ...), pin not yet determined
-                    //TODO: new ConnectorPin(v4.J5, ...), pin not yet determined
-                    //TODO: new ConnectorPin(v4.J6, ...), pin not yet determined
-                    //TODO: i2c connectors
+                    new ConnectorChannels(v4.J1, gpioAnalog(AnalogPin.P0)),
+                    new ConnectorChannels(v4.J2, gpioAnalog(AnalogPin.P1)),
+                    new ConnectorChannels(v4.J3, gpioAnalog(AnalogPin.P2)),
+                    //TODO: J1-J3 digital channel not wired yet — needs wiring table
+                    //TODO: new ConnectorChannels(v4.J4, ...), channels not wired yet — needs wiring table
+                    //TODO: new ConnectorChannels(v4.J5, ...), channels not wired yet — needs wiring table
+                    //TODO: new ConnectorChannels(v4.J6, ...), channels not wired yet — needs wiring table
+                    //TODO: i2c-backed channels
 
                 ],
                 "butiaV4");

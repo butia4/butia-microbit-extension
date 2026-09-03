@@ -3,9 +3,28 @@ declare namespace butia {
         readonly name: string;
     }
 
-    export interface IConnectorPin {
-        readonly connector: IConnector;
+    // How a channel is physically reached.
+    export const enum ChannelKind {
+        Gpio = 0,
+        I2c = 1,
+    }
+
+    // Common numeric identity used for caching/claim-tracking and for
+    // event-monitor subId computation.
+    export interface IChannel {
+        readonly kind: ChannelKind;
+        readonly id: number;
+    }
+
+    export interface IGpioChannel extends IChannel {
+        readonly kind: ChannelKind.Gpio;
         readonly pin: AnalogPin | DigitalPin;
+    }
+
+    export interface IConnectorChannels {
+        readonly connector: IConnector;
+        readonly analog?: IChannel;   // distance/light/gray/generic sensors + servo
+        readonly digital?: IChannel;  // button
     }
 
     export interface IRobot {
@@ -28,6 +47,6 @@ declare namespace butia {
         motorRight(): number
         servoSetAngle(connector: IConnector, name: number, degrees: number): void
         modelId(): string
-        connectorConfig(): IConnectorPin[]
+        connectorConfig(): IConnectorChannels[]
     }
 }

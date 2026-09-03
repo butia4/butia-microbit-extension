@@ -27,11 +27,11 @@ namespace butia {
                     [DigitalPin.P15, DigitalPin.P16]
                 ),
                 [
-                    new ConnectorPin(v2.J1, AnalogPin.P1),
-                    new ConnectorPin(v2.J2, AnalogPin.P2),
-                    new ConnectorPin(v2.J3, AnalogPin.P3),
-                    new ConnectorPin(v2.J4, AnalogPin.P4),
-                    new ConnectorPin(v2.J5, AnalogPin.P10),
+                    new ConnectorChannels(v2.J1, gpioAnalog(AnalogPin.P1), gpioDigital(DigitalPin.P1)),
+                    new ConnectorChannels(v2.J2, gpioAnalog(AnalogPin.P2), gpioDigital(DigitalPin.P2)),
+                    new ConnectorChannels(v2.J3, gpioAnalog(AnalogPin.P3), gpioDigital(DigitalPin.P3)),
+                    new ConnectorChannels(v2.J4, gpioAnalog(AnalogPin.P4), gpioDigital(DigitalPin.P4)),
+                    new ConnectorChannels(v2.J5, gpioAnalog(AnalogPin.P10), gpioDigital(DigitalPin.P10)),
                 ],
                 "butiaV2");
         }
