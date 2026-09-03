@@ -3,9 +3,9 @@
 // assertions don't depend on the PXT event scheduler.
 // Mocks come from test/_mocks.ts.
 
-const eCfg: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.v2.J1, AnalogPin.P1),
-    new butia.ConnectorPin(butia.v2.J2, AnalogPin.P2),
+const eCfg: butia.ConnectorChannels[] = [
+    new butia.ConnectorChannels(butia.v2.J1, butia.gpioAnalog(AnalogPin.P1), butia.gpioDigital(DigitalPin.P1)),
+    new butia.ConnectorChannels(butia.v2.J2, butia.gpioAnalog(AnalogPin.P2), butia.gpioDigital(DigitalPin.P2)),
 ];
 
 let s: number;

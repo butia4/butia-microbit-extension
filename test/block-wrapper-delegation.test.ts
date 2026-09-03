@@ -102,7 +102,17 @@ mV4 = useMockV4();
 mV4.mockDistance(AnalogPin.P2, new MockSensor(33));
 assertTest(butiaV4.obstacleDistance(butia.v4.J3) === 33, "butiaV4.obstacleDistance returns mocked value");
 
-mV4 = useMockV4();
+// v4's real wiring only has an analog channel for J1-J3 so far (its digital
+// channel isn't determined yet — see butia2-robot.ts), so this case can't
+// reuse useMockV4()'s real config like the others do. It builds its own
+// config with a digital channel just to exercise the wrapper's delegation
+// to RobotBase.readButton(), independent of real v4 hardware wiring.
+butia.RobotDriver._resetForTests();
+butia.RobotDriver.start(butia.butiaV4);
+mV4 = new MockRobot(new MockMotorDriver(), [
+    new butia.ConnectorChannels(butia.v4.J1, butia.gpioAnalog(AnalogPin.P0), butia.gpioDigital(DigitalPin.P0)),
+]);
+butia.RobotDriver.instance()._setSimRobot(mV4);
 mV4.mockButton(AnalogPin.P0, new MockSensor(0));
 assertTest(butiaV4.readButton(butia.v4.J1) === false, "butiaV4.readButton returns mocked value");
 

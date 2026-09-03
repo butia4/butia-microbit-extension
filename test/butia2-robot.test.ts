@@ -6,7 +6,9 @@ const v4Config = butia.butiaV4._connectorConfig();
 
 function pinForV4(name: string): AnalogPin | DigitalPin | undefined {
     for (const cp of v4Config) {
-        if (cp.connector.name === name) return cp.pin;
+        if (cp.connector.name === name) {
+            return cp.analog ? (cp.analog as butia.IGpioChannel).pin : undefined;
+        }
     }
     return undefined;
 }

@@ -1,9 +1,9 @@
 // Tests for servo driver integration via RobotBase.
 
-const servoConfig: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.v2.J1, AnalogPin.P1),
-    new butia.ConnectorPin(butia.v2.J2, AnalogPin.P2),
-    new butia.ConnectorPin(butia.v2.J3, AnalogPin.P3),
+const servoConfig: butia.ConnectorChannels[] = [
+    new butia.ConnectorChannels(butia.v2.J1, butia.gpioAnalog(AnalogPin.P1), butia.gpioDigital(DigitalPin.P1)),
+    new butia.ConnectorChannels(butia.v2.J2, butia.gpioAnalog(AnalogPin.P2), butia.gpioDigital(DigitalPin.P2)),
+    new butia.ConnectorChannels(butia.v2.J3, butia.gpioAnalog(AnalogPin.P3), butia.gpioDigital(DigitalPin.P3)),
 ];
 
 // --- setAngle delegation ---

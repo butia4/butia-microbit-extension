@@ -136,10 +136,10 @@ assertTest(msg21.model === undefined, "sim-motor-msg-model-omitted-when-absent")
 // ButiaSimRobot accepts a connectorConfig + modelId (v4 layout), instead of
 // always hardcoding the v2 J1-J5 layout.
 butia.simState.reset();
-const v4SimConfig: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.v4.J1, AnalogPin.P0),
-    new butia.ConnectorPin(butia.v4.J2, AnalogPin.P1),
-    new butia.ConnectorPin(butia.v4.J3, AnalogPin.P2),
+const v4SimConfig: butia.ConnectorChannels[] = [
+    new butia.ConnectorChannels(butia.v4.J1, butia.gpioAnalog(AnalogPin.P0)),
+    new butia.ConnectorChannels(butia.v4.J2, butia.gpioAnalog(AnalogPin.P1)),
+    new butia.ConnectorChannels(butia.v4.J3, butia.gpioAnalog(AnalogPin.P2)),
 ];
 const simRobotV4 = new butia.ButiaSimRobot(v4SimConfig, "butiaV4");
 assertTest(simRobotV4.modelId() === "butiaV4", "sim-robot-v4-modelid");

@@ -38,10 +38,10 @@ basic.showString("ALL PASS motors");
 
 // --- Sensor read tests ---
 
-const sensorConfig: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.v2.J1, AnalogPin.P1),
-    new butia.ConnectorPin(butia.v2.J2, AnalogPin.P2),
-    new butia.ConnectorPin(butia.v2.J3, AnalogPin.P3),
+const sensorConfig: butia.ConnectorChannels[] = [
+    new butia.ConnectorChannels(butia.v2.J1, butia.gpioAnalog(AnalogPin.P1), butia.gpioDigital(DigitalPin.P1)),
+    new butia.ConnectorChannels(butia.v2.J2, butia.gpioAnalog(AnalogPin.P2), butia.gpioDigital(DigitalPin.P2)),
+    new butia.ConnectorChannels(butia.v2.J3, butia.gpioAnalog(AnalogPin.P3), butia.gpioDigital(DigitalPin.P3)),
 ];
 const sensorRobot = new MockRobot(new MockMotorDriver(), sensorConfig);
 sensorRobot.mockLight(AnalogPin.P1, new MockSensor(750));
