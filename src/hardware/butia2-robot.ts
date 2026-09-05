@@ -20,6 +20,12 @@ namespace butia {
     }
 
     export class Butia2Robot extends RobotBase {
+        // Wiring table: J1-J3 analog is a direct pin, digital goes through
+        // the PCA9536 (I2C). J4/J6 analog goes through the ADS1015 (I2C),
+        // digital is a direct pin. J5 is I2C on both roles.
+        private _pca9536: Pca9536IoExpander;
+        private _ads1015: Ads1015Adc;
+
         constructor() {
             super(
                 new Tb6612MotorDriver({
@@ -30,20 +36,57 @@ namespace butia {
                     pwm2: DigitalPin.P8
                 }),
                 [
-                    new ConnectorChannels(v4.J1, gpioAnalog(AnalogPin.P0)),
-                    new ConnectorChannels(v4.J2, gpioAnalog(AnalogPin.P1)),
-                    new ConnectorChannels(v4.J3, gpioAnalog(AnalogPin.P2)),
-                    //TODO: J1-J3 digital channel not wired yet — needs wiring table
-                    //TODO: new ConnectorChannels(v4.J4, ...), channels not wired yet — needs wiring table
-                    //TODO: new ConnectorChannels(v4.J5, ...), channels not wired yet — needs wiring table
-                    //TODO: new ConnectorChannels(v4.J6, ...), channels not wired yet — needs wiring table
-                    //TODO: i2c-backed channels
-
+                    new ConnectorChannels(v4.J1, gpioAnalog(AnalogPin.P0), i2cDigital(2)),
+                    new ConnectorChannels(v4.J2, gpioAnalog(AnalogPin.P1), i2cDigital(1)),
+                    new ConnectorChannels(v4.J3, gpioAnalog(AnalogPin.P2), i2cDigital(0)),
+                    new ConnectorChannels(v4.J4, i2cAnalog(Ads1015Channel.Ain2), gpioDigital(DigitalPin.P9)),
+                    new ConnectorChannels(v4.J5, i2cAnalog(Ads1015Channel.Ain1), i2cDigital(3)),
+                    new ConnectorChannels(v4.J6, i2cAnalog(Ads1015Channel.Ain0), gpioDigital(DigitalPin.P12)),
                 ],
                 "butiaV4");
+            this._pca9536 = new Pca9536IoExpander();
+            this._ads1015 = new Ads1015Adc();
+            this._ads1015.setGain(Ads1015Gain.Fsr4_096V);
         }
+
         start(): void {
             super.start();
+            this._pca9536.init();
+        }
+
+        protected _newLightSensor(channel: IChannel): ILightSensor {
+            if (channel.kind === ChannelKind.I2c) {
+                return new I2cLightSensor(this._ads1015, (channel as II2cChannel).index);
+            }
+            return super._newLightSensor(channel);
+        }
+
+        protected _newGraySensor(channel: IChannel): IGraySensor {
+            if (channel.kind === ChannelKind.I2c) {
+                return new I2cGraySensor(this._ads1015, (channel as II2cChannel).index);
+            }
+            return super._newGraySensor(channel);
+        }
+
+        protected _newDistanceSensor(channel: IChannel): IDistanceSensor {
+            if (channel.kind === ChannelKind.I2c) {
+                return new I2cDistanceSensor(this._ads1015, (channel as II2cChannel).index);
+            }
+            return super._newDistanceSensor(channel);
+        }
+
+        protected _newGenericSensor(name: number, channel: IChannel): IGenericSensor {
+            if (channel.kind === ChannelKind.I2c) {
+                return new I2cGenericSensor(this._ads1015, (channel as II2cChannel).index, name);
+            }
+            return super._newGenericSensor(name, channel);
+        }
+
+        protected _newButtonSensor(channel: IChannel): IButtonSensor {
+            if (channel.kind === ChannelKind.I2c) {
+                return new I2cButtonSensor(this._pca9536, (channel as II2cChannel).index);
+            }
+            return super._newButtonSensor(channel);
         }
     }
     export const butiaV4 = new RobotDriver(new Butia2Robot());

@@ -21,6 +21,14 @@ declare namespace butia {
         readonly pin: AnalogPin | DigitalPin;
     }
 
+    // A channel reached through an I2C expander chip rather than a direct pin.
+    // `index` is the sub-channel on that shared peripheral (e.g. an ADS1015
+    // ADC channel 0-3, or a PCA9536 GPIO pin 0-3).
+    export interface II2cChannel extends IChannel {
+        readonly kind: ChannelKind.I2c;
+        readonly index: number;
+    }
+
     export interface IConnectorChannels {
         readonly connector: IConnector;
         readonly analog?: IChannel;   // distance/light/gray/generic sensors + servo
