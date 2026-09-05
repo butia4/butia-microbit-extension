@@ -78,7 +78,7 @@ export function PinSettings({ onClose }: PinSettingsProps) {
                             </h2>
                         </div>
                         {/* <p className="m-0 text-sm text-(--butia-ink-500)">
-                            Elegí qué conector (J1-J5) alimenta cada montaje del robot, o dejalo en "Sin conector" si no tiene sensor.
+                            Elegí qué conector (J1-J6) alimenta cada montaje del robot, o dejalo en "Sin conector" si no tiene sensor.
                         </p> */}
 
                         {errorMessage && (
