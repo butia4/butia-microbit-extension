@@ -1,8 +1,8 @@
 // RobotBase model plumbing: modelId()/connectorConfig()/motors() getters,
 // and RobotDriver's delegation to the active robot.
 
-const cfgRB: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.J1, AnalogPin.P1),
+const cfgRB: butia.ConnectorChannels[] = [
+    new butia.ConnectorChannels(butia.v2.J1, butia.gpioAnalog(AnalogPin.P1), butia.gpioDigital(DigitalPin.P1)),
 ];
 const motorsRB = new MockMotorDriver();
 
@@ -17,7 +17,7 @@ assertTest(rbCustom.modelId() === "butiaV9", "RobotBase exposes provided modelId
 // --- connectorConfig getter exposes the wiring table ---
 const cfg = rbCustom.connectorConfig();
 assertTest(
-    cfg.length === 1 && cfg[0].connector.name === "J1" && cfg[0].pin === AnalogPin.P1,
+    cfg.length === 1 && cfg[0].connector.name === "J1" && cfg[0].analog !== undefined && cfg[0].analog.id === (AnalogPin.P1 as number),
     "RobotBase connectorConfig() exposes wiring table"
 );
 

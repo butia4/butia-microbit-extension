@@ -10,7 +10,7 @@
 // its underlying robot for a fresh MockRobot via _setSimRobot() before each
 // case, so each block call can be checked against an observable mock instead
 // of real hardware pins. A fresh MockRobot per case avoids "pin already
-// claimed as a different sensor type" failures — v2 only wires 3 connectors
+// claimed as a different sensor type" failures — v4 only wires 3 connectors
 // (J1-J3) to 3 physical pins, too few to host every sensor kind at once on
 // one instance. A case PASSes only if the wrapper both forwarded the
 // arguments correctly AND returned/propagated the mocked value — not merely
@@ -49,29 +49,29 @@ assertTest(
 );
 
 mV2 = useMockV2();
-mV2.mockGray(AnalogPin.P0, new MockSensor(42));
-assertTest(butiaV2.readGraySensor(butia.J1) === 42, "butiaV2.readGraySensor returns mocked value");
+mV2.mockGray(AnalogPin.P1, new MockSensor(42));
+assertTest(butiaV2.readGraySensor(butia.v2.J1) === 42, "butiaV2.readGraySensor returns mocked value");
 
 mV2 = useMockV2();
-mV2.mockLight(AnalogPin.P1, new MockSensor(77));
-assertTest(butiaV2.readLightSensor(butia.J2) === 77, "butiaV2.readLightSensor returns mocked value");
+mV2.mockLight(AnalogPin.P2, new MockSensor(77));
+assertTest(butiaV2.readLightSensor(butia.v2.J2) === 77, "butiaV2.readLightSensor returns mocked value");
 
 mV2 = useMockV2();
-mV2.mockDistance(AnalogPin.P2, new MockSensor(15));
-assertTest(butiaV2.obstacleDistance(butia.J3) === 15, "butiaV2.obstacleDistance returns mocked value");
+mV2.mockDistance(AnalogPin.P3, new MockSensor(15));
+assertTest(butiaV2.obstacleDistance(butia.v2.J3) === 15, "butiaV2.obstacleDistance returns mocked value");
 
 mV2 = useMockV2();
-mV2.mockButton(AnalogPin.P0, new MockSensor(1));
-assertTest(butiaV2.readButton(butia.J1) === true, "butiaV2.readButton returns mocked value");
+mV2.mockButton(AnalogPin.P4, new MockSensor(1));
+assertTest(butiaV2.readButton(butia.v2.J4) === true, "butiaV2.readButton returns mocked value");
 
 mV2 = useMockV2();
-mV2.mockGeneric(AnalogPin.P1, new MockSensor(99));
-assertTest(butiaV2.readGenericSensor(0, butia.J2) === 99, "butiaV2.readGenericSensor forwards connector/name and returns value");
+mV2.mockGeneric(AnalogPin.P10, new MockSensor(99));
+assertTest(butiaV2.readGenericSensor(0, butia.v2.J5) === 99, "butiaV2.readGenericSensor forwards connector/name and returns value");
 
 mV2 = useMockV2();
 const servoV2 = new MockServoDriver();
-mV2.mockServo(AnalogPin.P2, servoV2);
-butiaV2.servoSetAngle(0, butia.J3, 123);
+mV2.mockServo(AnalogPin.P4, servoV2);
+butiaV2.servoSetAngle(0, butia.v2.J4, 123);
 assertTest(servoV2.angle === 123, "butiaV2.servoSetAngle forwards degrees to the servo driver");
 
 // --- Butia v4 ---
@@ -91,29 +91,39 @@ assertTest(
 );
 
 mV4 = useMockV4();
-mV4.mockGray(AnalogPin.P1, new MockSensor(11));
-assertTest(butiaV4.readGraySensor(butia.J1) === 11, "butiaV4.readGraySensor returns mocked value");
+mV4.mockGray(AnalogPin.P0, new MockSensor(11));
+assertTest(butiaV4.readGraySensor(butia.v4.J1) === 11, "butiaV4.readGraySensor returns mocked value");
 
 mV4 = useMockV4();
-mV4.mockLight(AnalogPin.P2, new MockSensor(22));
-assertTest(butiaV4.readLightSensor(butia.J2) === 22, "butiaV4.readLightSensor returns mocked value");
+mV4.mockLight(AnalogPin.P1, new MockSensor(22));
+assertTest(butiaV4.readLightSensor(butia.v4.J2) === 22, "butiaV4.readLightSensor returns mocked value");
 
 mV4 = useMockV4();
-mV4.mockDistance(AnalogPin.P3, new MockSensor(33));
-assertTest(butiaV4.obstacleDistance(butia.J3) === 33, "butiaV4.obstacleDistance returns mocked value");
+mV4.mockDistance(AnalogPin.P2, new MockSensor(33));
+assertTest(butiaV4.obstacleDistance(butia.v4.J3) === 33, "butiaV4.obstacleDistance returns mocked value");
+
+// v4's real wiring only has an analog channel for J1-J3 so far (its digital
+// channel isn't determined yet — see ButiaV4Robot in butia-v4-robot.ts), so this case can't
+// reuse useMockV4()'s real config like the others do. It builds its own
+// config with a digital channel just to exercise the wrapper's delegation
+// to RobotBase.readButton(), independent of real v4 hardware wiring.
+butia.RobotDriver._resetForTests();
+butia.RobotDriver.start(butia.butiaV4);
+mV4 = new MockRobot(new MockMotorDriver(), [
+    new butia.ConnectorChannels(butia.v4.J1, butia.gpioAnalog(AnalogPin.P0), butia.gpioDigital(DigitalPin.P0)),
+]);
+butia.RobotDriver.instance()._setSimRobot(mV4);
+mV4.mockButton(AnalogPin.P0, new MockSensor(0));
+assertTest(butiaV4.readButton(butia.v4.J1) === false, "butiaV4.readButton returns mocked value");
 
 mV4 = useMockV4();
-mV4.mockButton(AnalogPin.P4, new MockSensor(0));
-assertTest(butiaV4.readButton(butia.J4) === false, "butiaV4.readButton returns mocked value");
-
-mV4 = useMockV4();
-mV4.mockGeneric(AnalogPin.P10, new MockSensor(44));
-assertTest(butiaV4.readGenericSensor(0, butia.J5) === 44, "butiaV4.readGenericSensor forwards connector/name and returns value");
+mV4.mockGeneric(AnalogPin.P1, new MockSensor(44));
+assertTest(butiaV4.readGenericSensor(0, butia.v4.J2) === 44, "butiaV4.readGenericSensor forwards connector/name and returns value");
 
 mV4 = useMockV4();
 const servoV4 = new MockServoDriver();
-mV4.mockServo(AnalogPin.P4, servoV4);
-butiaV4.servoSetAngle(0, butia.J4, 45);
+mV4.mockServo(AnalogPin.P2, servoV4);
+butiaV4.servoSetAngle(0, butia.v4.J3, 45);
 assertTest(servoV4.angle === 45, "butiaV4.servoSetAngle forwards degrees to the servo driver");
 
 // Restore v4 as active so later test files in the run (alphabetically after

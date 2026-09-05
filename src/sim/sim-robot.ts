@@ -47,15 +47,15 @@ namespace butia {
         driver._setSimRobot(new ButiaSimRobot(driver._connectorConfig(), driver._modelId()));
     }
 
-    // v4's connector layout — used as ButiaSimRobot's default so pre-existing
+    // v2's connector layout — used as ButiaSimRobot's default so pre-existing
     // callers that construct it with no arguments (tests, mainly) keep working.
-    function _defaultSimConnectorConfig(): IConnectorPin[] {
+    function _defaultSimConnectorConfig(): IConnectorChannels[] {
         return [
-            new ConnectorPin(J1, AnalogPin.P1),
-            new ConnectorPin(J2, AnalogPin.P2),
-            new ConnectorPin(J3, AnalogPin.P3),
-            new ConnectorPin(J4, AnalogPin.P4),
-            new ConnectorPin(J5, AnalogPin.P10),
+            new ConnectorChannels(v2.J1, gpioAnalog(AnalogPin.P1), gpioDigital(DigitalPin.P1)),
+            new ConnectorChannels(v2.J2, gpioAnalog(AnalogPin.P2), gpioDigital(DigitalPin.P2)),
+            new ConnectorChannels(v2.J3, gpioAnalog(AnalogPin.P3), gpioDigital(DigitalPin.P3)),
+            new ConnectorChannels(v2.J4, gpioAnalog(AnalogPin.P4), gpioDigital(DigitalPin.P4)),
+            new ConnectorChannels(v2.J5, gpioAnalog(AnalogPin.P10), gpioDigital(DigitalPin.P10)),
         ];
     }
 
@@ -65,7 +65,7 @@ namespace butia {
         // connectorConfig/modelId are optional (defaulting to v4) rather than
         // using default-value syntax, because PXT's compiler (TS9212) only
         // supports numeric/null/true/false literal defaults — see robot-base.ts.
-        constructor(connectorConfig?: IConnectorPin[], modelId?: string) {
+        constructor(connectorConfig?: IConnectorChannels[], modelId?: string) {
             const selfRef: ButiaSimRobot[] = [];
             const driver = new SimMotorDriver(() => {
                 if (selfRef.length > 0) return selfRef[0]._buildSensorTypeMap();
@@ -74,7 +74,7 @@ namespace butia {
             super(
                 driver,
                 connectorConfig ? connectorConfig : _defaultSimConnectorConfig(),
-                modelId ? modelId : "butiaV4"
+                modelId ? modelId : "butiaV2"
             );
             selfRef[0] = this;
             this._simSensors = [];
@@ -86,34 +86,36 @@ namespace butia {
             super.start();
         }
 
-        protected _newDistanceSensor(pin: AnalogPin | DigitalPin): IDistanceSensor {
-            const s = new SimDistanceSensor(this._pinToConnName(pin));
+        protected _newDistanceSensor(channel: IChannel): IDistanceSensor {
+            const s = new SimDistanceSensor(this._channelToConnName(channel));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
-        protected _newGraySensor(pin: AnalogPin | DigitalPin): IGraySensor {
-            const s = new SimGraySensor(this._pinToConnName(pin));
+        protected _newGraySensor(channel: IChannel): IGraySensor {
+            const s = new SimGraySensor(this._channelToConnName(channel));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
-        protected _newLightSensor(pin: AnalogPin | DigitalPin): ILightSensor {
-            const s = new SimLightSensor(this._pinToConnName(pin));
+        protected _newLightSensor(channel: IChannel): ILightSensor {
+            const s = new SimLightSensor(this._channelToConnName(channel));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
-        protected _newButtonSensor(pin: AnalogPin | DigitalPin): IButtonSensor {
-            const s = new SimButtonSensor(this._pinToConnName(pin));
+        protected _newButtonSensor(channel: IChannel): IButtonSensor {
+            const s = new SimButtonSensor(this._channelToConnName(channel));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });
             return s;
         }
 
-        private _pinToConnName(pin: AnalogPin | DigitalPin): string {
+        private _channelToConnName(channel: IChannel): string {
             const cfg = this._connectorConfig;
-            for (const cp of cfg) {
-                if (cp.pin === pin) return cp.connector.name;
+            for (const cc of cfg) {
+                if ((cc.analog && cc.analog.id === channel.id) || (cc.digital && cc.digital.id === channel.id)) {
+                    return cc.connector.name;
+                }
             }
             return "UNKNOWN";
         }

@@ -87,8 +87,8 @@ assertTest(butia.simState.sensorCache["J2"] === undefined, "sim-incoming-stale-i
 // TASK-T14: ButiaSimRobot._buildSensorTypeMap() after sensor registration
 butia.simState.reset();
 const simRobot = new butia.ButiaSimRobot();
-simRobot.readDistanceSensor(butia.J2);
-simRobot.readGraySensor(butia.J5);
+simRobot.readDistanceSensor(butia.v2.J2);
+simRobot.readGraySensor(butia.v2.J5);
 const typeMap = simRobot._buildSensorTypeMap();
 assertTest(typeMap["J2"] === "distance", "sim-robot-map-j2");
 assertTest(typeMap["J5"] === "gray", "sim-robot-map-j5");
@@ -133,18 +133,18 @@ assertTest(msg20.model === "butiaV2", "sim-motor-msg-model-present");
 const msg21 = JSON.parse(butia.buildStateMessage(0, 0, {}, "r5"));
 assertTest(msg21.model === undefined, "sim-motor-msg-model-omitted-when-absent");
 
-// ButiaSimRobot accepts a connectorConfig + modelId (v2 layout), instead of
-// always hardcoding the v4 J1-J5 layout.
+// ButiaSimRobot accepts a connectorConfig + modelId (v4 layout), instead of
+// always hardcoding the v2 J1-J5 layout.
 butia.simState.reset();
-const v2SimConfig: butia.ConnectorPin[] = [
-    new butia.ConnectorPin(butia.J1, AnalogPin.P0),
-    new butia.ConnectorPin(butia.J2, AnalogPin.P1),
-    new butia.ConnectorPin(butia.J3, AnalogPin.P2),
+const v4SimConfig: butia.ConnectorChannels[] = [
+    new butia.ConnectorChannels(butia.v4.J1, butia.gpioAnalog(AnalogPin.P0)),
+    new butia.ConnectorChannels(butia.v4.J2, butia.gpioAnalog(AnalogPin.P1)),
+    new butia.ConnectorChannels(butia.v4.J3, butia.gpioAnalog(AnalogPin.P2)),
 ];
-const simRobotV2 = new butia.ButiaSimRobot(v2SimConfig, "butiaV2");
-assertTest(simRobotV2.modelId() === "butiaV2", "sim-robot-v2-modelid");
-simRobotV2.readGraySensor(butia.J1);
-const typeMapV2 = simRobotV2._buildSensorTypeMap();
-assertTest(typeMapV2["J1"] === "gray", "sim-robot-v2-sensor-typemap");
+const simRobotV4 = new butia.ButiaSimRobot(v4SimConfig, "butiaV4");
+assertTest(simRobotV4.modelId() === "butiaV4", "sim-robot-v4-modelid");
+simRobotV4.readGraySensor(butia.v4.J1);
+const typeMapV4 = simRobotV4._buildSensorTypeMap();
+assertTest(typeMapV4["J1"] === "gray", "sim-robot-v4-sensor-typemap");
 
 basic.showString("ALL PASS sim-bridge");

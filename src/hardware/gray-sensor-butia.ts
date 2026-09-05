@@ -1,8 +1,8 @@
 namespace butia {
     export class GraySensor implements IGraySensor {
-        private _pinTrigger: DigitalPin|AnalogPin;
+        private _pinTrigger: AnalogPin;
 
-        constructor(pinTrigger: DigitalPin|AnalogPin) {
+        constructor(pinTrigger: AnalogPin) {
             this._pinTrigger = pinTrigger;
         }
 
