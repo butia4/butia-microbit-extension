@@ -43,6 +43,13 @@
     --butia-green-300: #a5d6a7;
     --butia-green-600: #558b2f;
     --butia-green-800: #33691e;
+    --butia-shadow-rgb: 51, 105, 30;
+    --butia-blue-25: #f4f9fa;
+    --butia-blue-50: #e8f2f5;
+    --butia-blue-100: #c8dee6;
+    --butia-blue-300: #a5cad6;
+    --butia-blue-600: #2f748b;
+    --butia-blue-800: #1e5669;
     --butia-error: #b3261e;
     --butia-red-25: #fdf5f4;
     --butia-red-50: #fbe9e7;
@@ -56,6 +63,16 @@
     /* Tailwind v4 reads this as the `font-sans` utility token, so existing
        font-sans usages in components pick up Work Sans without per-component edits. */
     --font-sans: var(--font-body);
+}
+
+[data-robot-model="butiaV2"] {
+    --butia-green-25: var(--butia-blue-25);
+    --butia-green-50: var(--butia-blue-50);
+    --butia-green-100: var(--butia-blue-100);
+    --butia-green-300: var(--butia-blue-300);
+    --butia-green-600: var(--butia-blue-600);
+    --butia-green-800: var(--butia-blue-800);
+    --butia-shadow-rgb: 30, 86, 105;
 }
 
 /* Global rules that can't be expressed as Tailwind utilities in JSX because

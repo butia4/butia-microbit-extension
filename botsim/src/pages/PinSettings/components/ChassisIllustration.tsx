@@ -25,11 +25,12 @@ export function ChassisIllustration({ mounts }: ChassisIllustrationProps) {
         <div className="relative aspect-square w-32 shrink-0" aria-hidden="true">
             <div className="absolute top-1/2 left-1/2 flex h-40 w-40 origin-center -translate-x-1/2 -translate-y-1/2 items-center justify-center scale-[0.65]">
                 <div
-                    className="absolute inset-0 z-0 h-full w-full drop-shadow-[0_4px_14px_rgba(51,105,30,0.25)]"
+                    className="absolute inset-0 z-0 h-full w-full"
                     style={{
                         backgroundColor: chassisColors.fill,
                         border: `4px solid ${chassisColors.border}`,
                         borderRadius: `${chassisCornerRadiusPct(CHASSIS_SIDE_CM, CHASSIS_CORNER_RADIUS_CM)}%`,
+                        filter: "drop-shadow(0 4px 14px rgba(var(--butia-shadow-rgb), 0.25))",
                     }}
                     aria-hidden="true"
                 />
