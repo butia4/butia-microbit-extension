@@ -19,7 +19,7 @@ namespace butia {
         export const J6 = new ButiaV4Connector("J6");
     }
 
-    export class Butia2Robot extends RobotBase {
+    export class ButiaV4Robot extends RobotBase {
         // Wiring table: J1-J3 analog is a direct pin, digital goes through
         // the PCA9536 (I2C). J4/J6 analog goes through the ADS1015 (I2C),
         // digital is a direct pin. J5 is I2C on both roles.
@@ -89,5 +89,5 @@ namespace butia {
             return super._newButtonSensor(channel);
         }
     }
-    export const butiaV4 = new RobotDriver(new Butia2Robot());
+    export const butiaV4 = new RobotDriver(new ButiaV4Robot());
 }

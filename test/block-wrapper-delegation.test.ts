@@ -103,7 +103,7 @@ mV4.mockDistance(AnalogPin.P2, new MockSensor(33));
 assertTest(butiaV4.obstacleDistance(butia.v4.J3) === 33, "butiaV4.obstacleDistance returns mocked value");
 
 // v4's real wiring only has an analog channel for J1-J3 so far (its digital
-// channel isn't determined yet — see butia2-robot.ts), so this case can't
+// channel isn't determined yet — see ButiaV4Robot in butia-v4-robot.ts), so this case can't
 // reuse useMockV4()'s real config like the others do. It builds its own
 // config with a digital channel just to exercise the wrapper's delegation
 // to RobotBase.readButton(), independent of real v4 hardware wiring.

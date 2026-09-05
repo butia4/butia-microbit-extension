@@ -1,4 +1,4 @@
-// ButiaRobot wires the Butia v2 hardware components.
+// ButiaV2Robot wires the Butia v2 hardware components.
 
 namespace butia {
     export namespace v2 {
@@ -19,7 +19,7 @@ namespace butia {
         export const J5 = new ButiaV2Connector("J5");
     }
 
-    class ButiaRobot extends RobotBase {
+    class ButiaV2Robot extends RobotBase {
         constructor() {
             super(
                 new GpioMotorDriver(
@@ -40,5 +40,5 @@ namespace butia {
         }
     }
 
-    export const butiaV2 = new RobotDriver(new ButiaRobot());
+    export const butiaV2 = new RobotDriver(new ButiaV2Robot());
 }

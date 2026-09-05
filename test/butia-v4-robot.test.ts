@@ -1,4 +1,4 @@
-// Butia2Robot (Butia v4) wiring: J1-J3 analog is a direct pin (P0-P2), digital
+// ButiaV4Robot (Butia v4) wiring: J1-J3 analog is a direct pin (P0-P2), digital
 // goes through the PCA9536 (I2C pins 2/1/0). J4/J6 analog goes through the
 // ADS1015 (I2C AIN2/AIN0), digital is a direct pin (P9/P12). J5 is I2C on
 // both roles (AIN1 / PCA9536 pin 3).
@@ -47,7 +47,7 @@ assertTest(i2cIndexForV4("J5", "digital") === 3, "v4 J5 digital resolves to PCA9
 assertTest(butia.butiaV4._modelId() === "butiaV4", "v4 modelId is butiaV4");
 
 // --- motor wiring: TB6612FNG, STBY=P13, motor1 dir/pwm=P14/P15, motor2 dir/pwm=P16/P8 ---
-const v4Motors = new butia.Butia2Robot().motors() as butia.Tb6612MotorDriver;
+const v4Motors = new butia.ButiaV4Robot().motors() as butia.Tb6612MotorDriver;
 assertTest(v4Motors._stbyPin() === DigitalPin.P13, "v4 motor STBY pin is P13");
 assertTest(v4Motors._dir1Pin() === DigitalPin.P14, "v4 motor1 dir pin is P14");
 assertTest(v4Motors._pwm1Pin() === DigitalPin.P15, "v4 motor1 pwm pin is P15");
@@ -67,13 +67,13 @@ function assertNoThrow(fn: () => void, label: string): void {
     assertTest(!threw, label);
 }
 
-assertNoThrow(() => new butia.Butia2Robot().readDistanceSensor(butia.v4.J4), "v4 J4 distance sensor resolves via I2C (ADS1015 AIN2)");
-assertNoThrow(() => new butia.Butia2Robot().readLightSensor(butia.v4.J5), "v4 J5 light sensor resolves via I2C (ADS1015 AIN1)");
-assertNoThrow(() => new butia.Butia2Robot().readGraySensor(butia.v4.J6), "v4 J6 gray sensor resolves via I2C (ADS1015 AIN0)");
-assertNoThrow(() => new butia.Butia2Robot().readGenericSensor(butia.v4.J4, 0), "v4 J4 generic sensor resolves via I2C (ADS1015 AIN2)");
-assertNoThrow(() => new butia.Butia2Robot().readButton(butia.v4.J1), "v4 J1 button resolves via I2C (PCA9536 pin 2)");
-assertNoThrow(() => new butia.Butia2Robot().readButton(butia.v4.J5), "v4 J5 button resolves via I2C (PCA9536 pin 3)");
-assertNoThrow(() => new butia.Butia2Robot().readButton(butia.v4.J4), "v4 J4 button resolves via direct pin P9");
-assertNoThrow(() => new butia.Butia2Robot().readButton(butia.v4.J6), "v4 J6 button resolves via direct pin P12");
+assertNoThrow(() => new butia.ButiaV4Robot().readDistanceSensor(butia.v4.J4), "v4 J4 distance sensor resolves via I2C (ADS1015 AIN2)");
+assertNoThrow(() => new butia.ButiaV4Robot().readLightSensor(butia.v4.J5), "v4 J5 light sensor resolves via I2C (ADS1015 AIN1)");
+assertNoThrow(() => new butia.ButiaV4Robot().readGraySensor(butia.v4.J6), "v4 J6 gray sensor resolves via I2C (ADS1015 AIN0)");
+assertNoThrow(() => new butia.ButiaV4Robot().readGenericSensor(butia.v4.J4, 0), "v4 J4 generic sensor resolves via I2C (ADS1015 AIN2)");
+assertNoThrow(() => new butia.ButiaV4Robot().readButton(butia.v4.J1), "v4 J1 button resolves via I2C (PCA9536 pin 2)");
+assertNoThrow(() => new butia.ButiaV4Robot().readButton(butia.v4.J5), "v4 J5 button resolves via I2C (PCA9536 pin 3)");
+assertNoThrow(() => new butia.ButiaV4Robot().readButton(butia.v4.J4), "v4 J4 button resolves via direct pin P9");
+assertNoThrow(() => new butia.ButiaV4Robot().readButton(butia.v4.J6), "v4 J6 button resolves via direct pin P12");
 
-basic.showString("ALL PASS butia2-robot");
+basic.showString("ALL PASS butia-v4-robot");
