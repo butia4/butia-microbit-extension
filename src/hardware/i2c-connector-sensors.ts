@@ -71,8 +71,9 @@ namespace butia {
 
         init(): void {}
         read(): number {
-            const adcValue = nativeEquivalentRaw(this._adc, this._channel);
-            return 9462 / (adcValue - 16);
+            const raw = 1023 - nativeEquivalentRaw(this._adc, this._channel);
+            const value = (raw / 1023) * 100;
+            return Math.round(value * 10) / 10;
         }
     }
 

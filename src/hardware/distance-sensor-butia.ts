@@ -7,8 +7,9 @@ namespace butia {
 
         init(): void {}
         read(): number {
-            const adcValue = pins.analogReadPin(this._pinTrigger);
-            return 9462 / (adcValue - 16);
+            const raw = 1023 - pins.analogReadPin(this._pinTrigger);
+            const value = (raw / 1023) * 100;
+            return Math.round(value * 10) / 10;
         }
     }
 }
