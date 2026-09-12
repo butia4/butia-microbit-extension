@@ -161,7 +161,7 @@ src/
 └── blocks/         # blocks.ts — the public MakeCode block API documented above
 test/               # Unit tests, excluded from the extension build
 codigos/            # Classroom programs used to exercise the botsim maps
-scripts/            # Dev tooling (sync-pxt.ts, serve.ts)
+scripts/            # Dev tooling (sync-pxt.ts)
 botsim/             # The simulator: a standalone React/Vite app with its own package.json
 ```
 
