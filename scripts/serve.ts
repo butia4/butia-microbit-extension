@@ -2,7 +2,7 @@
 // Run with: bun scripts/serve.ts
 //           npx tsx scripts/serve.ts
 //
-// Automates the local dev loop documented in SIMULATOR.md:
+// Automates the local dev loop documented in SETUP.md:
 //   1. Patch node_modules/pxt-microbit/built/target.js so the local editor
 //      knows to open an iframe pointing at the botsim dev server.
 //   2. Build the extension (produces built/binary.hex).
@@ -11,9 +11,11 @@
 // What this script can NOT automate (must be done manually):
 //   - Start the botsim dev server yourself in another terminal:
 //       cd botsim && npm run dev
-//   - Once both servers are up (see SIMULATOR.md steps 4-5): import
-//     built/binary.hex as a project via Extensions -> Import File, and add
-//     ?simxdev to the editor URL.
+//   - Once both servers are up (see SETUP.md): push your branch, add the
+//     extension via Extensions -> paste
+//     https://github.com/butia4/butia-microbit-extension#<your-branch>,
+//     and add ?simxdev to the editor URL. There is no local/offline
+//     "Import File" option in the currently pinned pxt-microbit version.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -67,8 +69,9 @@ const pxt = spawn('npx', ['pxt', 'serve'], { cwd: ROOT, shell: true });
 prefixOutput(pxt, 'pxt');
 
 console.log(`[serve] Remember to start the botsim dev server yourself in another terminal: cd botsim && npm run dev (expected at ${BOTSIM_DEV_URL})`);
-console.log('[serve] Once both servers are up: import built/binary.hex into the editor (Extensions -> Import File),');
-console.log('[serve] then open it with ?simxdev added to the URL, e.g. http://localhost:3232/index.html?simxdev#editor');
+console.log('[serve] Once both servers are up: push your branch, then in the editor go to Extensions and paste');
+console.log('[serve] https://github.com/butia4/butia-microbit-extension#<your-branch> (no local "Import File" option in this pxt-microbit version),');
+console.log('[serve] using the URL above with ?simxdev added and the local_token this command printed — not a hand-typed URL.');
 
 let shuttingDown = false;
 function shutdown(code: number): void {
