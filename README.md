@@ -14,6 +14,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 - [Examples](#examples)
 - [Tutorials](#tutorials)
 - [Development](#development)
+- [Local Setup](SETUP.md)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
@@ -139,13 +140,13 @@ npm install       # installs dev tools (pxt, TypeScript, ESLint)
 | `npm run lint` | ESLint |
 | `npm run sync` | Sync `src/`/`test/` file lists into `pxt.json` — run after adding/renaming/deleting a `.ts` file |
 | `npm run loc` | Regenerate `_locales/*-strings.json` from the source `//% block` text — run after adding/renaming a block |
-| `npm run serve` | Local MakeCode editor + botsim dev server (see [SIMULATOR.md](SIMULATOR.md)) |
+| `npm run serve` | Local MakeCode editor + botsim dev server (see [SETUP.md](SETUP.md)) |
 | `npm run deploy` | Flash `built/binary.hex` to a connected micro:bit |
 | `make clean` | Remove `built/` output |
 
 `npm test` compiles the test files but does not execute the assertions — `assertTest`/`control.fail` only run on hardware or in the simulator. Treat a green `npm test` as "it still compiles", not "it still works".
 
-To test a local build in the editor: `npm run build`, then in MakeCode go to ⚙ → **Extensions** → **Import File** and upload `built/binary.hex`. See [SIMULATOR.md](SIMULATOR.md) for running the botsim simulator locally.
+To test your changes in the editor: push your branch, then in MakeCode go to ⚙ → **Extensions**, paste `https://github.com/butia4/butia-microbit-extension#<your-branch-name>` into the search box, and add the resulting card. There is no local/offline import for this in the currently pinned `pxt-microbit` version — see [SETUP.md](SETUP.md) for why, plus running the botsim simulator locally and a full clean-environment walkthrough (fresh `node_modules`, build, browser storage cleanup).
 
 ## Project Structure
 
@@ -160,7 +161,7 @@ src/
 └── blocks/         # blocks.ts — the public MakeCode block API documented above
 test/               # Unit tests, excluded from the extension build
 codigos/            # Classroom programs used to exercise the botsim maps
-scripts/            # Dev tooling (sync-pxt.ts, serve.ts)
+scripts/            # Dev tooling (sync-pxt.ts)
 botsim/             # The simulator: a standalone React/Vite app with its own package.json
 ```
 

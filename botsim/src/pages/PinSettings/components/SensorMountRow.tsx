@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { UseFormRegister, UseFormSetValue } from "react-hook-form"
-import { ALL_CONNECTOR_SLOTS, ConnectorSlot, MountSide } from "../../../botSpecs/botSpec"
+import { useSelector } from "react-redux"
+import { MountSide } from "../../../botSpecs/botSpec"
+import { BUTIA_BOT_SPEC, BUTIA_V2_BOT_SPEC } from "../../../botSpecs/butiaBotSpec"
+import { RootState } from "../../../redux/store"
 import { PinSettingsFormValues } from "../model/pinSettingsForm.model"
 import {
     ANGLE_MAX, ANGLE_MIN, DEFAULT_ANGLE, DEFAULT_DIRECTION, DEFAULT_RANGE, DIRECTION_MAX, DIRECTION_MIN, MOUNT_LABELS, RANGE_MAX, RANGE_MIN,
 } from "../constants"
-
-const CONNECTOR_OPTIONS: readonly ConnectorSlot[] = ALL_CONNECTOR_SLOTS
 
 type SensorMountRowProps = {
     side: MountSide
@@ -74,6 +75,8 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
     const optionsId = `sensor-options-${side}`
 
     const [isExpanded, setIsExpanded] = useState(true)
+    const model = useSelector((state: RootState) => state.robotModel.current)
+    const connectorOptions = (model === "butiaV2" ? BUTIA_V2_BOT_SPEC : BUTIA_BOT_SPEC).connectorSlots
 
     return (
         <li className="flex flex-col gap-2 border-b border-(--butia-green-100) pb-2 last:border-b-0 last:pb-0">
@@ -89,7 +92,7 @@ export function SensorMountRow({ side, register, setValue, isConnected, isForwar
                         className="h-9 min-w-11 cursor-pointer rounded-lg border-2 border-(--butia-green-100) bg-white px-2 text-sm font-semibold text-(--butia-ink-900) shadow-sm transition-colors hover:border-(--butia-green-600) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--butia-green-800)"
                     >
                         <option value="">Ninguno</option>
-                        {CONNECTOR_OPTIONS.map((slot) => (
+                        {connectorOptions.map((slot) => (
                             <option key={slot} value={slot}>
                                 {slot}
                             </option>

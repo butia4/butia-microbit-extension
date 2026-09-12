@@ -22,7 +22,7 @@ npm run build       # tsc + build de producción → dist/
 npm run preview     # previsualizar el build de producción
 ```
 
-Para correr el simulador junto al editor de MakeCode, ver [`SIMULATOR.md`](../SIMULATOR.md) en la raíz de `butia-microbit-extension`.
+Para correr el simulador junto al editor de MakeCode, ver [`SETUP.md`](../SETUP.md) en la raíz de `butia-microbit-extension`.
 
 ## Estructura
 
