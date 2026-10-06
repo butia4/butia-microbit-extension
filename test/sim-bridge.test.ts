@@ -47,8 +47,10 @@ assertTest(sensor06.read() === 45, "sim-distance-read-cached");
 butia.simState.reset();
 const sensor07a = new butia.SimGraySensor("J5");
 assertTest(sensor07a.read() === -1, "sim-gray-read-empty");
-butia.simState.sensorCache["J5"] = 78;
-assertTest(sensor07a.read() === 78, "sim-gray-read-cached");
+butia.simState.sensorCache["J5"] = 1023;
+assertTest(sensor07a.read() === 100, "sim-gray-read-raw-max-normalized");
+butia.simState.sensorCache["J5"] = 0;
+assertTest(sensor07a.read() === 0, "sim-gray-read-raw-zero-normalized");
 
 // TASK-T08: SimLightSensor.read() empty and cached
 butia.simState.reset();

@@ -27,9 +27,11 @@ namespace butia {
         connectorName(): string { return this._connName; }
         sensorType(): string { return "gray"; }
 
+        // botsim sends raw 0-1023; normalize to 0-100 like the hardware sensor.
+        // -1 stays "no data".
         read(): number {
             const v = simState.sensorCache[this._connName];
-            return v !== undefined ? v : -1;
+            return v !== undefined ? v / 1023 * 100 : -1;
         }
     }
 
