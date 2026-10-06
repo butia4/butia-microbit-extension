@@ -5,9 +5,9 @@
 namespace butia {
     // Gray readings are normalized to 0-100 (higher = darker) on hardware and
     // in the simulator. Readings at or above this value are black.
-    export const grayBlackThreshold = 50;
+    export const grayBlackThreshold = 12;
 
     export function grayColorToComparison(color: ButiaColor): ButiaComparison {
-        return color === ButiaColor.Black ? ButiaComparison.GreaterOrEqual : ButiaComparison.Less;
+        return color === ButiaColor.Black ? ButiaComparison.Less :ButiaComparison.GreaterOrEqual ;
     }
 }

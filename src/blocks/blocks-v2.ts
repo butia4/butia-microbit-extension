@@ -109,7 +109,6 @@ namespace butiaV2 {
      * Reads the analog gray/line sensor on the given connector (0-100, higher = darker).
      */
     //% blockId="butia_v2_imp_read_gray"
-    //% blockHidden=true
     //% block="gray sensor on %connector"
     //% weight=70
     //% group="Sensors"
