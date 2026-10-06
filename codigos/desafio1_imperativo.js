@@ -1,10 +1,10 @@
-butiaV4.selectMap(ButiaSimMap.LineAToB)
+butiaV2.selectMap(ButiaSimMap.LineAToB)
 basic.forever(function () {
-    if (butiaV4.graySensorSees(butia.v4.J1, ButiaColor.Black)) {
-        butiaV4.turn(ButiaTurnDirection.Left, 10)
-    } else if (butiaV4.graySensorSees(butia.v4.J2, ButiaColor.Black)) {
-        butiaV4.turn(ButiaTurnDirection.Right, 10)
+    if (butiaV2.graySensorSees(butia.v2.J1, ButiaColor.Black)) {
+        butiaV2.turn(ButiaTurnDirection.Left, 10)
+    } else if (butiaV2.graySensorSees(butia.v2.J2, ButiaColor.Black)) {
+        butiaV2.turn(ButiaTurnDirection.Right, 10)
     } else {
-        butiaV4.moveForward(30)
+        butiaV2.moveForward(30)
     }
 })
