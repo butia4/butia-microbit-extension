@@ -24,6 +24,7 @@ export const sensorMountSettingSchema = z
 export const sensorSettingsSchema = z
     .object({
         frontLeft: sensorMountSettingSchema.optional(),
+        frontCenter: sensorMountSettingSchema.optional(),
         frontRight: sensorMountSettingSchema.optional(),
         sideLeft: sensorMountSettingSchema.optional(),
         sideRight: sensorMountSettingSchema.optional(),

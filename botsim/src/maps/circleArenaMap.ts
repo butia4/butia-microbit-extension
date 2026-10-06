@@ -32,10 +32,12 @@ export const CIRCLE_ARENA_MAP: MapSpec = {
     ],
     defaultPinAssignment: {
         frontLeft: "J1",
+        frontCenter: "J3",
         frontRight: "J2",
     },
     defaultSensorSettings: {
         frontLeft: { mode: "surface" },
+        frontCenter: { mode: "forward" },
         frontRight: { mode: "surface" },
     },
     entities: [

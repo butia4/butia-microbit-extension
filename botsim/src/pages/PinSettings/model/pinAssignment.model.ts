@@ -7,6 +7,7 @@ export const connectorSlotSchema = z.enum(ALL_CONNECTOR_SLOTS)
 export const pinAssignmentSchema = z
     .object({
         frontLeft: connectorSlotSchema.optional(),
+        frontCenter: connectorSlotSchema.optional(),
         frontRight: connectorSlotSchema.optional(),
         sideLeft: connectorSlotSchema.optional(),
         sideRight: connectorSlotSchema.optional(),

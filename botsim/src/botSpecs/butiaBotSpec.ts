@@ -22,6 +22,7 @@ export const BUTIA_BOT_SPEC: BotSpec = {
     // facingDeg: 0=front(-y), clockwise-positive (Vec2.rotateDeg convention)
     sensorMounts: {
         frontLeft:  { pos: { x: -2.4, y: -4   }, facingDeg: 0 },
+        frontCenter: { pos: { x:  0,   y: -4   }, facingDeg: 0 },
         frontRight: { pos: { x:  2.4, y: -4   }, facingDeg: 0 },
         sideLeft:   { pos: { x: -4,   y: -1.6 }, facingDeg: -90 },
         sideRight:  { pos: { x:  4,   y: -1.6 }, facingDeg: 90 },

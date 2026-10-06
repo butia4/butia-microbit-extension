@@ -14,6 +14,7 @@ export const MOUNT_ORDER: readonly MountSide[] = ALL_MOUNT_SIDES
 
 export const MOUNT_LABELS: Record<MountSide, string> = {
     frontLeft: "Delantero Izquierdo",
+    frontCenter: "Delantero Central",
     frontRight: "Delantero Derecho",
     sideLeft: "Lateral Izquierdo",
     sideRight: "Lateral Derecho",
