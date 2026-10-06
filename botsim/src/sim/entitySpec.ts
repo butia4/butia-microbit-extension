@@ -15,7 +15,7 @@ export type PathShapeSpec = ShapeCommonSpec & {
     verts: Vec2Like[]
     width: number
     closed: boolean
-    stepSize: number
+    stepSize: number // cm between sampled points along the path
 }
 
 export type BoxShapeSpec = ShapeCommonSpec & {
@@ -143,7 +143,7 @@ export const defaultEdgeShape = (): EdgeShapeSpec => ({
 })
 
 export const defaultPathShape = (): PathShapeSpec => ({
-    type: "path", verts: [], width: 3, closed: true, stepSize: 0.2, roles: [],
+    type: "path", verts: [], width: 3, closed: true, stepSize: 0.5, roles: [],
 })
 
 export const defaultEntityShape = (): EntityShapeSpec => ({

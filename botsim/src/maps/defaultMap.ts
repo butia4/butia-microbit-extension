@@ -49,7 +49,7 @@ export const DEFAULT_MAP: MapSpec = {
                 verts: TRACK_VERTS,
                 width: 2,
                 closed: true,
-                stepSize: 0.1,
+                stepSize: 0.5,
                 offset: { x: 0, y: 0 },
                 angle: 0,
                 physics: { ...defaultShapePhysics(), sensor: true, density: 0 },

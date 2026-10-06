@@ -126,10 +126,8 @@ export class RenderObject {
                     for (let i = 1; i < sampled.length; i++) {
                         gfx.lineTo(ox + toRenderScale(sampled[i].x), oy + toRenderScale(sampled[i].y))
                     }
-                    if (ps.closed) {
-                        gfx.lineTo(ox + toRenderScale(sampled[0].x), oy + toRenderScale(sampled[0].y))
-                    }
-                    gfx.stroke({ width: hw * 2, color: fill })
+                    if (ps.closed) gfx.closePath()
+                    gfx.stroke({ width: hw * 2, color: fill, join: "round", cap: "round", alignment: 0.5 })
                 }
                 break
             }
@@ -172,7 +170,7 @@ export default class Renderer {
     public get canvasSize(): Vec2Like {
         const view = this.pixi.canvas as HTMLCanvasElement
         const rect = view.getBoundingClientRect?.()
-        if (!rect || (rect.width === 0 && rect.height === 0)) return { x: view.width, y: view.height }
+        if (!rect || (rect.width === 0 && rect.height === 0)) return { x: this.pixi.screen.width, y: this.pixi.screen.height }
         return { x: rect.width, y: rect.height }
     }
 
@@ -191,23 +189,31 @@ export default class Renderer {
         await this.pixi.init({
             width: w, height: h,
             antialias: true,
+            resolution: window.devicePixelRatio || 1,
+            autoDensity: true,
             clearBeforeRender: true,
             backgroundAlpha: 1,
         })
-        const view = this.pixi.canvas as HTMLCanvasElement
-        if (view.style) {
-            view.style.width = "100%"
-            view.style.height = "100%"
-        }
+        this.fitCanvas()
         this.pixi.stage.sortableChildren = true
         this.pixiRenderer = this.pixi.renderer as Pixi.Renderer
         this.color("#86BE27", 0.2)
         await Pixi.Assets.load(["assets/logo.svg", "assets/logo-v2.svg"])
     }
 
+    // autoDensity rewrites the inline px size on init/resize; keep the canvas filling its container
+    private fitCanvas(): void {
+        const view = this.pixi.canvas as HTMLCanvasElement
+        if (view.style) {
+            view.style.width = "100%"
+            view.style.height = "100%"
+        }
+    }
+
     public resize(widthCm: number, heightCm: number): void {
         this._size = { x: widthCm, y: heightCm }
         this.pixi.renderer.resize(toRenderScale(widthCm), toRenderScale(heightCm))
+        this.fitCanvas()
     }
 
     public color(hex: string, alpha: number = 1): void {

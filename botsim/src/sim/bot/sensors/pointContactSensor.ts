@@ -1,6 +1,7 @@
 import * as Planck from "planck"
 import { MountSensorSpec } from "../../../botSpecs/botSpec"
 import { Vec2 } from "../../../shared/types/vec2"
+import { testOverlap } from "../../physics/util"
 import { nextId } from "../../../shared/util"
 import { defaultShapePhysics, EntityCircleShapeSpec, defaultCircleShape, defaultEntityShape, defaultColorBrush } from "../../entitySpec"
 import { Rgb } from "../../rendering/util"
@@ -104,7 +105,8 @@ export class PointContactSensor implements DistanceSensor {
             const isMine = (d: { label?: string } | null) => d?.label === this._fixtureLabel
             const isTarget = (d: { roles?: string[] } | null) => d?.roles?.includes(this.config.roleTag) ?? false
 
-            if ((isMine(dataA) && isTarget(dataB)) || (isMine(dataB) && isTarget(dataA))) {
+            // contact list is AABB-based, so confirm the actual shapes overlap
+            if (((isMine(dataA) && isTarget(dataB)) || (isMine(dataB) && isTarget(dataA))) && testOverlap(fixtureA, fixtureB)) {
                 this._value = this.config.onValue
                 break
             }

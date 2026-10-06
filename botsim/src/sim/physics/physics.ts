@@ -99,19 +99,25 @@ export class PhysicsObject {
             case "path": {
                 const s = shapeSpec as EntityPathShapeSpec
                 const sampled = samplePath(s.verts, s.closed, s.stepSize)
-                for (let i = 1; i < sampled.length; i++) {
-                    const v0 = Vec2.add(Vec2.rotate(sampled[i - 1], angleRad), offset)
-                    const v1 = Vec2.add(Vec2.rotate(sampled[i], angleRad), offset)
+                const halfW = s.width / 2
+                const world = sampled.map(v => Vec2.add(Vec2.rotate(v, angleRad), offset))
+                // union of one rect per segment and one disc per sample = the round-join stroke the renderer draws
+                const segCount = s.closed ? world.length : world.length - 1
+                for (let i = 0; i < segCount; i++) {
+                    const v0 = world[i]
+                    const v1 = world[(i + 1) % world.length]
+                    const len = Vec2.dist(v0, v1)
+                    if (len < 1e-6) continue
+                    const mid = Planck.Vec2((v0.x + v1.x) / 2, (v0.y + v1.y) / 2)
+                    const segAngle = Math.atan2(v1.y - v0.y, v1.x - v0.x)
                     this.body.createFixture(
-                        Planck.Edge(Planck.Vec2(v0.x, v0.y), Planck.Vec2(v1.x, v1.y)),
+                        Planck.Box(len / 2, halfW, mid, segAngle),
                         { ...fixtureDef, userData: shapeSpec }
                     )
                 }
-                if (s.closed && sampled.length > 1) {
-                    const v0 = Vec2.add(Vec2.rotate(sampled[sampled.length - 1], angleRad), offset)
-                    const v1 = Vec2.add(Vec2.rotate(sampled[0], angleRad), offset)
+                for (const v of world) {
                     this.body.createFixture(
-                        Planck.Edge(Planck.Vec2(v0.x, v0.y), Planck.Vec2(v1.x, v1.y)),
+                        Planck.Circle(Planck.Vec2(v.x, v.y), halfW),
                         { ...fixtureDef, userData: shapeSpec }
                     )
                 }
