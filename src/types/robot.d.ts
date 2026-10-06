@@ -44,12 +44,14 @@ declare namespace butia {
         motorStop(): void
         readDistanceSensor(connector: IConnector): number
         readGraySensor(connector: IConnector): number
+        graySensorSees(connector: IConnector, color: ButiaColor): boolean
         readLightSensor(connector: IConnector): number
         readGenericSensor(connector: IConnector, name: number): number
         readButton(connector: IConnector): boolean
         onDistance(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
         onLight(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
         onGray(connector: IConnector, op: ButiaComparison, threshold: number, priority:number,handler: () => void): void
+        onGraySensorSees(connector: IConnector, color: ButiaColor, priority:number,handler: () => void): void
         onConnectorButton(connector: IConnector, state: ButiaButtonState, priority:number,handler: () => void): void
         motorLeft(): number
         motorRight(): number

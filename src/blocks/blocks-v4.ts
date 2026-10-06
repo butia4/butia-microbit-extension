@@ -1,5 +1,5 @@
 //% color="#84c324" icon="" block="Butia v4"
-//% groups="['Motors', 'Sensors', 'Generic Sensors', 'Servos']"
+//% groups="['Motors', 'Sensors', 'Events', 'Generic Sensors', 'Servos']"
 namespace butiaV4 {
 
     /**
@@ -109,6 +109,7 @@ namespace butiaV4 {
      * Reads the analog gray/line sensor on the given connector (0-100, higher = darker).
      */
     //% blockId="butia_v4_imp_read_gray"
+    //% blockHidden=true
     //% block="gray sensor on %connector"
     //% weight=70
     //% group="Sensors"
@@ -118,9 +119,40 @@ namespace butiaV4 {
     }
 
     /**
+     * Whether the gray sensor on the given connector currently sees the given color (black at 50 or above, white below 50).
+     */
+    //% blockId="butia_v4_imp_gray_sees"
+    //% block="gray sensor on %connector sees %color"
+    //% weight=72
+    //% group="Sensors"
+    export function graySensorSees(connector: butia.v4.ButiaV4Connector, color: ButiaColor): boolean {
+        butia.RobotDriver.start(butia.butiaV4);
+        return butia.RobotDriver.currentRobot().graySensorSees(connector, color);
+    }
+
+    /**
+     * Runs the handler when the gray sensor on the given connector sees the given color, at the given priority.
+     */
+    //% blockId="butia_v4_evt_gray_sees"
+    //% block="when gray sensor on %connector sees %color with priority %priority"
+    //% priority.defl=1 priority.min=1 priority.max=5
+    //% weight=75
+    //% group="Events"
+    export function onGraySensorSees(
+        connector: butia.v4.ButiaV4Connector,
+        color: ButiaColor,
+        priority: number,
+        handler: () => void
+    ): void {
+        butia.RobotDriver.start(butia.butiaV4);
+        butia.RobotDriver.currentRobot().onGraySensorSees(connector, color, priority, handler);
+    }
+
+    /**
      * Reads the light sensor on the given connector (0-100).
      */
     //% blockId="butia_v4_imp_read_light"
+    //% blockHidden=true
     //% block="light sensor on %connector"
     //% weight=69
     //% group="Sensors"
@@ -145,6 +177,7 @@ namespace butiaV4 {
      * Whether the button on the given connector is currently pressed.
      */
     //% blockId="butia_v4_imp_read_button"
+    //% blockHidden=true
     //% block="button on %connector pressed"
     //% weight=68
     //% group="Sensors"
@@ -170,6 +203,7 @@ namespace butiaV4 {
      * Reads a generic analog sensor. Pick an existing name or create one from the dropdown.
      */
     //% blockId="butia_v4_imp_read_generic"
+    //% blockHidden=true
     //% block="$sensorName sensor on $connector"
     //% sensorName.shadow="sensor_enum_shim_v4"
     //% weight=67
@@ -196,6 +230,7 @@ namespace butiaV4 {
      * Sets a servo's angle on the given connector.
      */
     //% blockId="butia_v4_servo_set_angle"
+    //% blockHidden=true
     //% block="servo $servoName on $connector set angle to $degrees °"
     //% servoName.shadow="servo_enum_shim_v4"
     //% degrees.min=0 degrees.max=180 degrees.defl=90
@@ -214,7 +249,7 @@ namespace butiaV4 {
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=65
-    //% advanced=true
+    //% group="Events"
     export function onDistance(
         connector: butia.v4.ButiaV4Connector,
         op: ButiaComparison,
@@ -230,6 +265,7 @@ namespace butiaV4 {
      * Runs the handler when the light sensor on the given connector matches the comparison, at the given priority.
      */
     //% blockId="butia_v4_evt_light"
+    //% blockHidden=true
     //% block="when light sensor on %connector is %op %threshold with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
@@ -250,11 +286,12 @@ namespace butiaV4 {
      * Runs the handler when the gray sensor on the given connector matches the comparison, at the given priority.
      */
     //% blockId="butia_v4_evt_gray"
+    //% blockHidden=true
     //% block="when gray sensor on %connector is %op %threshold with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=55
-    //% advanced=true
+    //% group="Events"
     export function onGray(
         connector: butia.v4.ButiaV4Connector,
         op: ButiaComparison,
@@ -270,6 +307,7 @@ namespace butiaV4 {
      * Runs the handler when the button on the given connector reaches the given state, at the given priority.
      */
     //% blockId="butia_v4_evt_button"
+    //% blockHidden=true
     //% block="when button on %connector is %state with priority %priority"
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=70

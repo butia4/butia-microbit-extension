@@ -33,14 +33,20 @@ declare const enum ButiaMotorSide {
     Right = 1,
 }
 
+declare const enum ButiaColor {
+    //% block="black"
+    Black = 0,
+    //% block="white"
+    White = 1,
+}
+
 // Value 0 is reserved as an "unset" sentinel for the botsim wire protocol.
 // The numeric values are the protocol: botsim resolves maps by id
-// (botsim/src/maps/*.ts), never by member name.
+// (botsim/src/maps/registry.ts), never by member name. Ids 1-3 belonged to
+// retired maps and stay reserved so stale saved programs cannot hit a new map.
 declare const enum ButiaSimMap {
-    //% block="line follower"
-    LineFollower = 1,
-    //% block="table"
-    Table = 2,
-    //% block="light"
-    Light = 3,
+    //% block="line A to B"
+    LineAToB = 4,
+    //% block="circle arena"
+    CircleArena = 5,
 }

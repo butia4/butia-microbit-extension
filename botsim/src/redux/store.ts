@@ -3,14 +3,14 @@ import currentMapReducer from "./currentMap.slice"
 import robotModelReducer from "./robotModel.slice"
 import pinAssignmentReducer, { PinAssignmentState } from "../pages/PinSettings/state/pinAssignment.slice"
 import sensorSettingsReducer, { SensorSettingsState } from "../pages/PinSettings/state/sensorSettings.slice"
-import { DEFAULT_MAP } from "../maps/defaultMap"
+import { LINE_A_TO_B_MAP } from "../maps/lineAToBMap"
 import { resolveMap } from "../maps/registry"
 import { DEFAULT_PIN_ASSIGNMENT, PinAssignment, pinAssignmentSchema } from "../pages/PinSettings/model/pinAssignment.model"
 import { DEFAULT_SENSOR_SETTINGS, SensorSettings, sensorSettingsSchema } from "../botSpecs/sensorSettings.model"
 import { loadOrDefaultMapSlot, persistMapSlot, pinAssignmentKey, sensorSettingsKey } from "./mapSlotPersistence"
 
 function loadPreloadedState() {
-    const mapId = DEFAULT_MAP.id
+    const mapId = LINE_A_TO_B_MAP.id
     const mapSpec = resolveMap(mapId)
     const pinDefault: PinAssignment = mapSpec?.defaultPinAssignment ?? DEFAULT_PIN_ASSIGNMENT
     const sensorDefault: SensorSettings = mapSpec?.defaultSensorSettings ?? DEFAULT_SENSOR_SETTINGS

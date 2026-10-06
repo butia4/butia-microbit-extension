@@ -26,7 +26,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 2. Go to ⚙ → **Extensions**.
 3. Search for or paste `https://github.com/butia4/butia-microbit-extension` and click **Import**.
 
-The Butia blocks appear in the toolbox immediately, under two separate categories — **Butia v2** and **Butia v4** — each with the groups **Motors**, **Sensors**, **Generic Sensors** and **Servos**. Pick blocks from only one category per program; mixing v2 and v4 blocks in the same program is not supported.
+The Butia blocks appear in the toolbox immediately, under two separate categories — **Butia v2** and **Butia v4** — but the toolbox is currently reduced to the blocks needed for the line-following and circle-arena challenges: only the **Butia v4** blocks listed below are shown, in the groups **Motors**, **Sensors** and **Events**. The light, distance, button, generic-sensor and servo blocks, and every Butia v2 block, are hidden (`blockHidden`) but still defined in the code, so they are not available from the toolbox.
 
 ## Block API Reference
 
@@ -40,8 +40,7 @@ The extension supports both the **Butia v4** and **Butia v2** kits, each with it
 
 | Block | Description | Parameters |
 |---|---|---|
-| `Butia v2 use map %map` | Selects which botsim map to run against for a Butia v2 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line follower` / `table` / `light` |
-| `Butia v4 use map %map` | Selects which botsim map to run against for a Butia v4 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line follower` / `table` / `light` |
+| `Butia v4 use map %map` | Selects which botsim map to run against for a Butia v4 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line A to B` / `circle arena` |
 
 ### Motors
 
@@ -58,39 +57,25 @@ The extension supports both the **Butia v4** and **Butia v2** kits, each with it
 
 | Block | Description | Returns |
 |---|---|---|
-| `gray sensor on %connector` | Reads the analog gray/line sensor on the given connector (0–100, higher = darker). | `number` |
-| `light sensor on %connector` | Reads the light sensor on the given connector (0–100). | `number` |
-| `distance sensor on %connector` | Reads the distance sensor on the given connector, in cm. | `number` |
-| `button on %connector pressed` | Whether the button on the given connector is currently pressed. | `boolean` |
+| `gray sensor on %connector` | Reads the analog gray/line sensor on the given connector (0–100, higher = darker; the simulator is normalized to the same range). | `number` |
+| `gray sensor on %connector sees %color` | Whether the gray sensor currently sees `black` (reading 50 or above) or `white` (below 50). A missing reading (no data yet) is neither color. | `boolean` |
 
-### Generic Sensors
-
-| Block | Description | Returns |
-|---|---|---|
-| `$sensorName sensor on $connector` | Reads a generic analog sensor. `sensorName` is a dynamic enum — pick an existing name or create one from the dropdown. | `number` |
-
-### Servos
-
-| Block | Description | Parameters |
-|---|---|---|
-| `servo $servoName on $connector set angle to $degrees °` | Positions a servo. `servoName` is a dynamic enum, like the generic sensors. | `degrees`: 0–180 (default 90) |
-
-### Events (advanced)
-
-Reactive blocks that run a handler when a sensor condition holds, guarded by a `priority` (1 lowest–5 highest) so only the highest-priority satisfied handler runs per cycle.
-
-The monitor polls every 50 ms and runs handlers **synchronously**, so a handler that blocks (for example a movement with a duration) delays every other rule until it returns. Keep handlers short unless the blocking is intentional.
+### Events
 
 | Block | Fires when |
 |---|---|
-| `when distance sensor on %connector is %op %threshold cm with priority %priority` | Distance compares against `threshold` (cm) using `op`. Readings of 0 or less are ignored as "no measurement". |
-| `when light sensor on %connector is %op %threshold with priority %priority` | Light reading compares against `threshold` |
-| `when gray sensor on %connector is %op %threshold with priority %priority` | Gray reading compares against `threshold` |
-| `when button on %connector is %state with priority %priority` | Button is `pressed`/`released` |
+| `when gray sensor on %connector sees %color` | Once each time the sensor starts seeing `black`/`white`. Edge-triggered: it does not repeat while the color persists and re-arms after the color changes. If the sensor already sees the color when the program starts, it fires once. |
+| `when gray sensor on %connector is %op %threshold with priority %priority` | Gray reading compares against `threshold` (level-triggered, guarded by a `priority`: 1 lowest–5 highest, so only the highest-priority satisfied handler runs per cycle). |
+
+The black/white threshold is a single constant (`grayBlackThreshold = 50`) shared by the boolean block and the event.
+
+The monitor polls every 50 ms and runs handlers **synchronously**, so a handler that blocks (for example a movement with a duration) delays every other rule until it returns. Keep handlers short unless the blocking is intentional.
 
 ## Examples
 
 The blocks translate directly to TypeScript — the code below is what dragging blocks into the editor actually generates, so it doubles as the "what does this program do" reference for anyone reading it outside MakeCode.
+
+**Challenge examples** (sensors on `J1`/`J2`): with the new color blocks, a line-following loop reads `if (butiaV4.graySensorSees(butia.v4.J1, ButiaColor.Black)) { ... }` inside `forever`, and the event version uses `butiaV4.onGraySensorSees(butia.v4.J1, ButiaColor.Black, 1, function () { ... })`. The "circle arena" map has a black ring and a pushable box: drive forward and use the same blocks to stay inside the ring.
 
 **Line follower**, using the two gray sensors on `J1`/`J2` to keep the robot centered on a dark line (higher reading = darker):
 
@@ -111,13 +96,13 @@ butiaV4.onGray(butia.J2, ButiaComparison.GreaterOrEqual, 17, 2, function () {
     butiaV4.turn(ButiaTurnDirection.Right, 10, 0.5)
 })
 
-// Run this program against the "line follower" botsim map.
-butiaV4.selectMap(ButiaSimMap.LineFollower)
+// Run this program against the "line A to B" botsim map.
+butiaV4.selectMap(ButiaSimMap.LineAToB)
 ```
 
 Handlers are checked in priority order (higher number wins) — the correction handlers use priority `2` so they override the "keep going straight" handlers at priority `1` whenever a line is detected.
 
-More ready-to-run programs — obstacle avoidance on the "table" map, light-seeking on the "light" map — live in [`codigos/`](codigos/) as exported `.js` files. They predate the Butia v2/v4 split and use the older single-namespace API (`butia.moveForward(...)` instead of `butiaV4.moveForward(...)`); adjust the namespace prefix before pasting them into a v4 program. They're meant to be imported into the MakeCode JavaScript editor to inspect or run against botsim, not copy-pasted as-is for teaching.
+More ready-to-run programs — obstacle avoidance and light-seeking programs for the retired "table" and "light" maps — live in [`codigos/`](codigos/) as exported `.js` files. They predate the Butia v2/v4 split and use the older single-namespace API (`butia.moveForward(...)` instead of `butiaV4.moveForward(...)`); adjust the namespace prefix before pasting them into a v4 program. They're meant to be imported into the MakeCode JavaScript editor to inspect or run against botsim, not copy-pasted as-is for teaching.
 
 ## Tutorials
 

@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { DEFAULT_MAP } from "../maps/defaultMap"
+import { LINE_A_TO_B_MAP } from "../maps/lineAToBMap"
 
 export type CurrentMapState = { mapId: number }
 
-const initialState: CurrentMapState = { mapId: DEFAULT_MAP.id }
+const initialState: CurrentMapState = { mapId: LINE_A_TO_B_MAP.id }
 
 export const currentMapSlice = createSlice({
     name: "currentMap",

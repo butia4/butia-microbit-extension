@@ -224,6 +224,10 @@ namespace butia {
             return s.read();
         }
 
+        graySensorSees(connector: IConnector, color: ButiaColor): boolean {
+            return evalComparison(grayColorToComparison(color), this.readGraySensor(connector), grayBlackThreshold);
+        }
+
         readButton(connector: IConnector): boolean {
             const s = this._getButtonSensor(this._resolveChannel(connector, "digital"));
             return s.read() === 1;
@@ -282,6 +286,10 @@ namespace butia {
                 handler,
             };
             this._eventMonitor.register(monitor);
+        }
+
+        onGraySensorSees(connector: IConnector, color: ButiaColor, priority: number, handler: () => void): void {
+            this.onGray(connector, grayColorToComparison(color), grayBlackThreshold, priority, handler);
         }
 
         onConnectorButton(connector: IConnector, state: ButiaButtonState, priority: number, handler: () => void): void {

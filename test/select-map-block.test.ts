@@ -6,13 +6,13 @@
 
 // --- Butia v4: selectMap auto-starts the v4 instance ---
 butia.RobotDriver._resetForTests();
-butiaV4.selectMap(ButiaSimMap.LineFollower);
+butiaV4.selectMap(ButiaSimMap.LineAToB);
 assertTest(butia.RobotDriver.instance() === butia.butiaV4, "Butia v4 map block selects the v4 instance");
 assertTest(butia.RobotDriver.currentRobot().modelId() === "butiaV4", "active robot after Butia v4 map block has modelId butiaV4");
 
 // --- Butia v2: selectMap auto-starts the v2 instance ---
 butia.RobotDriver._resetForTests();
-butiaV2.selectMap(ButiaSimMap.LineFollower);
+butiaV2.selectMap(ButiaSimMap.LineAToB);
 assertTest(butia.RobotDriver.instance() === butia.butiaV2, "Butia v2 map block selects the v2 instance");
 assertTest(butia.RobotDriver.currentRobot().modelId() === "butiaV2", "active robot after Butia v2 map block has modelId butiaV2");
 
