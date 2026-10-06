@@ -1,6 +1,7 @@
 {
   "Buffer.fromUTF8": "Create a new buffer from an UTF8-encoded string",
   "Buffer.toString": "Convert a buffer to string assuming UTF8 encoding",
+  "butiaV2.graySensorSees": "Whether the gray sensor on the given connector currently sees the given color (black at 50 or above, white below 50).",
   "butiaV2.motorStop": "Stops both motors.",
   "butiaV2.motorStopSingle": "Stops a single motor, leaving the other running.",
   "butiaV2.motorTank": "Sets each motor's speed independently (tank drive).",
@@ -10,6 +11,7 @@
   "butiaV2.onButton": "Runs the handler when the button on the given connector reaches the given state, at the given priority.",
   "butiaV2.onDistance": "Runs the handler when the distance sensor on the given connector matches the comparison, at the given priority.",
   "butiaV2.onGray": "Runs the handler when the gray sensor on the given connector matches the comparison, at the given priority.",
+  "butiaV2.onGraySensorSees": "Runs the handler when the gray sensor on the given connector sees the given color, at the given priority.",
   "butiaV2.onLight": "Runs the handler when the light sensor on the given connector matches the comparison, at the given priority.",
   "butiaV2.readButton": "Whether the button on the given connector is currently pressed.",
   "butiaV2.readGenericSensor": "Reads a generic analog sensor. Pick an existing name or create one from the dropdown.",

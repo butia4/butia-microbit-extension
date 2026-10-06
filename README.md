@@ -26,7 +26,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 2. Go to ⚙ → **Extensions**.
 3. Search for or paste `https://github.com/butia4/butia-microbit-extension` and click **Import**.
 
-The Butia blocks appear in the toolbox immediately, under two separate categories — **Butia v2** and **Butia v4** — but the toolbox is currently reduced to the blocks needed for the line-following and circle-arena challenges: only the **Butia v4** blocks listed below are shown, in the groups **Motors**, **Sensors** and **Events**. The light, distance, button, generic-sensor and servo blocks, and every Butia v2 block, are hidden (`blockHidden`) but still defined in the code, so they are not available from the toolbox.
+The Butia blocks appear in the toolbox immediately, under two separate categories — **Butia v2** and **Butia v4** — but the toolbox is currently reduced to the blocks needed for the line-following and circle-arena challenges: only the **Butia v2** blocks listed below are shown, in the groups **Motors**, **Sensors** and **Events**. The light, distance, button, generic-sensor and servo blocks, and every Butia v4 block, are hidden (`blockHidden`) but still defined in the code, so they are not available from the toolbox.
 
 ## Block API Reference
 
@@ -40,7 +40,7 @@ The extension supports both the **Butia v4** and **Butia v2** kits, each with it
 
 | Block | Description | Parameters |
 |---|---|---|
-| `Butia v4 use map %map` | Selects which botsim map to run against for a Butia v4 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line A to B` / `circle arena` |
+| `Butia v2 use map %map` | Selects which botsim map to run against for a Butia v2 program. Optional — if omitted, botsim shows its "no map selected" screen instead of running the simulation. | `map`: `line A to B` / `circle arena` |
 
 ### Motors
 
@@ -75,7 +75,7 @@ The monitor polls every 50 ms and runs handlers **synchronously**, so a handler 
 
 The blocks translate directly to TypeScript — the code below is what dragging blocks into the editor actually generates, so it doubles as the "what does this program do" reference for anyone reading it outside MakeCode.
 
-**Challenge examples** (sensors on `J1`/`J2`): with the new color blocks, a line-following loop reads `if (butiaV4.graySensorSees(butia.v4.J1, ButiaColor.Black)) { ... }` inside `forever`, and the event version uses `butiaV4.onGraySensorSees(butia.v4.J1, ButiaColor.Black, 1, function () { ... })`. The "circle arena" map has a black ring and a pushable box: drive forward and use the same blocks to stay inside the ring.
+**Challenge examples** (sensors on `J1`/`J2`): with the new color blocks, a line-following loop reads `if (butiaV2.graySensorSees(butia.v2.J1, ButiaColor.Black)) { ... }` inside `forever`, and the event version uses `butiaV2.onGraySensorSees(butia.v2.J1, ButiaColor.Black, 1, function () { ... })`. The "circle arena" map has a black ring and a pushable box: drive forward and use the same blocks to stay inside the ring.
 
 **Line follower**, using the two gray sensors on `J1`/`J2` to keep the robot centered on a dark line (higher reading = darker):
 

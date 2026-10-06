@@ -1,5 +1,5 @@
 //% color="#2E86AB" icon="" block="Butia v2"
-//% groups="['Motors', 'Sensors', 'Generic Sensors', 'Servos']"
+//% groups="['Motors', 'Sensors', 'Events', 'Generic Sensors', 'Servos']"
 namespace butiaV2 {
 
     /**
@@ -8,7 +8,6 @@ namespace butiaV2 {
      * separate "start" block is needed.
      */
     //% blockId="butia_v2_select_map"
-    //% blockHidden=true
     //% block="Butia v2 use map %map"
     //% weight=111
     export function selectMap(map: ButiaSimMap): void {
@@ -20,7 +19,6 @@ namespace butiaV2 {
      * Drives both motors forward. Runs indefinitely, or for the given duration if set.
      */
     //% blockId="butia_v2_imp_move_forward"
-    //% blockHidden=true
     //% block="move forward at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
@@ -37,7 +35,6 @@ namespace butiaV2 {
      * Drives both motors backward. Runs indefinitely, or for the given duration if set.
      */
     //% blockId="butia_v2_imp_move_backward"
-    //% blockHidden=true
     //% block="move backward at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
@@ -54,7 +51,6 @@ namespace butiaV2 {
      * Turns in place toward the given direction.
      */
     //% blockId="butia_v2_imp_turn"
-    //% blockHidden=true
     //% block="turn %direction at speed %speed || for %duration seconds"
     //% speed.min=0 speed.max=100 speed.defl=40
     //% duration.min=0
@@ -71,7 +67,6 @@ namespace butiaV2 {
      * Sets each motor's speed independently (tank drive).
      */
     //% blockId="butia_v2_imp_motor_tank"
-    //% blockHidden=true
     //% block="motor left %left right %right"
     //% left.min=-100 left.max=100 left.defl=70
     //% right.min=-100 right.max=100 right.defl=70
@@ -86,7 +81,6 @@ namespace butiaV2 {
      * Stops both motors.
      */
     //% blockId="butia_v2_imp_stop"
-    //% blockHidden=true
     //% block="stop motors"
     //% weight=80
     //% group="Motors"
@@ -99,7 +93,6 @@ namespace butiaV2 {
      * Stops a single motor, leaving the other running.
      */
     //% blockId="butia_v2_imp_stop_single"
-    //% blockHidden=true
     //% block="stop motor %motor"
     //% weight=79
     //% group="Motors"
@@ -126,6 +119,36 @@ namespace butiaV2 {
     }
 
     /**
+     * Whether the gray sensor on the given connector currently sees the given color (black at 50 or above, white below 50).
+     */
+    //% blockId="butia_v2_imp_gray_sees"
+    //% block="gray sensor on %connector sees %color"
+    //% weight=72
+    //% group="Sensors"
+    export function graySensorSees(connector: butia.v2.ButiaV2Connector, color: ButiaColor): boolean {
+        butia.RobotDriver.start(butia.butiaV2);
+        return butia.RobotDriver.currentRobot().graySensorSees(connector, color);
+    }
+
+    /**
+     * Runs the handler when the gray sensor on the given connector sees the given color, at the given priority.
+     */
+    //% blockId="butia_v2_evt_gray_sees"
+    //% block="when gray sensor on %connector sees %color with priority %priority"
+    //% priority.defl=1 priority.min=1 priority.max=5
+    //% weight=75
+    //% group="Events"
+    export function onGraySensorSees(
+        connector: butia.v2.ButiaV2Connector,
+        color: ButiaColor,
+        priority: number,
+        handler: () => void
+    ): void {
+        butia.RobotDriver.start(butia.butiaV2);
+        butia.RobotDriver.currentRobot().onGraySensorSees(connector, color, priority, handler);
+    }
+
+    /**
      * Reads the light sensor on the given connector (0-100).
      */
     //% blockId="butia_v2_imp_read_light"
@@ -142,7 +165,6 @@ namespace butiaV2 {
      * Reads the distance sensor on the given connector, in cm.
      */
     //% blockId="butia_v2_imp_distance"
-    //% blockHidden=true
     //% block="distance sensor on %connector"
     //% weight=69
     //% group="Sensors"
@@ -223,12 +245,11 @@ namespace butiaV2 {
      * Runs the handler when the distance sensor on the given connector matches the comparison, at the given priority.
      */
     //% blockId="butia_v2_evt_distance"
-    //% blockHidden=true
     //% block="when distance sensor on %connector is %op %threshold cm with priority %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=65
-    //% advanced=true
+    //% group="Events"
     export function onDistance(
         connector: butia.v2.ButiaV2Connector,
         op: ButiaComparison,
@@ -270,7 +291,7 @@ namespace butiaV2 {
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=55
-    //% advanced=true
+    //% group="Events"
     export function onGray(
         connector: butia.v2.ButiaV2Connector,
         op: ButiaComparison,

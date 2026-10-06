@@ -1,6 +1,7 @@
 {
   "Buffer.fromUTF8": "Crea un nuevo buffer a partir de una cadena codificada en UTF8",
   "Buffer.toString": "Convierte un buffer a cadena de texto asumiendo codificación UTF8",
+  "butiaV2.graySensorSees": "Indica si el sensor de grises en el conector indicado ve actualmente el color indicado (negro desde 50, blanco por debajo de 50).",
   "butiaV2.motorStop": "Detiene ambos motores.",
   "butiaV2.motorStopSingle": "Detiene un solo motor, dejando el otro en funcionamiento.",
   "butiaV2.motorTank": "Fija la velocidad de cada motor de forma independiente (tracción diferencial).",
@@ -10,6 +11,7 @@
   "butiaV2.onButton": "Ejecuta el manejador cuando el botón en el conector indicado alcanza el estado indicado, con la prioridad indicada.",
   "butiaV2.onDistance": "Ejecuta el manejador cuando el sensor de distancia en el conector indicado cumple la comparación, con la prioridad indicada.",
   "butiaV2.onGray": "Ejecuta el manejador cuando el sensor de grises en el conector indicado cumple la comparación, con la prioridad indicada.",
+  "butiaV2.onGraySensorSees": "Ejecuta el manejador cuando el sensor de grises en el conector indicado ve el color indicado, con la prioridad indicada.",
   "butiaV2.onLight": "Ejecuta el manejador cuando el sensor de luz en el conector indicado cumple la comparación, con la prioridad indicada.",
   "butiaV2.readButton": "Indica si el botón en el conector indicado está actualmente presionado.",
   "butiaV2.readGenericSensor": "Lee un sensor analógico genérico. Elegí un nombre existente o creá uno desde la lista desplegable.",
