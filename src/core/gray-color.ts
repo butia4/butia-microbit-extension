@@ -19,9 +19,9 @@ namespace butia {
     // export const grayJ1: GrayColorConfig = { threshold: 0.05, blackIsHigh: false };
     // export const grayJ2: GrayColorConfig = { threshold: 76, blackIsHigh: false };
 
-    // Desafio salir de bloque
-    export const grayJ1: GrayColorConfig = { threshold: 0.05, blackIsHigh: false };
-    export const grayJ2: GrayColorConfig = { threshold: 76, blackIsHigh: false };
+    // Desafio salir de circulo
+    export const grayJ1: GrayColorConfig = { threshold: 12, blackIsHigh: false };
+    export const grayJ2: GrayColorConfig = { threshold: 79, blackIsHigh: false };
 
     // Fallback for any other connector (placeholder, same scale as J1/J2).
     export const grayFallback: GrayColorConfig = { threshold: 12, blackIsHigh: false };
