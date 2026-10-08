@@ -14,8 +14,15 @@ namespace butia {
     // PLACEHOLDER values: to be calibrated on real hardware. Independent
     // objects on purpose so each connector can be tuned on its own.
     // Gray sensors are assumed to be wired on J1 and J2.
-    export const grayJ1: GrayColorConfig = { threshold: 12, blackIsHigh: false };
-    export const grayJ2: GrayColorConfig = { threshold: 12, blackIsHigh: false };
+
+    // Desafio seguirdor de linea
+    // export const grayJ1: GrayColorConfig = { threshold: 0.05, blackIsHigh: false };
+    // export const grayJ2: GrayColorConfig = { threshold: 76, blackIsHigh: false };
+
+    // Desafio salir de bloque
+    export const grayJ1: GrayColorConfig = { threshold: 0.05, blackIsHigh: false };
+    export const grayJ2: GrayColorConfig = { threshold: 76, blackIsHigh: false };
+
     // Fallback for any other connector (placeholder, same scale as J1/J2).
     export const grayFallback: GrayColorConfig = { threshold: 12, blackIsHigh: false };
     // Simulator: botsim readings are normalized to 0-100, higher = darker.
