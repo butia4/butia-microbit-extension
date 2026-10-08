@@ -86,6 +86,10 @@ namespace butia {
             super.start();
         }
 
+        protected _grayConfigFor(connector: IConnector): GrayColorConfig {
+            return graySim;
+        }
+
         protected _newDistanceSensor(channel: IChannel): IDistanceSensor {
             const s = new SimDistanceSensor(this._channelToConnName(channel));
             this._simSensors.push({ connName: s.connectorName(), type: s.sensorType() });

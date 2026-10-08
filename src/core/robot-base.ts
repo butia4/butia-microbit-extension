@@ -225,7 +225,12 @@ namespace butia {
         }
 
         graySensorSees(connector: IConnector, color: ButiaColor): boolean {
-            return evalComparison(grayColorToComparison(color), this.readGraySensor(connector), grayBlackThreshold);
+            return grayReadingIs(this.readGraySensor(connector), color, this._grayConfigFor(connector));
+        }
+
+        // Overridable so the simulator robot can use its own gray config.
+        protected _grayConfigFor(connector: IConnector): GrayColorConfig {
+            return grayConfigFor(connector);
         }
 
         readButton(connector: IConnector): boolean {
@@ -289,7 +294,17 @@ namespace butia {
         }
 
         onGraySensorSees(connector: IConnector, color: ButiaColor, priority: number, handler: () => void): void {
-            this.onGray(connector, grayColorToComparison(color), grayBlackThreshold, priority, handler);
+            const channel = this._resolveChannel(connector, "analog");
+            const sensor = this._getGraySensor(channel);
+            const cfg = this._grayConfigFor(connector);
+            const subId = computeSubId(sensorTypeGray, channel.id, comparisonToDir(grayColorComparison(color, cfg)));
+            const monitor: IMonitor = {
+                subId: subId,
+                evaluate: () => grayReadingIs(sensor.read(), color, cfg),
+                priority,
+                handler,
+            };
+            this._eventMonitor.register(monitor);
         }
 
         onConnectorButton(connector: IConnector, state: ButiaButtonState, priority: number, handler: () => void): void {

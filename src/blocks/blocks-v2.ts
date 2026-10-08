@@ -118,7 +118,7 @@ namespace butiaV2 {
     }
 
     /**
-     * Whether the gray sensor on the given connector currently sees the given color (black at 50 or above, white below 50).
+     * Whether the gray sensor on the given connector currently sees the given color (uses a per-connector calibration on hardware and a separate fixed one in the simulator; no data is neither black nor white).
      */
     //% blockId="butia_v2_imp_gray_sees"
     //% block="gray sensor on %connector sees %color"

@@ -58,7 +58,7 @@ The extension supports both the **Butia v4** and **Butia v2** kits, each with it
 | Block | Description | Returns |
 |---|---|---|
 | `gray sensor on %connector` | Reads the analog gray/line sensor on the given connector (0–100, higher = darker; the simulator is normalized to the same range). | `number` |
-| `gray sensor on %connector sees %color` | Whether the gray sensor currently sees `black` (reading 50 or above) or `white` (below 50). A missing reading (no data yet) is neither color. | `boolean` |
+| `gray sensor on %connector sees %color` | Whether the gray sensor currently sees `black` or `white`. On hardware each connector has its own threshold and polarity (`grayJ1`, `grayJ2`, `grayFallback`, placeholders pending calibration); the simulator uses a separate fixed config (black at 50 or above). A missing reading (no data) is neither color. | `boolean` |
 
 ### Events
 
@@ -67,7 +67,7 @@ The extension supports both the **Butia v4** and **Butia v2** kits, each with it
 | `when gray sensor on %connector sees %color` | Once each time the sensor starts seeing `black`/`white`. Edge-triggered: it does not repeat while the color persists and re-arms after the color changes. If the sensor already sees the color when the program starts, it fires once. |
 | `when gray sensor on %connector is %op %threshold with priority %priority` | Gray reading compares against `threshold` (level-triggered, guarded by a `priority`: 1 lowest–5 highest, so only the highest-priority satisfied handler runs per cycle). |
 
-The black/white threshold is a single constant (`grayBlackThreshold = 50`) shared by the boolean block and the event.
+The boolean block and the event share the same per-connector classifier (`src/core/gray-color.ts`). A reading equal to the threshold belongs to the high side. No data never fires the event.
 
 The monitor polls every 50 ms and runs handlers **synchronously**, so a handler that blocks (for example a movement with a duration) delays every other rule until it returns. Keep handlers short unless the blocking is intentional.
 
