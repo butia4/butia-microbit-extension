@@ -153,6 +153,19 @@ namespace butiaV2 {
         return butia.RobotDriver.currentRobot().readButton(connector);
     }
 
+    /**
+     * Sends a value over serial with the given label, so it appears in the
+     * MakeCode data graph ("Show data").
+     */
+    //% blockId="butia_v2_plot_value"
+    //% block="plot %value as %label"
+    //% label.defl="sensor"
+    //% weight=66
+    //% group="Sensors"
+    export function plotValue(value: number, label: string): void {
+        serial.writeValue(label, value);
+    }
+
     //% shim=ENUM_GET
     //% blockId=sensor_enum_shim_v2
     //% blockHidden=true
