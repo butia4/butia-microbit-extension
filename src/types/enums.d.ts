@@ -2,41 +2,41 @@
 // but carry a Butia prefix so they cannot collide with another extension.
 
 declare const enum ButiaTurnDirection {
-    //% block="left"
+    //% block="izquierda"
     Left = 0,
-    //% block="right"
+    //% block="derecha"
     Right = 1,
 }
 
 declare const enum ButiaComparison {
-    //% block="greater than"
+    //% block="mayor que"
     Greater = 0,
-    //% block="less than"
+    //% block="menor que"
     Less = 1,
-    //% block="greater than or equal to"
+    //% block="mayor o igual que"
     GreaterOrEqual = 2,
-    //% block="less than or equal to"
+    //% block="menor o igual que"
     LessOrEqual = 3,
 }
 
 declare const enum ButiaButtonState {
-    //% block="pressed"
+    //% block="presione"
     Pressed = 0,
-    //% block="released"
+    //% block="suelte"
     Released = 1,
 }
 
 declare const enum ButiaMotorSide {
-    //% block="left"
+    //% block="izquierdo"
     Left = 0,
-    //% block="right"
+    //% block="derecho"
     Right = 1,
 }
 
 declare const enum ButiaColor {
-    //% block="black"
+    //% block="negro"
     Black = 0,
-    //% block="white"
+    //% block="blanco"
     White = 1,
 }
 
@@ -45,8 +45,8 @@ declare const enum ButiaColor {
 // (botsim/src/maps/registry.ts), never by member name. Ids 1-3 belonged to
 // retired maps and stay reserved so stale saved programs cannot hit a new map.
 declare const enum ButiaSimMap {
-    //% block="line A to B"
+    //% block="línea A a B"
     LineAToB = 4,
-    //% block="circle arena"
+    //% block="arena circular"
     CircleArena = 5,
 }

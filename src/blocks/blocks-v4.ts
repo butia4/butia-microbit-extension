@@ -1,15 +1,15 @@
 //% color="#84c324" icon="" block="Butia v4"
-//% groups="['Motors', 'Sensors', 'Events', 'Generic Sensors', 'Servos']"
+//% groups="['Motores', 'Sensores', 'Eventos', 'Sensores Genéricos', 'Servos']"
 namespace butiaV4 {
 
     /**
-     * Selects which botsim map to run against. The robot itself starts
-     * automatically the first time any other Butia v4 block runs — no
-     * separate "start" block is needed.
+     * Selecciona qué mapa de botsim usar. El robot se inicia automáticamente
+     * la primera vez que se ejecuta cualquier otro bloque de Butia v4 —
+     * no hace falta un bloque "start" separado.
      */
     //% blockId="butia_v4_select_map"
     //% blockHidden=true
-    //% block="Butia v4 use map %map"
+    //% block="Butia v4 usar mapa %map"
     //% weight=111
     export function selectMap(map: ButiaSimMap): void {
         butia.RobotDriver.start(butia.butiaV4);
@@ -17,16 +17,16 @@ namespace butiaV4 {
     }
 
     /**
-     * Drives both motors forward. Runs indefinitely, or for the given duration if set.
+     * Hace avanzar ambos motores. Se ejecuta indefinidamente, o durante la duración indicada si se especifica.
      */
     //% blockId="butia_v4_imp_move_forward"
     //% blockHidden=true
-    //% block="move forward at speed %speed || for %duration seconds"
+    //% block="avanzar a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
     //% duration.defl=0
     //% weight=100
-    //% group="Motors"
+    //% group="Motores"
     export function moveForward(speed: number, duration?: number): void {
         butia.RobotDriver.start(butia.butiaV4);
         const ms = duration ? duration * 1000 : 0;
@@ -34,16 +34,16 @@ namespace butiaV4 {
     }
 
     /**
-     * Drives both motors backward. Runs indefinitely, or for the given duration if set.
+     * Hace retroceder ambos motores. Se ejecuta indefinidamente, o durante la duración indicada si se especifica.
      */
     //% blockId="butia_v4_imp_move_backward"
     //% blockHidden=true
-    //% block="move backward at speed %speed || for %duration seconds"
+    //% block="retroceder a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=50
     //% duration.min=0
     //% duration.defl=0
     //% weight=95
-    //% group="Motors"
+    //% group="Motores"
     export function moveBackward(speed: number, duration?: number): void {
         butia.RobotDriver.start(butia.butiaV4);
         const ms = duration ? duration * 1000 : 0;
@@ -51,16 +51,16 @@ namespace butiaV4 {
     }
 
     /**
-     * Turns in place toward the given direction.
+     * Gira en el lugar hacia la dirección indicada.
      */
     //% blockId="butia_v4_imp_turn"
     //% blockHidden=true
-    //% block="turn %direction at speed %speed || for %duration seconds"
+    //% block="girar hacia %direction a velocidad %speed || durante %duration segundos"
     //% speed.min=0 speed.max=100 speed.defl=40
     //% duration.min=0
     //% duration.defl=0
     //% weight=90
-    //% group="Motors"
+    //% group="Motores"
     export function turn(direction: ButiaTurnDirection, speed: number, duration?: number): void {
         butia.RobotDriver.start(butia.butiaV4);
         const ms = duration ? duration * 1000 : undefined;
@@ -68,41 +68,41 @@ namespace butiaV4 {
     }
 
     /**
-     * Sets each motor's speed independently (tank drive).
+     * Fija la velocidad de cada motor de forma independiente (tracción diferencial).
      */
     //% blockId="butia_v4_imp_motor_tank"
     //% blockHidden=true
-    //% block="motor left %left right %right"
+    //% block="motor izquierdo %left derecho %right"
     //% left.min=-100 left.max=100 left.defl=70
     //% right.min=-100 right.max=100 right.defl=70
     //% weight=85
-    //% group="Motors"
+    //% group="Motores"
     export function motorTank(left: number, right: number): void {
         butia.RobotDriver.start(butia.butiaV4);
         butia.RobotDriver.currentRobot().motorTank(left, right);
     }
 
     /**
-     * Stops both motors.
+     * Detiene ambos motores.
      */
     //% blockId="butia_v4_imp_stop"
     //% blockHidden=true
-    //% block="stop motors"
+    //% block="detener motores"
     //% weight=80
-    //% group="Motors"
+    //% group="Motores"
     export function motorStop(): void {
         butia.RobotDriver.start(butia.butiaV4);
         butia.RobotDriver.currentRobot().motorStop();
     }
 
     /**
-     * Stops a single motor, leaving the other running.
+     * Detiene un solo motor, dejando el otro en funcionamiento.
      */
     //% blockId="butia_v4_imp_stop_single"
     //% blockHidden=true
-    //% block="stop motor %motor"
+    //% block="detener motor %motor"
     //% weight=79
-    //% group="Motors"
+    //% group="Motores"
     export function motorStopSingle(motor: ButiaMotorSide): void {
         butia.RobotDriver.start(butia.butiaV4);
         if (motor === ButiaMotorSide.Left) {
@@ -113,40 +113,40 @@ namespace butiaV4 {
     }
 
     /**
-     * Reads the analog gray/line sensor on the given connector (0-100, higher = darker).
+     * Lee el sensor analógico de grises/línea en el conector indicado (0-100, mayor = más oscuro).
      */
     //% blockId="butia_v4_imp_read_gray"
     //% blockHidden=true
-    //% block="gray sensor on %connector"
+    //% block="sensor de grises en %connector"
     //% weight=70
-    //% group="Sensors"
+    //% group="Sensores"
     export function readGraySensor(connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readGraySensor(connector);
     }
 
     /**
-     * Whether the gray sensor on the given connector currently sees the given color (uses a per-connector calibration on hardware and a separate fixed one in the simulator; no data is neither black nor white).
+     * Indica si el sensor de grises en el conector indicado ve actualmente el color indicado (usa una calibración por conector en el hardware y otra fija en el simulador; sin datos no es ni negro ni blanco).
      */
     //% blockId="butia_v4_imp_gray_sees"
     //% blockHidden=true
-    //% block="gray sensor on %connector sees %color"
+    //% block="sensor de grises en %connector ve %color"
     //% weight=72
-    //% group="Sensors"
+    //% group="Sensores"
     export function graySensorSees(connector: butia.v4.ButiaV4Connector, color: ButiaColor): boolean {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().graySensorSees(connector, color);
     }
 
     /**
-     * Runs the handler when the gray sensor on the given connector sees the given color, at the given priority.
+     * Ejecuta el manejador cuando el sensor de grises en el conector indicado ve el color indicado, con la prioridad indicada.
      */
     //% blockId="butia_v4_evt_gray_sees"
     //% blockHidden=true
-    //% block="when gray sensor on %connector sees %color with priority %priority"
+    //% block="cuando el sensor de grises en %connector vea %color con prioridad %priority"
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=75
-    //% group="Events"
+    //% group="Eventos"
     export function onGraySensorSees(
         connector: butia.v4.ButiaV4Connector,
         color: ButiaColor,
@@ -158,39 +158,39 @@ namespace butiaV4 {
     }
 
     /**
-     * Reads the light sensor on the given connector (0-100).
+     * Lee el sensor de luz en el conector indicado (0-100).
      */
     //% blockId="butia_v4_imp_read_light"
     //% blockHidden=true
-    //% block="light sensor on %connector"
+    //% block="sensor de luz en %connector"
     //% weight=69
-    //% group="Sensors"
+    //% group="Sensores"
     export function readLightSensor(connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readLightSensor(connector);
     }
 
     /**
-     * Reads the distance sensor on the given connector, in cm.
+     * Lee el sensor de distancia en el conector indicado, en cm.
      */
     //% blockId="butia_v4_imp_distance"
     //% blockHidden=true
-    //% block="distance sensor on %connector"
+    //% block="sensor de distancia en %connector"
     //% weight=69
-    //% group="Sensors"
+    //% group="Sensores"
     export function obstacleDistance(connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readDistanceSensor(connector);
     }
 
     /**
-     * Whether the button on the given connector is currently pressed.
+     * Indica si el botón en el conector indicado está actualmente presionado.
      */
     //% blockId="butia_v4_imp_read_button"
     //% blockHidden=true
-    //% block="button on %connector pressed"
+    //% block="botón en %connector presionado"
     //% weight=68
-    //% group="Sensors"
+    //% group="Sensores"
     export function readButton(connector: butia.v4.ButiaV4Connector): boolean {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readButton(connector);
@@ -204,20 +204,20 @@ namespace butiaV4 {
     //% enumMemberName="sensor"
     //% enumPromptHint="eg: Humidity"
     //% enumInitialMembers="Humidity,Pressure,Sound"
-    //% group="Generic Sensors"
+    //% group="Sensores Genéricos"
     export function _sensorEnumShim(arg: number): number {
         return arg;
     }
 
     /**
-     * Reads a generic analog sensor. Pick an existing name or create one from the dropdown.
+     * Lee un sensor analógico genérico. Elegí un nombre existente o creá uno desde la lista desplegable.
      */
     //% blockId="butia_v4_imp_read_generic"
     //% blockHidden=true
-    //% block="$sensorName sensor on $connector"
+    //% block="sensor de $sensorName en $connector"
     //% sensorName.shadow="sensor_enum_shim_v4"
     //% weight=67
-    //% group="Generic Sensors"
+    //% group="Sensores Genéricos"
     export function readGenericSensor(sensorName: number, connector: butia.v4.ButiaV4Connector): number {
         butia.RobotDriver.start(butia.butiaV4);
         return butia.RobotDriver.currentRobot().readGenericSensor(connector, sensorName);
@@ -237,11 +237,11 @@ namespace butiaV4 {
     }
 
     /**
-     * Sets a servo's angle on the given connector.
+     * Fija el ángulo de un servo en el conector indicado.
      */
     //% blockId="butia_v4_servo_set_angle"
     //% blockHidden=true
-    //% block="servo $servoName on $connector set angle to $degrees °"
+    //% block="servo $servoName en $connector fijar ángulo a $degrees °"
     //% servoName.shadow="servo_enum_shim_v4"
     //% degrees.min=0 degrees.max=180 degrees.defl=90
     //% weight=50
@@ -252,15 +252,15 @@ namespace butiaV4 {
     }
 
     /**
-     * Runs the handler when the distance sensor on the given connector matches the comparison, at the given priority.
+     * Ejecuta el manejador cuando el sensor de distancia en el conector indicado cumple la comparación, con la prioridad indicada.
      */
     //% blockId="butia_v4_evt_distance"
     //% blockHidden=true
-    //% block="when distance sensor on %connector is %op %threshold cm with priority %priority"
+    //% block="cuando el sensor de distancia en %connector sea %op %threshold cm con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=65
-    //% group="Events"
+    //% group="Eventos"
     export function onDistance(
         connector: butia.v4.ButiaV4Connector,
         op: ButiaComparison,
@@ -273,11 +273,11 @@ namespace butiaV4 {
     }
 
     /**
-     * Runs the handler when the light sensor on the given connector matches the comparison, at the given priority.
+     * Ejecuta el manejador cuando el sensor de luz en el conector indicado cumple la comparación, con la prioridad indicada.
      */
     //% blockId="butia_v4_evt_light"
     //% blockHidden=true
-    //% block="when light sensor on %connector is %op %threshold with priority %priority"
+    //% block="cuando el sensor de luz en %connector sea %op %threshold con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=60
@@ -294,15 +294,15 @@ namespace butiaV4 {
     }
 
     /**
-     * Runs the handler when the gray sensor on the given connector matches the comparison, at the given priority.
+     * Ejecuta el manejador cuando el sensor de grises en el conector indicado cumple la comparación, con la prioridad indicada.
      */
     //% blockId="butia_v4_evt_gray"
     //% blockHidden=true
-    //% block="when gray sensor on %connector is %op %threshold with priority %priority"
+    //% block="cuando el sensor de grises en %connector sea %op %threshold con prioridad %priority"
     //% threshold.defl=20 threshold.min=1 threshold.max=100
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=55
-    //% group="Events"
+    //% group="Eventos"
     export function onGray(
         connector: butia.v4.ButiaV4Connector,
         op: ButiaComparison,
@@ -315,11 +315,11 @@ namespace butiaV4 {
     }
 
     /**
-     * Runs the handler when the button on the given connector reaches the given state, at the given priority.
+     * Ejecuta el manejador cuando el botón en el conector indicado alcanza el estado indicado, con la prioridad indicada.
      */
     //% blockId="butia_v4_evt_button"
     //% blockHidden=true
-    //% block="when button on %connector is %state with priority %priority"
+    //% block="cuando el botón en %connector se %state con prioridad %priority"
     //% priority.defl=1 priority.min=1 priority.max=5
     //% weight=70
     //% advanced=true

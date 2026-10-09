@@ -1,7 +1,7 @@
 {
   "Buffer.fromUTF8": "Crea un nuevo buffer a partir de una cadena codificada en UTF8",
   "Buffer.toString": "Convierte un buffer a cadena de texto asumiendo codificación UTF8",
-  "butiaV2.graySensorSees": "Indica si el sensor de grises en el conector indicado ve actualmente el color indicado (negro desde 50, blanco por debajo de 50).",
+  "butiaV2.graySensorSees": "Indica si el sensor de grises en el conector indicado ve actualmente el color indicado (usa una calibración por conector en el hardware y otra fija en el simulador; sin datos no es ni negro ni blanco).",
   "butiaV2.motorStop": "Detiene ambos motores.",
   "butiaV2.motorStopSingle": "Detiene un solo motor, dejando el otro en funcionamiento.",
   "butiaV2.motorTank": "Fija la velocidad de cada motor de forma independiente (tracción diferencial).",
@@ -20,7 +20,7 @@
   "butiaV2.selectMap": "Selecciona qué mapa de botsim usar. El robot se inicia automáticamente\r\nla primera vez que se ejecuta cualquier otro bloque de Butia v2 —\r\nno hace falta un bloque \"start\" separado.",
   "butiaV2.servoSetAngle": "Fija el ángulo de un servo en el conector indicado.",
   "butiaV2.turn": "Gira en el lugar hacia la dirección indicada.",
-  "butiaV4.graySensorSees": "Indica si el sensor de grises en el conector indicado ve actualmente el color indicado (negro desde 50, blanco por debajo de 50).",
+  "butiaV4.graySensorSees": "Indica si el sensor de grises en el conector indicado ve actualmente el color indicado (usa una calibración por conector en el hardware y otra fija en el simulador; sin datos no es ni negro ni blanco).",
   "butiaV4.motorStop": "Detiene ambos motores.",
   "butiaV4.motorStopSingle": "Detiene un solo motor, dejando el otro en funcionamiento.",
   "butiaV4.motorTank": "Fija la velocidad de cada motor de forma independiente (tracción diferencial).",
