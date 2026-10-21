@@ -36,7 +36,7 @@ namespace butia {
         _pwm2Pin(): DigitalPin { return this.pins.pwm2; }
 
         private _setMotor(dirPin: DigitalPin, pwmPin: DigitalPin, speed: number): void {
-            const value = Math.min(maxMotorSpeed, Math.max(-maxMotorSpeed, speed));
+            const value = Math.min(100, Math.max(-100, speed));
             const pwm = Math.floor(Math.abs(value) * 1023 / 100);
 
             pins.digitalWritePin(dirPin, value < 0 ? 0 : 1);

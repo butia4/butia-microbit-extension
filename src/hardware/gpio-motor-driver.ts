@@ -25,7 +25,7 @@ namespace butia {
         _rightPins(): DigitalPin[] { return this.rightPins; }
 
         private _setMotor(motorPins: DigitalPin[], speed: number): void {
-            const value = Math.min(maxMotorSpeed, Math.max(-maxMotorSpeed, speed));
+            const value = Math.min(100, Math.max(-100, speed));
             const pwm = Math.floor(Math.abs(value) * 1023 / 100);
 
             if (value > 0) {
