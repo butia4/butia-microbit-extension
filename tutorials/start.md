@@ -7,36 +7,36 @@ atrás, detenerlo y girar. ¡Vamos!
 
 ## Avanzar
 
-Agregá un bloque `||Butia:Avanzar a velocidad||` en `||basic:on start||` y elegí una velocidad de 0 a 100 para que el robot avance.
+Agregá un bloque `||butiaV4:avanzar a velocidad||` en `||basic:on start||` y elegí una velocidad de 0 a 100 para que el robot avance.
 
 ```blocks
 // @highlight
-Butia.moveForward(60)
+butiaV4.moveForward(60)
 ```
 
 ## Detener motores
 
 A continuación, agregá el bloque `||basic:pause||` con 1 segundo y usá
-`||Butia:Detener Motores||` para frenar el robot.
+`||butiaV4:detener motores||` para frenar el robot.
 
 ```blocks
-Butia.moveForward(60)
+butiaV4.moveForward(60)
 basic.pause(1000)
 // @highlight
-Butia.motorStop()
+butiaV4.motorStop()
 ```
 
 ## Retroceder
 
-Agregá un bloque `||Butia:Retroceder a velocidad||` y elegí la velocidad para que el robot vaya hacia atrás.
+Agregá un bloque `||butiaV4:retroceder a velocidad||` y elegí la velocidad para que el robot vaya hacia atrás.
 
 ```blocks
-Butia.moveForward(60)
+butiaV4.moveForward(60)
 basic.pause(1000)
-Butia.motorStop()
+butiaV4.motorStop()
 basic.pause(500)
 // @highlight
-Butia.moveBackward(60)
+butiaV4.moveBackward(60)
 ```
 
 ## Detener motores otra vez
@@ -44,32 +44,32 @@ Butia.moveBackward(60)
 Frená de nuevo antes de girar.
 
 ```blocks
-Butia.moveForward(60)
+butiaV4.moveForward(60)
 basic.pause(1000)
-Butia.motorStop()
+butiaV4.motorStop()
 basic.pause(500)
-Butia.moveBackward(60)
+butiaV4.moveBackward(60)
 basic.pause(1000)
 // @highlight
-Butia.motorStop()
+butiaV4.motorStop()
 ```
 
 ## Girar
 
-Agregá un bloque `||Butia:Girar hacia||` para que el robot gire hacia la
+Agregá un bloque `||butiaV4:girar hacia||` para que el robot gire hacia la
 derecha durante medio segundo.
 
 ```blocks
-Butia.moveForward(60)
+butiaV4.moveForward(60)
 basic.pause(1000)
-Butia.motorStop()
+butiaV4.motorStop()
 basic.pause(500)
-Butia.moveBackward(60)
+butiaV4.moveBackward(60)
 basic.pause(1000)
-Butia.motorStop()
+butiaV4.motorStop()
 basic.pause(500)
 // @highlight
-Butia.turn(TurnDirection.Right, 40, 0.5)
+butiaV4.turn(ButiaTurnDirection.Right, 40, 0.5)
 ```
 
 ## ¡A programar! @showdialog

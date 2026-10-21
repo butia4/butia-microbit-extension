@@ -300,7 +300,7 @@ namespace butia {
         }
 
         // Exposed for tests — drives one polling cycle without sleeping.
-        // Returns the subIds that fired this cycle.
+        // Returns the subId that fired this cycle, or 0 if none.
         _stepEventMonitor(): number {
             return this._eventMonitor.pollOnce();
         }

@@ -3,8 +3,9 @@
 // A single background fiber (lazy-started on the first register call) iterates
 // a dynamic list of sensor monitors every 50 ms. Each monitor encapsulates
 // its own evaluation closure, so the poller stays agnostic to sensor type.
-// Rising-edge detection prevents repeated firing while the condition holds.
-// Step 2 evaluates level-triggered reactive motor rules via subsumption.
+// Monitors are level-triggered: a handler runs on every cycle its condition
+// holds. When several hold at once, only the highest-priority one runs
+// (ties go to the one registered last).
 
 namespace butia {
     export const pollIntervalMs = 50;
@@ -46,8 +47,8 @@ namespace butia {
         handler: () => void;
     }
 
-    // Pure: used by both control.onEvent (handler side) and control.raiseEvent
-    // (poller side). Keeping it pure guarantees both sides agree on the ID.
+    // Pure, so the same sensor/channel/direction always maps to the same ID.
+    // pollOnce() returns it, which lets tests tell which monitor fired.
     export function computeSubId(sensorType: number, pin: number, direction: number): number {
         return sensorType * 10000 + pin * 10 + direction;
     }
@@ -68,12 +69,11 @@ namespace butia {
         }
         
 
-        // Runs a single polling cycle synchronously. Returns the list of
-        // subIds that fired this cycle so tests can assert rising-edge
-        // behavior without depending on the PXT event scheduler. The
-        // background loop ignores the return value.
+        // Runs a single polling cycle synchronously. Returns the subId that
+        // fired this cycle, or 0 if none, so tests can assert dispatch without
+        // depending on the PXT event scheduler. The background loop ignores
+        // the return value.
         pollOnce(): number {
-            // Returns the subId that fired this cycle, or 0 if none.
             if (this._eventRaising) return 0;
             let bestMonitor: IMonitor = this._monitors[0];
             let anyTriggered = false;

@@ -1,7 +1,7 @@
 {
     "name": "butia-microbit-extension",
     "version": "0.1.0",
-    "description": "MakeCode extension for the Butia v4 educational robotics kit — imperative, event-based and reactive block paradigms.",
+    "description": "MakeCode extension for the Butia v4 educational robotics kit — motor, sensor, servo and event blocks.",
     "dependencies": {
         "core": "*"
     },

@@ -24,7 +24,7 @@ A [MakeCode](https://makecode.microbit.org/) extension for the [micro:bit](https
 
 1. Open [https://makecode.microbit.org/](https://makecode.microbit.org/) and create a **New Project**.
 2. Go to ⚙ → **Extensions**.
-3. Search for or paste `https://github.com/butia4/butia-microbit-extension` and click **Import**.
+3. Paste `https://github.com/butia4/butia-microbit-extension` into the search box and click the result.
 
 The Butia blocks appear in the toolbox immediately, under two separate categories — **Butia v2** and **Butia v4** — each with the groups **Motors**, **Sensors**, **Generic Sensors** and **Servos**. Pick blocks from only one category per program; mixing v2 and v4 blocks in the same program is not supported.
 
@@ -32,7 +32,7 @@ The Butia blocks appear in the toolbox immediately, under two separate categorie
 
 English is the base language of the blocks; Spanish is shipped as a locale (`_locales/es/`) and is what students see when the editor is set to Spanish. The reference below uses the English text.
 
-`%connector` is a Butia connector picker. Available connectors depend on the active robot model — **J1–J5** on Butia v4, **J1–J3** on Butia v2.
+`%connector` is a Butia connector picker. Available connectors depend on the active robot model — **J1–J6** on Butia v4, **J1–J5** on Butia v2. In code they are `butia.v4.J1`… and `butia.v2.J1`….
 
 ### Robot Model
 
@@ -62,6 +62,7 @@ The extension supports both the **Butia v4** and **Butia v2** kits, each with it
 | `light sensor on %connector` | Reads the light sensor on the given connector (0–100). | `number` |
 | `distance sensor on %connector` | Reads the distance sensor on the given connector, in cm. | `number` |
 | `button on %connector pressed` | Whether the button on the given connector is currently pressed. | `boolean` |
+| `plot %value as %label` | Sends a value over serial with a label, so it shows up in MakeCode's data graph ("Show data"). | — |
 
 ### Generic Sensors
 
@@ -96,18 +97,18 @@ The blocks translate directly to TypeScript — the code below is what dragging 
 
 ```ts
 // Below the line: keep driving straight.
-butiaV4.onGray(butia.J1, ButiaComparison.Less, 17, 1, function () {
+butiaV4.onGray(butia.v4.J1, ButiaComparison.Less, 17, 1, function () {
     butiaV4.moveForward(20)
 })
-butiaV4.onGray(butia.J2, ButiaComparison.Less, 17, 1, function () {
+butiaV4.onGray(butia.v4.J2, ButiaComparison.Less, 17, 1, function () {
     butiaV4.moveForward(20)
 })
 // Left sensor sees the line: correct by turning left.
-butiaV4.onGray(butia.J1, ButiaComparison.GreaterOrEqual, 17, 2, function () {
+butiaV4.onGray(butia.v4.J1, ButiaComparison.GreaterOrEqual, 17, 2, function () {
     butiaV4.turn(ButiaTurnDirection.Left, 10, 0.5)
 })
 // Right sensor sees the line: correct by turning right.
-butiaV4.onGray(butia.J2, ButiaComparison.GreaterOrEqual, 17, 2, function () {
+butiaV4.onGray(butia.v4.J2, ButiaComparison.GreaterOrEqual, 17, 2, function () {
     butiaV4.turn(ButiaTurnDirection.Right, 10, 0.5)
 })
 
@@ -117,7 +118,7 @@ butiaV4.selectMap(ButiaSimMap.LineFollower)
 
 Handlers are checked in priority order (higher number wins) — the correction handlers use priority `2` so they override the "keep going straight" handlers at priority `1` whenever a line is detected.
 
-More ready-to-run programs — obstacle avoidance on the "table" map, light-seeking on the "light" map — live in [`codigos/`](codigos/) as exported `.js` files. They predate the Butia v2/v4 split and use the older single-namespace API (`butia.moveForward(...)` instead of `butiaV4.moveForward(...)`); adjust the namespace prefix before pasting them into a v4 program. They're meant to be imported into the MakeCode JavaScript editor to inspect or run against botsim, not copy-pasted as-is for teaching.
+More ready-to-run Butia v4 programs live in [`example/`](example/) as `.js` files: line following, obstacle avoidance on the "table" map (driving forward or backward), and light-seeking on the "light" map. Paste them into the MakeCode JavaScript editor to inspect them or run them against botsim.
 
 ## Tutorials
 
@@ -139,8 +140,7 @@ npm install       # installs dev tools (pxt, TypeScript, ESLint)
 | `npm run typecheck` | Type-check without emitting files |
 | `npm run lint` | ESLint |
 | `npm run sync` | Sync `src/`/`test/` file lists into `pxt.json` — run after adding/renaming/deleting a `.ts` file |
-| `npm run loc` | Regenerate `_locales/*-strings.json` from the source `//% block` text — run after adding/renaming a block |
-| `npm run serve` | Local MakeCode editor + botsim dev server (see [SETUP.md](SETUP.md)) |
+| `npm run loc` | Regenerate `_locales/*-strings.json` from the source `//% block` text — run after adding/renaming a block, then add the Spanish text to `_locales/es/` by hand |
 | `npm run deploy` | Flash `built/binary.hex` to a connected micro:bit |
 | `make clean` | Remove `built/` output |
 
@@ -154,17 +154,20 @@ To test your changes in the editor: push your branch, then in MakeCode go to ⚙
 src/
 ├── robotdriver.ts  # RobotDriver singleton, swaps in the sim robot when applicable
 ├── types/          # Ambient interfaces and const enums
-├── core/           # RobotBase (DI base class) + connector, logger, event-monitor
-├── hardware/       # Concrete hardware drivers (motors, gray/light/distance/button/generic sensors, servo)
+├── core/           # RobotBase (DI base class) + connector, event-monitor
+├── hardware/       # Butia v2/v4 robots and their drivers (motors, sensors, servo, I2C expanders)
 ├── sim/            # MakeCode simulator bridge — swaps hardware drivers for sim equivalents
-└── blocks/         # blocks.ts — the public MakeCode block API documented above
+└── blocks/         # blocks-v2.ts / blocks-v4.ts — the public MakeCode block API documented above
 test/               # Unit tests, excluded from the extension build
-codigos/            # Classroom programs used to exercise the botsim maps
+example/            # Classroom programs used to exercise the botsim maps
+tutorials/          # MakeCode tutorials (Spanish)
+_locales/           # Block strings; es/ holds the Spanish translation
+documents/          # Hardware reference (micro:bit PCB schematic)
 scripts/            # Dev tooling (sync-pxt.ts)
 botsim/             # The simulator: a standalone React/Vite app with its own package.json
 ```
 
-All extension code lives under the `Butia` namespace, and the shared enums are prefixed `Butia*`, so nothing collides with other MakeCode extensions.
+Blocks live in the `butiaV2` and `butiaV4` namespaces, internals in `butia` (with connectors in `butia.v2` / `butia.v4`), and the shared enums are prefixed `Butia*`, so nothing collides with other MakeCode extensions.
 
 ## Contributing
 
