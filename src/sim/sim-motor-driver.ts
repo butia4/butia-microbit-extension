@@ -29,8 +29,6 @@ namespace butia {
             this._sensorTypes = sensorTypes;
         }
 
-        init(): void {}
-
         setSpeed(left: number, right: number): void {
             simState.motorLeft = left;
             simState.motorRight = right;

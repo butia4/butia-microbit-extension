@@ -152,10 +152,9 @@ To test your changes in the editor: push your branch, then in MakeCode go to ⚙
 
 ```
 src/
-├── main.ts         # Runtime entry point — starts the robot singleton
 ├── robotdriver.ts  # RobotDriver singleton, swaps in the sim robot when applicable
 ├── types/          # Ambient interfaces and const enums
-├── core/           # RobotBase (DI base class) + constants, connector, logger, event-monitor
+├── core/           # RobotBase (DI base class) + connector, logger, event-monitor
 ├── hardware/       # Concrete hardware drivers (motors, gray/light/distance/button/generic sensors, servo)
 ├── sim/            # MakeCode simulator bridge — swaps hardware drivers for sim equivalents
 └── blocks/         # blocks.ts — the public MakeCode block API documented above

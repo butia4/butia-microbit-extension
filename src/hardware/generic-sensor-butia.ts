@@ -7,7 +7,6 @@ namespace butia {
             this._pinTrigger = pinTrigger;
         }
 
-        init(): void {}
         read(): number {
             let raw = 1023 - pins.analogReadPin(this._pinTrigger);
             let value = (raw / 1023) * 100;

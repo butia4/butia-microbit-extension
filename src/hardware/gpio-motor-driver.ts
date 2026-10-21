@@ -6,8 +6,6 @@ namespace butia {
             private rightPins: DigitalPin[]
         ) {}
 
-        init(): void {}
-
         setSpeed(left: number, right: number): void {
             if (this.leftPins.length === 0 || this.rightPins.length === 0)
                 control.fail("Motor pins not configured.");

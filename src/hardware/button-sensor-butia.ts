@@ -6,7 +6,6 @@ namespace butia {
             this._pin = pin;
         }
 
-        init(): void {}
-        read(): number { return pins.digitalReadPin(this._pin); }
+        isPressed(): boolean { return pins.digitalReadPin(this._pin) === 1; }
     }
 }

@@ -6,18 +6,17 @@ class MockMotorDriver implements butia.IMotorDriver {
     left: number;
     right: number;
     constructor() { this.left = 0; this.right = 0; }
-    init(): void {}
     setSpeed(left: number, right: number): void { this.left = left; this.right = right; }
     stop(): void { this.left = 0; this.right = 0; }
 }
 
 // Single mock sensor type for all four sensor flavors. Its value is
 // mutable so event tests can simulate threshold crossings.
-class MockSensor implements butia.ILightSensor, butia.IGraySensor, butia.IDistanceSensor, butia.IButtonSensor {
+class MockSensor implements butia.ISensor, butia.IButtonSensor {
     private _value: number;
     constructor(value: number) { this._value = value; }
-    init(): void {}
     read(): number { return this._value; }
+    isPressed(): boolean { return this._value === 1; }
     setValue(v: number): void { this._value = v; }
 }
 
@@ -26,7 +25,6 @@ class MockServoDriver implements butia.IServoDriver {
     constructor() {
         this.angle = -1;
     }
-    init(): void {}
     setAngle(degrees: number): void { this.angle = degrees; }
 }
 

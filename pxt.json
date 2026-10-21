@@ -24,7 +24,6 @@
         "src/hardware/pca9536-io-expander.ts",
         "src/hardware/servo-driver-butia.ts",
         "src/hardware/tb6612-motor-driver.ts",
-        "src/main.ts",
         "src/robotdriver.ts",
         "src/sim/sim-map.ts",
         "src/sim/sim-motor-driver.ts",

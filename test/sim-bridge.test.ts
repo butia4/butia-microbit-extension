@@ -1,6 +1,4 @@
 // Tests for the PXT simulator bridge (pxt-sim-bridge change).
-// Note: SimButtonSensor.read() returns number (0 or 1), not boolean,
-// because IButtonSensor extends ISensor whose read() returns number.
 
 // TASK-T01: butia.simState.reset() clears all fields
 butia.simState.runId = "abc";
@@ -57,19 +55,19 @@ assertTest(sensor08.read() === -1, "sim-light-read-empty");
 butia.simState.sensorCache["J1"] = 55;
 assertTest(sensor08.read() === 55, "sim-light-read-cached");
 
-// TASK-T09: SimButtonSensor.read() returns 1 when cache is 1 (SC-06)
+// TASK-T09: SimButtonSensor.isPressed() is true when cache is 1 (SC-06)
 butia.simState.reset();
 butia.simState.sensorCache["J4"] = 1;
 const sensor09 = new butia.SimButtonSensor("J4");
-assertTest(sensor09.read() === 1, "sim-button-pressed");
+assertTest(sensor09.isPressed(), "sim-button-pressed");
 
-// TASK-T10: SimButtonSensor.read() returns 0 when cache is 0 (SC-07)
+// TASK-T10: SimButtonSensor.isPressed() is false when cache is 0 (SC-07)
 butia.simState.sensorCache["J4"] = 0;
-assertTest(sensor09.read() === 0, "sim-button-released");
+assertTest(!sensor09.isPressed(), "sim-button-released");
 
-// TASK-T11: SimButtonSensor.read() returns 0 when connector absent (SC-08)
+// TASK-T11: SimButtonSensor.isPressed() is false when connector absent (SC-08)
 butia.simState.reset();
-assertTest(sensor09.read() === 0, "sim-button-absent");
+assertTest(!sensor09.isPressed(), "sim-button-absent");
 
 // TASK-T12: applySensorsMessage updates cache for matching runId (SC-03)
 butia.simState.reset();

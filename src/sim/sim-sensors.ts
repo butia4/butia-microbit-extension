@@ -6,7 +6,6 @@ namespace butia {
             this._connName = connName;
         }
 
-        init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "distance"; }
 
@@ -23,7 +22,6 @@ namespace butia {
             this._connName = connName;
         }
 
-        init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "gray"; }
 
@@ -40,7 +38,6 @@ namespace butia {
             this._connName = connName;
         }
 
-        init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "light"; }
 
@@ -50,7 +47,6 @@ namespace butia {
         }
     }
 
-    // read() returns 1 (pressed) or 0 (released) to satisfy IButtonSensor (read(): number).
     export class SimButtonSensor implements IButtonSensor {
         private _connName: string;
 
@@ -58,12 +54,11 @@ namespace butia {
             this._connName = connName;
         }
 
-        init(): void {}
         connectorName(): string { return this._connName; }
         sensorType(): string { return "button"; }
 
-        read(): number {
-            return simState.sensorCache[this._connName] === 1 ? 1 : 0;
+        isPressed(): boolean {
+            return simState.sensorCache[this._connName] === 1;
         }
     }
 }
