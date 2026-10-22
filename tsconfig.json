@@ -18,6 +18,7 @@
         "pxt_modules/core/dal.d.ts",
         "pxt_modules/core/pxt-core.d.ts",
         "pxt_modules/core/control.ts",
-        "pxt_modules/core/controlmessage.ts"
+        "pxt_modules/core/controlmessage.ts",
+        "pxt_modules/core/serial.ts"
     ]
 }

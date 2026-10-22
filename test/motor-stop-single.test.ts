@@ -5,17 +5,14 @@
 // blocks-v4.ts) — RobotBase itself has no equivalent method — so it was
 // previously exercised by nothing.
 //
-// Approach: start the real RobotDriver singleton for each model, then swap
-// its underlying robot for a MockRobot via _setSimRobot() so we can observe
-// the resulting motor state without touching real hardware pins. Each block
-// call below is expected to zero exactly the requested side and leave the
-// other side unchanged; PASS/FAIL reflects whether that held.
+// Approach: useMockRobot() (test/_mocks.ts) swaps the real RobotDriver's
+// robot for a MockRobot so we can observe the resulting motor state without
+// touching real hardware pins. Each block call below is expected to zero
+// exactly the requested side and leave the other side unchanged; PASS/FAIL
+// reflects whether that held.
 
 // --- Butia v2: stop left, right stays running ---
-butia.RobotDriver._resetForTests();
-butia.RobotDriver.start(butia.butiaV2);
-const mockV2Left = new MockRobot(new MockMotorDriver(), butia.RobotDriver.currentRobot().connectorConfig());
-butia.RobotDriver.instance()._setSimRobot(mockV2Left);
+const mockV2Left = useMockRobot(butia.butiaV2);
 mockV2Left.motorTank(50, 60);
 butiaV2.motorStopSingle(ButiaMotorSide.Left);
 assertTest(
@@ -24,10 +21,7 @@ assertTest(
 );
 
 // --- Butia v2: stop right, left stays running ---
-butia.RobotDriver._resetForTests();
-butia.RobotDriver.start(butia.butiaV2);
-const mockV2Right = new MockRobot(new MockMotorDriver(), butia.RobotDriver.currentRobot().connectorConfig());
-butia.RobotDriver.instance()._setSimRobot(mockV2Right);
+const mockV2Right = useMockRobot(butia.butiaV2);
 mockV2Right.motorTank(50, 60);
 butiaV2.motorStopSingle(ButiaMotorSide.Right);
 assertTest(
@@ -36,10 +30,7 @@ assertTest(
 );
 
 // --- Butia v4: stop left, right stays running ---
-butia.RobotDriver._resetForTests();
-butia.RobotDriver.start(butia.butiaV4);
-const mockV4Left = new MockRobot(new MockMotorDriver(), butia.RobotDriver.currentRobot().connectorConfig());
-butia.RobotDriver.instance()._setSimRobot(mockV4Left);
+const mockV4Left = useMockRobot(butia.butiaV4);
 mockV4Left.motorTank(-30, 45);
 butiaV4.motorStopSingle(ButiaMotorSide.Left);
 assertTest(
@@ -48,10 +39,7 @@ assertTest(
 );
 
 // --- Butia v4: stop right, left stays running ---
-butia.RobotDriver._resetForTests();
-butia.RobotDriver.start(butia.butiaV4);
-const mockV4Right = new MockRobot(new MockMotorDriver(), butia.RobotDriver.currentRobot().connectorConfig());
-butia.RobotDriver.instance()._setSimRobot(mockV4Right);
+const mockV4Right = useMockRobot(butia.butiaV4);
 mockV4Right.motorTank(-30, 45);
 butiaV4.motorStopSingle(ButiaMotorSide.Right);
 assertTest(
@@ -59,9 +47,6 @@ assertTest(
     "butiaV4.motorStopSingle Right zeroes right, keeps left"
 );
 
-// Restore v4 as active so later test files in the run (alphabetically after
-// this one) that assume an already-started singleton keep working.
-butia.RobotDriver._resetForTests();
-butia.RobotDriver.start(butia.butiaV4);
+restoreRealRobots();
 
 basic.showString("ALL PASS motor-stop-single");

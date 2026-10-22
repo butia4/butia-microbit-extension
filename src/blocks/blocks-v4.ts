@@ -172,8 +172,8 @@ namespace butiaV4 {
     //% block="$arg"
     //% enumName="SensorNameV4"
     //% enumMemberName="sensor"
-    //% enumPromptHint="eg: Humidity"
-    //% enumInitialMembers="Humidity,Pressure,Sound"
+    //% enumPromptHint="Ej: Humedad"
+    //% enumInitialMembers="Humedad,Presion,Sonido"
     //% group="Generic Sensors"
     export function _sensorEnumShim(arg: number): number {
         return arg;

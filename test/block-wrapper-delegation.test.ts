@@ -6,30 +6,20 @@
 // return value, broken delegation to RobotDriver.currentRobot()) would not
 // be caught anywhere else.
 //
-// Approach: start the real RobotDriver singleton for each model, then swap
-// its underlying robot for a fresh MockRobot via _setSimRobot() before each
-// case, so each block call can be checked against an observable mock instead
-// of real hardware pins. A fresh MockRobot per case avoids "pin already
-// claimed as a different sensor type" failures — v4 only wires 3 connectors
-// (J1-J3) to 3 physical pins, too few to host every sensor kind at once on
-// one instance. A case PASSes only if the wrapper both forwarded the
-// arguments correctly AND returned/propagated the mocked value — not merely
-// "didn't throw".
+// Approach: useMockRobot() (test/_mocks.ts) starts the real RobotDriver for
+// each model and swaps its robot for a fresh MockRobot with the real wiring
+// table, so each block call can be checked against an observable mock instead
+// of real hardware pins. A fresh MockRobot per case keeps the cases
+// independent: each connector can only be claimed by one sensor type. A case
+// PASSes only if the wrapper both forwarded the arguments correctly AND
+// returned/propagated the mocked value — not merely "didn't throw".
 
 function useMockV2(): MockRobot {
-    butia.RobotDriver._resetForTests();
-    butia.RobotDriver.start(butia.butiaV2);
-    const mock = new MockRobot(new MockMotorDriver(), butia.RobotDriver.currentRobot().connectorConfig());
-    butia.RobotDriver.instance()._setSimRobot(mock);
-    return mock;
+    return useMockRobot(butia.butiaV2);
 }
 
 function useMockV4(): MockRobot {
-    butia.RobotDriver._resetForTests();
-    butia.RobotDriver.start(butia.butiaV4);
-    const mock = new MockRobot(new MockMotorDriver(), butia.RobotDriver.currentRobot().connectorConfig());
-    butia.RobotDriver.instance()._setSimRobot(mock);
-    return mock;
+    return useMockRobot(butia.butiaV4);
 }
 
 // --- Butia v2 ---
@@ -102,19 +92,10 @@ mV4 = useMockV4();
 mV4.mockDistance(AnalogPin.P2, new MockSensor(33));
 assertTest(butiaV4.obstacleDistance(butia.v4.J3) === 33, "butiaV4.obstacleDistance returns mocked value");
 
-// v4's real wiring only has an analog channel for J1-J3 so far (its digital
-// channel isn't determined yet — see ButiaV4Robot in butia-v4-robot.ts), so this case can't
-// reuse useMockV4()'s real config like the others do. It builds its own
-// config with a digital channel just to exercise the wrapper's delegation
-// to RobotBase.readButton(), independent of real v4 hardware wiring.
-butia.RobotDriver._resetForTests();
-butia.RobotDriver.start(butia.butiaV4);
-mV4 = new MockRobot(new MockMotorDriver(), [
-    new butia.ConnectorChannels(butia.v4.J1, butia.gpioAnalog(AnalogPin.P0), butia.gpioDigital(DigitalPin.P0)),
-]);
-butia.RobotDriver.instance()._setSimRobot(mV4);
-mV4.mockButton(AnalogPin.P0, new MockSensor(0));
-assertTest(butiaV4.readButton(butia.v4.J1) === false, "butiaV4.readButton returns mocked value");
+// J4's digital role is a direct pin (P9) in v4's real wiring table.
+mV4 = useMockV4();
+mV4.mockButton(DigitalPin.P9, new MockSensor(1));
+assertTest(butiaV4.readButton(butia.v4.J4) === true, "butiaV4.readButton returns mocked value");
 
 mV4 = useMockV4();
 mV4.mockGeneric(AnalogPin.P1, new MockSensor(44));
@@ -126,9 +107,6 @@ mV4.mockServo(AnalogPin.P2, servoV4);
 butiaV4.servoSetAngle(0, butia.v4.J3, 45);
 assertTest(servoV4.angle === 45, "butiaV4.servoSetAngle forwards degrees to the servo driver");
 
-// Restore v4 as active so later test files in the run (alphabetically after
-// this one) that assume an already-started singleton keep working.
-butia.RobotDriver._resetForTests();
-butia.RobotDriver.start(butia.butiaV4);
+restoreRealRobots();
 
 basic.showString("ALL PASS block-wrapper-delegation");

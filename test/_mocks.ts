@@ -6,18 +6,17 @@ class MockMotorDriver implements butia.IMotorDriver {
     left: number;
     right: number;
     constructor() { this.left = 0; this.right = 0; }
-    init(): void {}
     setSpeed(left: number, right: number): void { this.left = left; this.right = right; }
     stop(): void { this.left = 0; this.right = 0; }
 }
 
 // Single mock sensor type for all four sensor flavors. Its value is
 // mutable so event tests can simulate threshold crossings.
-class MockSensor implements butia.ILightSensor, butia.IGraySensor, butia.IDistanceSensor, butia.IButtonSensor {
+class MockSensor implements butia.ISensor, butia.IButtonSensor {
     private _value: number;
     constructor(value: number) { this._value = value; }
-    init(): void {}
     read(): number { return this._value; }
+    isPressed(): boolean { return this._value === 1; }
     setValue(v: number): void { this._value = v; }
 }
 
@@ -26,7 +25,6 @@ class MockServoDriver implements butia.IServoDriver {
     constructor() {
         this.angle = -1;
     }
-    init(): void {}
     setAngle(degrees: number): void { this.angle = degrees; }
 }
 
@@ -91,6 +89,39 @@ class MockRobot extends butia.RobotBase {
         return super._newServoDriver(name, channel);
     }
     protected _newEventMonitor(): butia.EventMonitor { return new butia.TestEventMonitor(); }
+}
+
+// The real robot behind each RobotDriver, captured the first time a test
+// swaps it out, so restoreRealRobots() can put it back.
+const _realRobots: { driver: butia.RobotDriver, robot: butia.IRobot }[] = [];
+
+// Starts the given model and swaps its robot for a fresh MockRobot with the
+// same wiring table. Always built from the real robot's config, so a case
+// never inherits the config of a previous mock. Call restoreRealRobots()
+// at the end of the file.
+function useMockRobot(driver: butia.RobotDriver): MockRobot {
+    butia.RobotDriver._resetForTests();
+    butia.RobotDriver.start(driver);
+    let real = butia.RobotDriver.currentRobot();
+    let known = false;
+    for (const r of _realRobots) {
+        if (r.driver === driver) {
+            real = r.robot;
+            known = true;
+        }
+    }
+    if (!known) _realRobots.push({ driver, robot: real });
+    const mock = new MockRobot(new MockMotorDriver(), real.connectorConfig());
+    driver._setSimRobot(mock);
+    return mock;
+}
+
+// Puts the real robots back and leaves v4 as the active model, so later
+// test files see the same state as a fresh program.
+function restoreRealRobots(): void {
+    for (const r of _realRobots) r.driver._setSimRobot(r.robot);
+    butia.RobotDriver._resetForTests();
+    butia.RobotDriver.start(butia.butiaV4);
 }
 
 function assertTest(condition: boolean, label: string): void {

@@ -19,8 +19,6 @@ namespace butia {
             this._started = false;
         }
 
-        init(): void {}
-
         private _ensurePeriod(): void {
             if (!this._started) {
                 pins.analogSetPeriod(this._pin, servoPeriodMicros);

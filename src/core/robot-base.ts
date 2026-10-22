@@ -226,7 +226,7 @@ namespace butia {
 
         readButton(connector: IConnector): boolean {
             const s = this._getButtonSensor(this._resolveChannel(connector, "digital"));
-            return s.read() === 1;
+            return s.isPressed();
         }
 
         readGenericSensor(connector: IConnector, name: number): number {
@@ -289,10 +289,10 @@ namespace butia {
             const sensor = this._getButtonSensor(channel);
             const dir = state === ButiaButtonState.Pressed ? dirGreaterOrPressed : dirLessOrReleased;
             const subId = computeSubId(sensorTypeButton, channel.id, dir);
-            const target = state === ButiaButtonState.Pressed ? 1 : 0;
+            const wantPressed = state === ButiaButtonState.Pressed;
             const monitor: IMonitor = {
                 subId: subId,
-                evaluate: () => sensor.read() === target,
+                evaluate: () => sensor.isPressed() === wantPressed,
                 priority,
                 handler,
             };
@@ -300,7 +300,7 @@ namespace butia {
         }
 
         // Exposed for tests — drives one polling cycle without sleeping.
-        // Returns the subIds that fired this cycle.
+        // Returns the subId that fired this cycle, or 0 if none.
         _stepEventMonitor(): number {
             return this._eventMonitor.pollOnce();
         }

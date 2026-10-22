@@ -7,39 +7,26 @@ interface Buffer {
     toString(): string;
 }
 
-declare namespace butia {
-    export interface IRobotComponent {
-        init(): void
-    }
+declare namespace butia { 
 
-    export interface ISensor extends IRobotComponent {
+    export interface ISensor {
         read(): number
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IDistanceSensor extends ISensor {}
+    export interface IButtonSensor {
+        isPressed(): boolean
+    }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface ILightSensor extends ISensor {}
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IGraySensor extends ISensor {}
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IButtonSensor extends ISensor { }
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IGenericSensor extends ISensor {}
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    export interface IActuator extends IRobotComponent {}
-
-    export interface IMotorDriver extends IActuator {
+    export interface IMotorDriver {
         setSpeed(left: number, right: number): void
         stop(): void
     }
 
-    export interface IServoDriver extends IActuator {
+    export interface IServoDriver {
         setAngle(degrees: number): void
     }
+    export type IDistanceSensor = ISensor;
+    export type ILightSensor = ISensor;
+    export type IGraySensor = ISensor;
+    export type IGenericSensor = ISensor;
 }

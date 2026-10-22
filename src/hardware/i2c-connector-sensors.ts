@@ -39,15 +39,13 @@ namespace butia {
         // pin: the PCA9536 expander pin (0-3) wired to this connector.
         constructor(private _expander: Pca9536IoExpander, private _pin: number) {}
 
-        init(): void {}
-        read(): number { return this._expander.readPin(this._pin) ? 1 : 0; }
+        isPressed(): boolean { return this._expander.readPin(this._pin); }
     }
 
     export class I2cLightSensor implements ILightSensor {
         // channel: the ADS1015 ADC channel (0-3) wired to this connector.
         constructor(private _adc: Ads1015Adc, private _channel: Ads1015Channel) {}
 
-        init(): void {}
         read(): number {
             const raw = 1023 - nativeEquivalentRaw(this._adc, this._channel);
             const value = (raw / 1023) * 100;
@@ -58,7 +56,6 @@ namespace butia {
     export class I2cGraySensor implements IGraySensor {
         constructor(private _adc: Ads1015Adc, private _channel: Ads1015Channel) {}
 
-        init(): void {}
         read(): number {
             const raw = 1023 - nativeEquivalentRaw(this._adc, this._channel);
             const value = (raw / 1023) * 100;
@@ -69,7 +66,6 @@ namespace butia {
     export class I2cDistanceSensor implements IDistanceSensor {
         constructor(private _adc: Ads1015Adc, private _channel: Ads1015Channel) {}
 
-        init(): void {}
         read(): number {
             const adcValue = nativeEquivalentRaw(this._adc, this._channel);
             return 9462 / (adcValue - 16);
@@ -80,7 +76,6 @@ namespace butia {
         // name is part of the shared sensor factory signature but unused here.
         constructor(private _adc: Ads1015Adc, private _channel: Ads1015Channel, name: number) {}
 
-        init(): void {}
         read(): number {
             const raw = 1023 - nativeEquivalentRaw(this._adc, this._channel);
             const value = (raw / 1023) * 100;
